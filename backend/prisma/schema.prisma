@@ -1,0 +1,140 @@
+// Configuração do Cliente e Banco
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- ENTIDADES DE ESTRUTURA ---
+
+model Escola {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  endereco  String?
+  telefone  String?
+  turmas    Turma[]
+  adis      ADI[]
+  avisos    AvisoGeral[]
+}
+
+model Turma {
+  id          Int      @id @default(autoincrement())
+  nome        String   // Ex: Berçário A
+  anoLetivo   Int
+  escolaId    Int
+  escola      Escola   @relation(fields: [escolaId], references: [id])
+  bebes       Bebe[]
+  adis        ADI[]    @relation("ADITurma")
+  vivencias   VivenciaGeral[]
+}
+
+// --- PESSOAS ---
+
+model Bebe {
+  id                 Int      @id @default(autoincrement())
+  nome               String
+  dataNascimento     DateTime?
+  genero             String?
+  alergias           String?
+  medicamentos       String?
+  observacoesSaude   String?
+  autorizadosBusca   String?
+  fotoUrl            String?
+  
+  turmaId            Int
+  turma              Turma    @relation(fields: [turmaId], references: [id])
+  
+  responsaveis       Responsavel[] @relation("BebeResponsavel")
+  diarios            DiarioIndividual[]
+  ocorrencias        Ocorrencia[]
+}
+
+model Responsavel {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  cpf       String   @unique
+  telefone  String?
+  email     String   @unique
+  senhaHash String
+  endereco  String?
+  
+  bebes     Bebe[]   @relation("BebeResponsavel")
+}
+
+model ADI {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  matricula String   @unique
+  email     String   @unique
+  senhaHash String
+  
+  escolaId  Int
+  escola    Escola   @relation(fields: [escolaId], references: [id])
+  
+  turmas    Turma[]  @relation("ADITurma")
+  diarios   DiarioIndividual[]
+  ocorrencias Ocorrencia[]
+  vivencias   VivenciaGeral[]
+}
+
+// --- REGISTROS DIÁRIOS E PEDAGÓGICOS ---
+
+model DiarioIndividual {
+  id               Int      @id @default(autoincrement())
+  data             DateTime @default(now())
+  
+  // Campos de Checklist (conforme sua ideia de evitar texto livre)
+  frequencia       Boolean  @default(true)
+  chegadaHumor     String?  // Ex: Feliz, Chorando
+  alimentacao      String?  // Ex: Boa, Regular, Ruim
+  banho            Boolean  @default(false)
+  sono             String?  
+  
+  desenvolvimentoPedagogico String? @db.Text
+  enviadoEm        DateTime?
+  
+  bebeId           Int
+  bebe             Bebe     @relation(fields: [bebeId], references: [id])
+  adiId            Int
+  adi              ADI      @relation(fields: [adiId], references: [id])
+}
+
+model Ocorrencia {
+  id          Int      @id @default(autoincrement())
+  titulo      String
+  descricao   String   @db.Text
+  horario     DateTime @default(now())
+  prioridade  String   @default("BAIXA") // BAIXA, MEDIA, ALTA
+  
+  bebeId      Int
+  bebe        Bebe     @relation(fields: [bebeId], references: [id])
+  adiId       Int
+  adi         ADI      @relation(fields: [adiId], references: [id])
+}
+
+model VivenciaGeral {
+  id        Int      @id @default(autoincrement())
+  data      DateTime @default(now())
+  titulo    String
+  descricao String   @db.Text
+  fotosJson Json?    // Aqui você guarda um array de URLs das fotos da turma
+  
+  turmaId   Int
+  turma     Turma    @relation(fields: [turmaId], references: [id])
+  adiId     Int
+  adi       ADI      @relation(fields: [adiId], references: [id])
+}
+
+model AvisoGeral {
+  id           Int       @id @default(autoincrement())
+  titulo       String
+  conteudo     String    @db.Text
+  dataCriacao  DateTime  @default(now())
+  dataExpiracao DateTime?
+  
+  escolaId     Int
+  escola       Escola    @relation(fields: [escolaId], references: [id])
+}
