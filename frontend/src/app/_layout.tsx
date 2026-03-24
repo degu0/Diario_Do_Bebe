@@ -1,6 +1,6 @@
 import { AuthProvider } from "@/context/AuthContext";
 import { Stack } from "expo-router";
-import { SafeAreaView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 function LayoutWrapper() {
   return (
