@@ -59,9 +59,9 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(217, 217, 217, 0.3)",
     borderColor: "rgba(255, 255, 255, 1)",
     borderRadius: 120,
-    width: 410,
-    height: 120,
-    padding: 15,
+    width: 350,
+    height: 100,
+    padding: 12,
   },
   containerNav: {
     flexDirection: "row",
@@ -76,19 +76,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 4,
-    paddingVertical: 20,
+    paddingVertical: 17,
   },
   activeLink: {
     borderTopWidth: 2,
     borderTopColor: "#8B4FFC",
   },
   image: {
-    width: 30,
-    height: 30,
+    width: 25,
+    height: 25,
   },
   text: {
     marginTop: 4,
-    fontSize: 12,
+    fontSize: 10,
     color: "#aaa",
   },
   activeText: {
