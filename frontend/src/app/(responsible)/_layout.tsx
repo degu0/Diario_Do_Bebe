@@ -1,18 +1,21 @@
+import Navbar from "@/components/Navbar";
 import { useAuth } from "@/context/AuthContext";
 import { Redirect, Slot } from "expo-router";
-import { ActivityIndicator, View } from "react-native";
+import { View } from "react-native";
 
 export default function ProtectedLayout() {
   const { user, loading } = useAuth();
 
-
-  if(!user || user.type !== "responsible") {
-    return <Redirect href="/(auth)/login" />
+  if (!user || user.type !== "responsible") {
+    return <Redirect href="/(auth)/login" />;
   }
 
   return (
-    <View style={{flex: 1}}>
-        <Slot />
+    <View style={{ flex: 1 }}>
+      <Slot />
+      <View style={{ position: "absolute", bottom: 20, width: "100%" }}>
+        <Navbar />
+      </View>
     </View>
-  )
+  );
 }

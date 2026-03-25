@@ -1,11 +1,11 @@
 import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
 import {
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export default function FormLogin() {
@@ -26,9 +26,9 @@ export default function FormLogin() {
 
     try {
       const type =
-        email === "teacher@gmail.com" && password === "123"
-          ? "teacher"
-          : "responsible";
+        email === "admin@gmail.com" && password === "123"
+          ? "responsible"
+          : "teacher";
 
       if (email === "teacher@gmail.com" && password !== "123") {
         setErroPassword(true);
