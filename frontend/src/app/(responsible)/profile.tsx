@@ -1,3 +1,4 @@
+import CardSettings from "@/components/CardSettings";
 import {
   Image,
   KeyboardAvoidingView,
@@ -94,6 +95,7 @@ export default function Profile() {
               </View>
             </View>
           </View>
+          <CardSettings />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

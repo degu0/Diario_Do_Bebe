@@ -1,8 +1,17 @@
-import { StyleSheet, View, Text, TouchableOpacity, Image, Animated } from "react-native";
+import { useAuth } from "@/context/AuthContext";
 import { useRef } from "react";
+import {
+  Animated,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 function SettingsButton({ icon, label }: { icon: any; label: string }) {
   const bgAnim = useRef(new Animated.Value(0)).current;
+  const { logout } = useAuth();
 
   const handlePressIn = () => {
     Animated.timing(bgAnim, {
@@ -20,6 +29,14 @@ function SettingsButton({ icon, label }: { icon: any; label: string }) {
     }).start();
   };
 
+  const handleOnPress = async (label: string) => {
+    if (label === "Logout") {
+      await logout();
+    } else if (label === "Modo escuro") {
+      console.log("Dark mod");
+    }
+  };
+
   const backgroundColor = bgAnim.interpolate({
     inputRange: [0, 1],
     outputRange: ["rgba(237,224,247,0)", "#ede0f7"],
@@ -30,6 +47,7 @@ function SettingsButton({ icon, label }: { icon: any; label: string }) {
       activeOpacity={1}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
+      onPress={() => handleOnPress(label)}
     >
       <Animated.View style={[styles.button, { backgroundColor }]}>
         <View style={styles.iconBox}>
@@ -44,9 +62,15 @@ function SettingsButton({ icon, label }: { icon: any; label: string }) {
 export default function CardSettings() {
   return (
     <View style={styles.container}>
-      <SettingsButton icon={require("@/assets/icon/sun.png")} label="Modo Escuro" />
+      <SettingsButton
+        icon={require("@/assets/icon/sun.png")}
+        label="Modo Escuro"
+      />
       <View style={styles.divider} />
-      <SettingsButton icon={require("@/assets/icon/logout.png")} label="Logout" />
+      <SettingsButton
+        icon={require("@/assets/icon/logout.png")}
+        label="Logout"
+      />
     </View>
   );
 }
