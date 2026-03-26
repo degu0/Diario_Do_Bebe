@@ -1,14 +1,15 @@
+import CardSettings from "@/components/CardSettings";
 import {
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Text,
-  View,
-  StyleSheet,
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from "react-native";
 
-export default function Perfil() {
+export default function Profile() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -29,8 +30,7 @@ export default function Perfil() {
           <View style={styles.headerInfo}>
             <Text style={styles.profileName}>Rafaela Bezerra</Text>
             <View style={styles.phonePill}>
-              <Text style={styles.phoneIcon}>📞</Text>
-              <Text style={styles.phoneText}>(81) 99111-1111</Text>
+              <Text style={styles.phoneText}>Professora</Text>
             </View>
           </View>
         </View>
@@ -38,62 +38,38 @@ export default function Perfil() {
         <View style={styles.content}>
           <View style={styles.cardRow}>
             <View style={[styles.cardSmall, { marginRight: 6 }]}>
-              <Text style={styles.cardLabel}>Endereço</Text>
-              <Text style={styles.cardValue}>Nº100, Rua aqui do lado</Text>
-              <Text style={styles.cardValue}>Indianopolis</Text>
-            </View>
-            <View style={[styles.cardSmall, { marginLeft: 6 }]}>
-              <Text style={styles.cardLabel}>Local de Trabalho</Text>
-              <Text style={styles.cardValue}>Nº129, Avenida aqui perto</Text>
-              <Text style={styles.cardValue}>Nova Caruaru</Text>
+              <Text style={styles.cardLabel}>Creche que atua</Text>
+              <Text style={styles.cardValue}>Creche Sol lindo</Text>
               <View style={styles.hoursBadge}>
                 <Text style={styles.hoursText}>8 às 18h</Text>
               </View>
             </View>
-          </View>
-
-          <View style={styles.card}>
-            <View style={styles.emailIconBox}>
-              <Text style={styles.emailIconText}>✉️</Text>
-            </View>
-            <View>
-              <Text style={styles.cardLabel}>Email</Text>
-              <Text style={styles.cardValue}>contatomeu@gmail.com</Text>
+            <View style={[styles.cardSmall, { marginLeft: 6 }]}>
+              <Text style={styles.cardLabel}>Turma</Text>
+              <Text style={styles.cardValue}>Maternal I</Text>
             </View>
           </View>
 
           <View style={styles.cardSection}>
             <View style={styles.sectionHeader}>
               <View style={styles.sectionDot} />
-              <Text style={styles.sectionTitle}>Informações</Text>
+              <Text style={styles.sectionTitle}>Contato</Text>
               <View style={styles.sectionLine} />
             </View>
 
             <View style={styles.infoRow}>
-              <Text style={styles.infoKey}>Nome</Text>
-              <Text style={styles.infoVal}>Rafaela Bezerra</Text>
+              <Text style={styles.infoKey}>Email</Text>
+              <Text style={styles.infoVal}>contatomeu@gmail.com</Text>
             </View>
             <View style={styles.divider} />
 
             <View style={styles.infoRow}>
-              <Text style={styles.infoKey}>CPF</Text>
-              <Text style={styles.infoVal}>000.000.000-00</Text>
+              <Text style={styles.infoKey}>Telefone</Text>
+              <Text style={styles.infoVal}>(00)99999-9999</Text>
             </View>
             <View style={styles.divider} />
-
-            <View style={styles.infoRow}>
-              <Text style={styles.infoKey}>RG</Text>
-              <Text style={styles.infoVal}>00.000.00</Text>
-            </View>
-            <View style={styles.divider} />
-
-            <View style={styles.infoRow}>
-              <Text style={styles.infoKey}>Parentesco</Text>
-              <View style={styles.parentescoBadge}>
-                <Text style={styles.parentescoText}>Mãe</Text>
-              </View>
-            </View>
           </View>
+          <CardSettings />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -106,7 +82,6 @@ const PURPLE_DARK = "#a67cc5";
 const PURPLE_GRADIENT_TOP = "#e8d5f5";
 const WHITE = "#ffffff";
 const TEXT_DARK = "#2d2d2d";
-const TEXT_MID = "#5a5a5a";
 const TEXT_LIGHT = "#9a9a9a";
 
 const styles = StyleSheet.create({
@@ -125,8 +100,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 18,
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
   },
   avatarWrapper: {
     position: "relative",
@@ -172,15 +145,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.9)",
   },
-  phoneIcon: { fontSize: 13 },
   phoneText: {
     fontSize: 13,
     fontWeight: "500",
     color: TEXT_DARK,
   },
   content: {
+    height: "80%",
     padding: 16,
-    marginTop: -16,
+    marginTop: 5,
   },
   cardRow: {
     flexDirection: "row",
@@ -224,29 +197,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: PURPLE_DARK,
   },
-  card: {
-    backgroundColor: WHITE,
-    borderRadius: 18,
-    padding: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 14,
-    marginBottom: 12,
-    shadowColor: "#b39dcc",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  emailIconBox: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
-    backgroundColor: PURPLE_LIGHT,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  emailIconText: { fontSize: 17 },
   cardSection: {
     backgroundColor: WHITE,
     borderRadius: 18,
@@ -302,17 +252,5 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "600",
     color: TEXT_DARK,
-  },
-  parentescoBadge: {
-    backgroundColor: PURPLE_MID,
-    paddingHorizontal: 14,
-    paddingVertical: 4,
-    borderRadius: 20,
-  },
-  parentescoText: {
-    fontSize: 12,
-    fontWeight: "700",
-    color: WHITE,
-    letterSpacing: 0.3,
   },
 });
