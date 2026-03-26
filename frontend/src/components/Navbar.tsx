@@ -16,7 +16,7 @@ const links = [
   },
   {
     label: "Perfil",
-    href: "/(responsible)/perfil" as const,
+    href: "/(responsible)/profile" as const,
     icon: require("../../assets/images/user-black.png"),
     iconActive: require("../../assets/images/user-purple.png"),
   },
@@ -24,7 +24,6 @@ const links = [
 
 export default function Navbar() {
   const pathname = usePathname();
-  console.log(pathname);
 
   return (
     <View style={styles.container}>
