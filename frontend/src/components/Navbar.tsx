@@ -21,7 +21,7 @@ type NavLink = {
 const teacherLinks: NavLink[] = [
   {
     label: "Home",
-    href: "/(teacher)/homeTeacher",
+    href: "/(teacher)/home",
     icon: icons.home,
     iconActive: icons.homeActive,
   },
@@ -42,7 +42,7 @@ const teacherLinks: NavLink[] = [
 const responsibleLinks: NavLink[] = [
   {
     label: "Home",
-    href: "/(responsible)/homeResponsible",
+    href: "/(responsible)/home",
     icon: icons.home,
     iconActive: icons.homeActive,
   },
