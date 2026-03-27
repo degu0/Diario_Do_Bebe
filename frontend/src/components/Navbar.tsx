@@ -5,8 +5,8 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 const icons = {
   home: require("@/assets/images/home-black.png"),
   homeActive: require("@/assets/images/home-purple.png"),
-  turma: require("@/assets/images/book-black.png"),
-  turmaActive: require("@/assets/images/book-purple.png"),
+  class: require("@/assets/images/book-black.png"),
+  classActive: require("@/assets/images/book-purple.png"),
   profile: require("@/assets/images/user-black.png"),
   profileActive: require("@/assets/images/user-purple.png"),
 };
@@ -26,10 +26,10 @@ const teacherLinks: NavLink[] = [
     iconActive: icons.homeActive,
   },
   {
-    label: "Turma",
-    href: "/(teacher)/turma",
-    icon: icons.turma,
-    iconActive: icons.turmaActive,
+    label: "class",
+    href: "/(teacher)/class",
+    icon: icons.class,
+    iconActive: icons.classActive,
   },
   {
     label: "Perfil",

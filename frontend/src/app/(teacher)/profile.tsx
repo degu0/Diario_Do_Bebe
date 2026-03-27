@@ -1,12 +1,12 @@
 import CardSettings from "@/components/CardSettings";
 import {
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 export default function Profile() {
@@ -45,7 +45,7 @@ export default function Profile() {
               </View>
             </View>
             <View style={[styles.cardSmall, { marginLeft: 6 }]}>
-              <Text style={styles.cardLabel}>Turma</Text>
+              <Text style={styles.cardLabel}>class</Text>
               <Text style={styles.cardValue}>Maternal I</Text>
             </View>
           </View>
