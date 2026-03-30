@@ -12,10 +12,18 @@
   "devDependencies": {
     "@prisma/config": "^7.5.0",
     "@types/jest": "^30.0.0",
+    "@types/pg": "^8.20.0",
+    "dotenv-cli": "^11.0.0",
     "jest": "^30.3.0",
     "ts-jest": "^29.4.6"
   },
   "dependencies": {
-    "@prisma/client": "^7.5.0"
+    "@prisma/adapter-pg": "^7.6.0",
+    "@prisma/client": "^7.5.0",
+    "dotenv": "^17.3.1",
+    "pg": "^8.20.0"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   }
 }

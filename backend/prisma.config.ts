@@ -1,11 +1,15 @@
-import { defineConfig } from '@prisma/config';
-import * as dotenv from 'dotenv';
-
-// Carrega as variáveis do arquivo .env
-dotenv.config();
-
+import { defineConfig, env } from '@prisma/config';
+import "dotenv/config";
 export default defineConfig({
+  // the main entry for your schema
+  schema: "prisma/schema.prisma",
   datasource: {
-    url: process.env.DATABASE_URL,
+    url: env("DATABASE_URL"),
+  },
+  migrations: {
+    path: "prisma/migrations",
+    // Usamos 'npx ts-node' para garantir que ele ache o executor
+    // E removemos o './' para o Windows não se confundir
+    seed: 'npx ts-node prisma/seed.ts',
   },
 });
