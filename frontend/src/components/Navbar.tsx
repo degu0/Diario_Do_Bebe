@@ -1,43 +1,77 @@
+import { useAuth } from "@/context/AuthContext";
 import { router, usePathname } from "expo-router";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-const links = [
+const icons = {
+  home: require("@/assets/images/home-black.png"),
+  homeActive: require("@/assets/images/home-purple.png"),
+  class: require("@/assets/images/book-black.png"),
+  classActive: require("@/assets/images/book-purple.png"),
+  profile: require("@/assets/images/user-black.png"),
+  profileActive: require("@/assets/images/user-purple.png"),
+};
+
+type NavLink = {
+  label: string;
+  href: string;
+  icon: any;
+  iconActive: any;
+};
+
+const teacherLinks: NavLink[] = [
   {
     label: "Home",
-    href: "/(responsible)/homeResponsible" as const,
-    icon: require("../../assets/images/home-black.png"),
-    iconActive: require("../../assets/images/home-purple.png"),
+    href: "/(teacher)/home",
+    icon: icons.home,
+    iconActive: icons.homeActive,
   },
   {
-    label: "Turma",
-    href: "/(responsible)/turma" as const,
-    icon: require("../../assets/images/book-black.png"),
-    iconActive: require("../../assets/images/book-purple.png"),
+    label: "class",
+    href: "/(teacher)/class",
+    icon: icons.class,
+    iconActive: icons.classActive,
   },
   {
     label: "Perfil",
-    href: "/(responsible)/perfil" as const,
-    icon: require("../../assets/images/user-black.png"),
-    iconActive: require("../../assets/images/user-purple.png"),
+    href: "/(teacher)/profile",
+    icon: icons.profile,
+    iconActive: icons.profileActive,
+  },
+];
+
+const responsibleLinks: NavLink[] = [
+  {
+    label: "Home",
+    href: "/(responsible)/home",
+    icon: icons.home,
+    iconActive: icons.homeActive,
+  },
+  {
+    label: "Perfil",
+    href: "/(responsible)/profile",
+    icon: icons.profile,
+    iconActive: icons.profileActive,
   },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
-  console.log(pathname);
+  const { user } = useAuth();
+
+  const links = user?.type === "teacher" ? teacherLinks : responsibleLinks;
 
   return (
     <View style={styles.container}>
       <View style={styles.containerNav}>
         {links.map((link) => {
-          const path = link.href.split("/(responsible)");
-          const isActive = pathname === path[1];
+          const routeName = link.href.split("/").pop();
+          const isActive = pathname.endsWith(routeName ?? "");
 
           return (
             <TouchableOpacity
               key={link.href}
               style={[styles.link, isActive && styles.activeLink]}
-              onPress={() => router.push(link.href)}
+              onPress={() => router.push(link.href as any)}
             >
               <Image
                 source={isActive ? link.iconActive : link.icon}

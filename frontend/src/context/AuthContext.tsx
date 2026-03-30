@@ -31,9 +31,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await AsyncStorage.setItem("user", JSON.stringify(userData));
     setUser(userData);
     if (userData.type === "responsible") {
-      router.replace("/(responsible)/homeResponsible");
+      router.replace("/(responsible)/home");
     } else if (userData.type === "teacher") {
-      router.replace("/(teacher)/homeTeacher");
+      router.replace("/(teacher)/home");
     }
   };
 

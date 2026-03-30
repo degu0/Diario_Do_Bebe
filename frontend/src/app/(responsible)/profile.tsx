@@ -1,14 +1,15 @@
+import CardSettings from "@/components/CardSettings";
 import {
   Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  StyleSheet,
   Text,
   View,
-  StyleSheet,
 } from "react-native";
 
-export default function Perfil() {
+export default function Profile() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -94,6 +95,7 @@ export default function Perfil() {
               </View>
             </View>
           </View>
+          <CardSettings />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
