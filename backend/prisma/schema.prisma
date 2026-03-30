@@ -1,11 +1,10 @@
 // Configuração do Cliente e Banco
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 // --- ENTIDADES DE ESTRUTURA ---
@@ -43,10 +42,10 @@ model Bebe {
   observacoesSaude   String?
   autorizadosBusca   String?
   fotoUrl            String?
-  
+
   turmaId            Int
   turma              Turma    @relation(fields: [turmaId], references: [id])
-  
+
   responsaveis       Responsavel[] @relation("BebeResponsavel")
   diarios            DiarioIndividual[]
   ocorrencias        Ocorrencia[]
@@ -60,7 +59,7 @@ model Responsavel {
   email     String   @unique
   senhaHash String
   endereco  String?
-  
+
   bebes     Bebe[]   @relation("BebeResponsavel")
 }
 
@@ -70,10 +69,10 @@ model ADI {
   matricula String   @unique
   email     String   @unique
   senhaHash String
-  
+
   escolaId  Int
   escola    Escola   @relation(fields: [escolaId], references: [id])
-  
+
   turmas    Turma[]  @relation("ADITurma")
   diarios   DiarioIndividual[]
   ocorrencias Ocorrencia[]
@@ -85,17 +84,17 @@ model ADI {
 model DiarioIndividual {
   id               Int      @id @default(autoincrement())
   data             DateTime @default(now())
-  
+
   // Campos de Checklist (conforme sua ideia de evitar texto livre)
   frequencia       Boolean  @default(true)
   chegadaHumor     String?  // Ex: Feliz, Chorando
   alimentacao      String?  // Ex: Boa, Regular, Ruim
   banho            Boolean  @default(false)
-  sono             String?  
-  
+  sono             String?
+
   desenvolvimentoPedagogico String? @db.Text
   enviadoEm        DateTime?
-  
+
   bebeId           Int
   bebe             Bebe     @relation(fields: [bebeId], references: [id])
   adiId            Int
@@ -108,7 +107,7 @@ model Ocorrencia {
   descricao   String   @db.Text
   horario     DateTime @default(now())
   prioridade  String   @default("BAIXA") // BAIXA, MEDIA, ALTA
-  
+
   bebeId      Int
   bebe        Bebe     @relation(fields: [bebeId], references: [id])
   adiId       Int
@@ -121,7 +120,7 @@ model VivenciaGeral {
   titulo    String
   descricao String   @db.Text
   fotosJson Json?    // Aqui você guarda um array de URLs das fotos da turma
-  
+
   turmaId   Int
   turma     Turma    @relation(fields: [turmaId], references: [id])
   adiId     Int
@@ -134,7 +133,7 @@ model AvisoGeral {
   conteudo     String    @db.Text
   dataCriacao  DateTime  @default(now())
   dataExpiracao DateTime?
-  
+
   escolaId     Int
   escola       Escola    @relation(fields: [escolaId], references: [id])
 }
