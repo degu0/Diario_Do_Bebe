@@ -1,3 +1,4 @@
+import Fonts from "@/constants/Fonts";
 import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
 import {
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     color: "#7a7a7a",
-    fontSize: 14,
+    fontSize: Fonts.size.sm,
     fontWeight: "400",
   },
   form: {

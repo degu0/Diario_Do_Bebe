@@ -1,3 +1,5 @@
+import { useRoute } from "@react-navigation/native";
+import { router } from "expo-router";
 import { useState } from "react";
 import {
   Image,
@@ -31,6 +33,7 @@ const kids = [
 export default function Claass() {
   const [search, setSearch] = useState("");
   const [filteredKids, setFilteredKids] = useState(kids);
+  const route = useRoute();
 
   const handleSearch = (text: string) => {
     setSearch(text);
@@ -64,7 +67,11 @@ export default function Claass() {
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {filteredKids.map((item) => (
-          <TouchableOpacity key={item.id} style={styles.card}>
+          <TouchableOpacity
+            key={item.id}
+            style={styles.card}
+            onPress={() => router.navigate(`/baby/${item.id}`)}
+          >
             <Image source={item.image} style={styles.imageKid} />
             <View style={styles.informationContainer}>
               <Text style={styles.kidName}>{item.name}</Text>
