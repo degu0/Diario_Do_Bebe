@@ -1,49 +1,34 @@
 import { useAuth } from '@/context/AuthContext';
 import { router, usePathname } from 'expo-router';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-const icons = {
-  home: require('@/assets/images/home-black.png'),
-  homeActive: require('@/assets/images/home-purple.png'),
-  class: require('@/assets/images/book-black.png'),
-  classActive: require('@/assets/images/book-purple.png'),
-  calendar: require('@/assets/images/calendar-black.png'),
-  calendarActive: require('@/assets/images/calendar-purple.png'),
-  profile: require('@/assets/images/user-black.png'),
-  profileActive: require('@/assets/images/user-purple.png'),
-};
+import { Home, Calendar, Book, Profile } from 'iconsax-react-native';
 
 type NavLink = {
   label: string;
   href: string;
   icon: any;
-  iconActive: any;
 };
 
 const teacherLinks: NavLink[] = [
   {
     label: 'Home',
     href: '/(teacher)/home',
-    icon: icons.home,
-    iconActive: icons.homeActive,
+    icon: Home,
   },
   {
     label: 'Calendario',
     href: '/calendar',
-    icon: icons.calendar,
-    iconActive: icons.calendarActive,
+    icon: Calendar,
   },
   {
     label: 'class',
     href: '/(teacher)/class',
-    icon: icons.class,
-    iconActive: icons.classActive,
+    icon: Book,
   },
   {
     label: 'Perfil',
     href: '/(teacher)/profile',
-    icon: icons.profile,
-    iconActive: icons.profileActive,
+    icon: Profile,
   },
 ];
 
@@ -51,20 +36,17 @@ const responsibleLinks: NavLink[] = [
   {
     label: 'Home',
     href: '/(responsible)/home',
-    icon: icons.home,
-    iconActive: icons.homeActive,
+    icon: Home,
   },
   {
     label: 'Calendario',
     href: '/calendar',
-    icon: icons.calendar,
-    iconActive: icons.calendarActive,
+    icon: Calendar,
   },
   {
     label: 'Perfil',
     href: '/(responsible)/profile',
-    icon: icons.profile,
-    iconActive: icons.profileActive,
+    icon: Profile,
   },
 ];
 
@@ -81,15 +63,18 @@ export default function Navbar() {
           const routeName = link.href.split('/').pop();
           const isActive = pathname.endsWith(routeName ?? '');
 
+          const Icon = link.icon;
+
           return (
             <TouchableOpacity
               key={link.href}
               style={[styles.link, isActive && styles.activeLink]}
               onPress={() => router.push(link.href as any)}
             >
-              <Image
-                source={isActive ? link.iconActive : link.icon}
-                style={styles.image}
+              <Icon
+                size={25}
+                color={isActive ? '#8B4FFC' : '#aaa'}
+                variant={isActive ? 'Bold' : 'Outline'}
               />
               <Text style={[styles.text, isActive && styles.activeText]}>
                 {link.label}
