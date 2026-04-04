@@ -8,6 +8,7 @@ import {
   Text,
   View,
 } from "react-native";
+import colors from "../constants/colors"; 
 
 export default function Profile() {
   return (
@@ -76,24 +77,16 @@ export default function Profile() {
   );
 }
 
-const PURPLE_LIGHT = "#ede0f7";
-const PURPLE_MID = "#c9a8e8";
-const PURPLE_DARK = "#a67cc5";
-const PURPLE_GRADIENT_TOP = "#e8d5f5";
-const WHITE = "#ffffff";
-const TEXT_DARK = "#2d2d2d";
-const TEXT_LIGHT = "#9a9a9a";
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f0fa",
+    backgroundColor: colors.purple_background,
   },
   scroll: {
     flexGrow: 1,
   },
   header: {
-    backgroundColor: PURPLE_GRADIENT_TOP,
+    backgroundColor: colors.light_purple,
     paddingHorizontal: 24,
     paddingTop: 20,
     paddingBottom: 36,
@@ -109,8 +102,8 @@ const styles = StyleSheet.create({
     height: 72,
     borderRadius: 22,
     borderWidth: 3,
-    borderColor: WHITE,
-    backgroundColor: PURPLE_LIGHT,
+    borderColor: colors.white,
+    backgroundColor: colors.purple,
   },
   avatarBadge: {
     position: "absolute",
@@ -119,9 +112,9 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     borderRadius: 8,
-    backgroundColor: "#7bc47b",
+    backgroundColor: colors.green,
     borderWidth: 2,
-    borderColor: WHITE,
+    borderColor: colors.white,
   },
   headerInfo: {
     flex: 1,
@@ -130,25 +123,25 @@ const styles = StyleSheet.create({
     fontFamily: Platform.OS === "ios" ? "Georgia" : "serif",
     fontSize: 22,
     fontWeight: "600",
-    color: TEXT_DARK,
+    color: colors.dark_gray,
     marginBottom: 8,
   },
   phonePill: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: "rgba(255,255,255,0.65)",
+    backgroundColor: colors.white,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
     alignSelf: "flex-start",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.9)",
+    borderColor: colors.white,
   },
   phoneText: {
     fontSize: 13,
     fontWeight: "500",
-    color: TEXT_DARK,
+    color: colors.dark_gray,
   },
   content: {
     height: "80%",
@@ -161,10 +154,10 @@ const styles = StyleSheet.create({
   },
   cardSmall: {
     flex: 1,
-    backgroundColor: WHITE,
+    backgroundColor: colors.white,
     borderRadius: 18,
     padding: 14,
-    shadowColor: "#b39dcc",
+    shadowColor: colors.purple,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.12,
     shadowRadius: 8,
@@ -175,17 +168,17 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 0.8,
-    color: TEXT_LIGHT,
+    color: colors.gray,
     marginBottom: 5,
   },
   cardValue: {
     fontSize: 13,
     fontWeight: "500",
-    color: TEXT_DARK,
+    color: colors.dark_gray,
     lineHeight: 19,
   },
   hoursBadge: {
-    backgroundColor: PURPLE_LIGHT,
+    backgroundColor: colors.light_purple,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 8,
@@ -195,14 +188,14 @@ const styles = StyleSheet.create({
   hoursText: {
     fontSize: 11,
     fontWeight: "600",
-    color: PURPLE_DARK,
+    color: colors.violet,
   },
   cardSection: {
-    backgroundColor: WHITE,
+    backgroundColor: colors.white,
     borderRadius: 18,
     padding: 16,
     marginBottom: 12,
-    shadowColor: "#b39dcc",
+    shadowColor: colors.purple,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.12,
     shadowRadius: 8,
@@ -218,18 +211,18 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: PURPLE_MID,
+    backgroundColor: colors.purple,
   },
   sectionTitle: {
     fontFamily: Platform.OS === "ios" ? "Georgia" : "serif",
     fontSize: 15,
     fontWeight: "600",
-    color: TEXT_DARK,
+    color: colors.dark_gray,
   },
   sectionLine: {
     flex: 1,
     height: 1,
-    backgroundColor: "rgba(0,0,0,0.05)",
+    backgroundColor: colors.light_gray,
   },
   infoRow: {
     flexDirection: "row",
@@ -239,18 +232,18 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: "rgba(0,0,0,0.04)",
+    backgroundColor: colors.light_gray,
   },
   infoKey: {
     fontSize: 12,
     fontWeight: "600",
     textTransform: "uppercase",
     letterSpacing: 0.5,
-    color: TEXT_LIGHT,
+    color: colors.gray,
   },
   infoVal: {
     fontSize: 13,
     fontWeight: "600",
-    color: TEXT_DARK,
+    color: colors.dark_gray,
   },
 });

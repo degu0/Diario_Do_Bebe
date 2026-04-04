@@ -1,6 +1,8 @@
 import { useAuth } from "@/context/AuthContext";
 import { router, usePathname } from "expo-router";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import theme from "../constants/colors";
+const { colors } = theme;
 
 const icons = {
   home: require("@/assets/images/home-black.png"),
@@ -90,8 +92,8 @@ export default function Navbar() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "rgba(217, 217, 217, 0.3)",
-    borderColor: "rgba(255, 255, 255, 1)",
+    backgroundColor: colors.light_gray + "4D", 
+    borderColor: colors.white,
     borderRadius: 120,
     width: 350,
     height: 100,
@@ -99,7 +101,7 @@ const styles = StyleSheet.create({
   },
   containerNav: {
     flexDirection: "row",
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderRadius: 120,
     justifyContent: "space-around",
     alignItems: "center",
@@ -114,7 +116,7 @@ const styles = StyleSheet.create({
   },
   activeLink: {
     borderTopWidth: 2,
-    borderTopColor: "#8B4FFC",
+    borderTopColor: colors.purple,
   },
   image: {
     width: 25,
@@ -123,10 +125,10 @@ const styles = StyleSheet.create({
   text: {
     marginTop: 4,
     fontSize: 10,
-    color: "#aaa",
+    color: colors.gray,
   },
   activeText: {
-    color: "#8B4FFC",
+    color: colors.purple,
     fontWeight: "600",
   },
 });

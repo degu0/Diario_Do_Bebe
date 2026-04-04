@@ -9,6 +9,9 @@ import {
   View,
 } from "react-native";
 
+import theme from "../constants/Colors";
+const { colors } = theme;
+
 function SettingsButton({ icon, label }: { icon: any; label: string }) {
   const bgAnim = useRef(new Animated.Value(0)).current;
   const { logout } = useAuth();
@@ -39,7 +42,7 @@ function SettingsButton({ icon, label }: { icon: any; label: string }) {
 
   const backgroundColor = bgAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: ["rgba(237,224,247,0)", "#ede0f7"],
+    outputRange: ["rgba(237,224,247,0)", colors.purple_background],
   });
 
   return (
@@ -77,11 +80,11 @@ export default function CardSettings() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.white, 
     borderRadius: 18,
     padding: 8,
     marginBottom: 12,
-    shadowColor: "#b39dcc",
+    shadowColor: colors.light_purple, 
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.12,
     shadowRadius: 8,
@@ -99,23 +102,24 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 10,
-    backgroundColor: "#f5f0fa",
+    backgroundColor: colors.purple_background, 
     alignItems: "center",
     justifyContent: "center",
   },
   image: {
     width: 18,
     height: 18,
-    tintColor: "#a67cc5",
+    tintColor: colors.light_purple, 
   },
   text: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#2d2d2d",
+    color: colors.dark_gray, 
   },
   divider: {
     height: 1,
-    backgroundColor: "rgba(0,0,0,0.04)",
+    backgroundColor: colors.light_gray, 
     marginHorizontal: 10,
   },
 });
+

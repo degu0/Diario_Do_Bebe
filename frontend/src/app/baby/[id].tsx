@@ -1,3 +1,4 @@
+
 import { useRoute } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -9,6 +10,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
+import theme from "../constants/colors"; 
+const { colors } = theme;
 
 function AccordionSection({
   icon,
@@ -33,11 +37,16 @@ function AccordionSection({
           <Text style={styles.accordionIcon}>{icon}</Text>
           <Text style={styles.accordionTitle}>{title}</Text>
         </View>
+
         <View style={styles.accordionRight}>
           <View style={styles.accordionBadge}>
-            <Text style={styles.accordionBadgeText}>{items.length} itens</Text>
+            <Text style={styles.accordionBadgeText}>
+              {items.length} itens
+            </Text>
           </View>
-          <Text style={styles.accordionChevron}>{expanded ? "∧" : "∨"}</Text>
+          <Text style={styles.accordionChevron}>
+            {expanded ? "∧" : "∨"}
+          </Text>
         </View>
       </TouchableOpacity>
 
@@ -84,6 +93,7 @@ export default function BabyProfile() {
               style={styles.arrowIcon}
             />
           </TouchableOpacity>
+
           <Text style={styles.pageTitle}>Perfil da criança</Text>
         </View>
 
@@ -92,80 +102,114 @@ export default function BabyProfile() {
             source={require("@/assets/images/profile-icon.png")}
             style={styles.babyAvatar}
           />
+
           <View style={styles.babyTexts}>
             <Text style={styles.babyName}>Maria Clara</Text>
-            <Text style={styles.babyBirthday}>Aniversário: 01/01/2025</Text>
+            <Text style={styles.babyBirthday}>
+              Aniversário: 01/01/2025
+            </Text>
           </View>
         </View>
       </View>
 
       <View style={styles.content}>
-
         <Text style={styles.sectionTitle}>Responsáveis</Text>
+
         <View style={styles.containerCardResponsible}>
-          <View style={[styles.card, { backgroundColor: "#ff9bfa" }]}>
+          <View
+            style={[
+              styles.card,
+              { backgroundColor: colors.purple_background },
+            ]}
+          >
             <View style={styles.cardInformation}>
               <Image
                 source={require("@/assets/images/profile-icon.png")}
                 style={styles.responsibleAvatar}
               />
               <View style={styles.information}>
-                <Text style={styles.responsibleName}>Heloisa Santos</Text>
+                <Text style={styles.responsibleName}>
+                  Heloisa Santos
+                </Text>
                 <Text style={styles.responsibleRole}>Mãe</Text>
               </View>
             </View>
-            <Text style={styles.responsiblePhone}>(81) 99111-1111</Text>
+            <Text style={styles.responsiblePhone}>
+              (81) 99111-1111
+            </Text>
           </View>
 
-          <View style={[styles.card, { backgroundColor: "#83aaff" }]}>
+          <View
+            style={[
+              styles.card,
+              { backgroundColor: colors.blue_background },
+            ]}
+          >
             <View style={styles.cardInformation}>
               <Image
                 source={require("@/assets/images/profile-icon.png")}
                 style={styles.responsibleAvatar}
               />
               <View style={styles.information}>
-                <Text style={styles.responsibleName}>João Santos</Text>
+                <Text style={styles.responsibleName}>
+                  João Santos
+                </Text>
                 <Text style={styles.responsibleRole}>Pai</Text>
               </View>
             </View>
-            <Text style={styles.responsiblePhone}>(81) 99222-2222</Text>
+            <Text style={styles.responsiblePhone}>
+              (81) 99222-2222
+            </Text>
           </View>
         </View>
 
-        <Text style={styles.sectionTitle}>Contato de emergência</Text>
+        <Text style={styles.sectionTitle}>
+          Contato de emergência
+        </Text>
+
         <View style={styles.contactList}>
           {contacts.map((item) => (
             <View key={item.id} style={styles.contactRow}>
               <Text style={styles.contactName}>{item.name}</Text>
-              <Text style={styles.contactNumber}>{item.number}</Text>
+              <Text style={styles.contactNumber}>
+                {item.number}
+              </Text>
             </View>
           ))}
         </View>
 
-        <Text style={styles.sectionTitle}>Pessoas autorizadas para buscar</Text>
+        <Text style={styles.sectionTitle}>
+          Pessoas autorizadas para buscar
+        </Text>
+
         <View style={styles.authorizedRow}>
           {authorized.map((item, index) => (
             <View key={index} style={styles.authorizedCard}>
-              <Text style={styles.authorizedName}>{item.name}</Text>
-              <Text style={styles.authorizedRole}>{item.role}</Text>
+              <Text style={styles.authorizedName}>
+                {item.name}
+              </Text>
+              <Text style={styles.authorizedRole}>
+                {item.role}
+              </Text>
             </View>
           ))}
         </View>
 
         <Text style={styles.sectionTitle}>Saúde</Text>
+
         <AccordionSection
           icon="🔥"
           title="Alergias"
           items={allergies}
           itemIcon="⚠️"
         />
+
         <AccordionSection
           icon="💊"
           title="Medicações"
           items={medications}
           itemIcon="🩺"
         />
-
       </View>
     </ScrollView>
   );
@@ -174,215 +218,248 @@ export default function BabyProfile() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f0fa",
+    backgroundColor: colors.light_gray,
   },
+
   containerPage: {
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
     marginBottom: 24,
   },
+
   arrowIcon: {
     width: 24,
     height: 24,
   },
+
   pageTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#2d2d2d",
+    color: colors.dark_gray,
   },
+
   babyInformation: {
     flexDirection: "row",
     alignItems: "center",
     gap: 16,
     marginBottom: 24,
   },
+
   babyAvatar: {
     width: 72,
     height: 72,
     borderRadius: 22,
-    backgroundColor: "#ede0f7",
+    backgroundColor: colors.light_gray,
   },
+
   babyTexts: {
-    flexDirection: "column",
     gap: 4,
   },
+
   babyName: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#2d2d2d",
+    color: colors.dark_gray,
   },
+
   babyBirthday: {
     fontSize: 13,
-    color: "#9a9a9a",
+    color: colors.gray,
   },
+
   content: {
-    height: "105%",
     borderRadius: 18,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     padding: 24,
     marginBottom: 32,
-    shadowColor: "#b39dcc",
+    shadowColor: colors.light_purple,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
   },
+
   sectionTitle: {
     fontSize: 13,
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 0.8,
-    color: "#9a9a9a",
+    color: colors.gray,
     marginBottom: 12,
     marginTop: 16,
   },
+
   containerCardResponsible: {
     flexDirection: "row",
     gap: 12,
   },
+
   card: {
     flex: 1,
     borderRadius: 14,
     padding: 12,
     gap: 10,
   },
+
   cardInformation: {
-    alignItems: "center",
     flexDirection: "row",
+    alignItems: "center",
     gap: 10,
   },
+
   responsibleAvatar: {
     width: 38,
     height: 38,
     borderRadius: 10,
-    backgroundColor: "rgba(255,255,255,0.4)",
+    backgroundColor: colors.gray,
   },
+
   information: {
-    flexDirection: "column",
     gap: 2,
   },
+
   responsibleName: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#2d2d2d",
+    color: colors.dark_gray,
   },
+
   responsibleRole: {
     fontSize: 11,
-    color: "#555",
+    color: colors.gray,
   },
+
   responsiblePhone: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#2d2d2d",
+    color: colors.dark_gray,
   },
+
   contactList: {
     gap: 8,
   },
+
   contactRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 10,
     paddingHorizontal: 12,
-    backgroundColor: "#f5f0fa",
+    backgroundColor: colors.light_gray,
     borderRadius: 12,
   },
+
   contactName: {
     fontSize: 13,
     fontWeight: "500",
-    color: "#2d2d2d",
+    color: colors.dark_gray,
   },
+
   contactNumber: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#9a9a9a",
+    color: colors.gray,
   },
 
   authorizedRow: {
     flexDirection: "row",
     gap: 8,
   },
+
   authorizedCard: {
     flex: 1,
-    backgroundColor: "#f0ebf7",
+    backgroundColor: colors.light_gray,
     borderRadius: 12,
     paddingVertical: 10,
     paddingHorizontal: 12,
     alignItems: "center",
     gap: 4,
   },
+
   authorizedName: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#2d2d2d",
-  },
-  authorizedRole: {
-    fontSize: 11,
-    color: "#9a9a9a",
+    color: colors.dark_gray,
   },
 
-  // Accordion
+  authorizedRole: {
+    fontSize: 11,
+    color: colors.gray,
+  },
+
   accordionContainer: {
-    backgroundColor: "#f5f0fa",
+    backgroundColor: colors.light_gray,
     borderRadius: 14,
     marginBottom: 8,
     overflow: "hidden",
   },
+
   accordionHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     padding: 14,
   },
+
   accordionLeft: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
   },
+
   accordionIcon: {
     fontSize: 16,
   },
+
   accordionTitle: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#2d2d2d",
+    color: colors.dark_gray,
   },
+
   accordionRight: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
   },
+
   accordionBadge: {
-    backgroundColor: "#ede0f7",
+    backgroundColor: colors.white,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 20,
   },
+
   accordionBadgeText: {
     fontSize: 11,
     fontWeight: "600",
-    color: "#a67cc5",
+    color: colors.light_purple,
   },
+
   accordionChevron: {
     fontSize: 12,
-    color: "#9a9a9a",
+    color: colors.gray,
   },
+
   accordionBody: {
     paddingHorizontal: 14,
     paddingBottom: 12,
     gap: 8,
   },
+
   accordionItem: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
   },
+
   accordionItemIcon: {
     fontSize: 13,
   },
+
   accordionItemText: {
     fontSize: 13,
-    color: "#2d2d2d",
+    color: colors.dark_gray,
   },
 });
