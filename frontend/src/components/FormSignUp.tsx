@@ -8,6 +8,9 @@ import {
   View,
 } from "react-native";
 
+import theme from "../constants/colors";
+const { colors } = theme;
+
 export default function FormSignUp() {
   const { login } = useAuth();
   const [name, setName] = useState("");
@@ -53,7 +56,7 @@ export default function FormSignUp() {
               value={name}
               onChangeText={setName}
               placeholder="Seu nome completo"
-              placeholderTextColor="#aaa"
+              placeholderTextColor={colors.gray}
             />
           </View>
         </View>
@@ -69,7 +72,7 @@ export default function FormSignUp() {
               keyboardType="email-address"
               autoCapitalize="none"
               placeholder="exemplo@gmail.com"
-              placeholderTextColor="#aaa"
+              placeholderTextColor={colors.gray}
             />
           </View>
         </View>
@@ -83,7 +86,7 @@ export default function FormSignUp() {
               value={password}
               onChangeText={setPassword}
               placeholder="••••••••"
-              placeholderTextColor="#aaa"
+              placeholderTextColor={colors.gray}
               secureTextEntry={!senhaVisivel}
             />
             <TouchableOpacity onPress={() => setSenhaVisivel(!senhaVisivel)}>
@@ -115,12 +118,12 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   title: {
-    color: "#00051f",
+    color: colors.dark_gray,
     fontSize: 24,
     fontWeight: "700",
   },
   subtitle: {
-    color: "#7a7a7a",
+    color: colors.gray,
     fontSize: 14,
     fontWeight: "400",
   },
@@ -133,16 +136,16 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 11,
     fontWeight: "600",
-    color: "#aaa",
+    color: colors.gray,
     letterSpacing: 0.8,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#e8e8e8",
+    borderColor: colors.light_gray,
     paddingHorizontal: 12,
     paddingVertical: 2,
     gap: 8,
@@ -153,27 +156,27 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 15,
-    color: "#00051f",
+    color: colors.dark_gray,
     paddingVertical: 12,
   },
   erro: {
-    color: "#e03e3e",
+    color: colors.red,
     fontSize: 13,
     textAlign: "center",
   },
   button: {
-    backgroundColor: "#8B4FFC",
+    backgroundColor: colors.purple,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: "center",
-    shadowColor: "#8B4FFC",
+    shadowColor: colors.purple,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 4,
   },
   textButton: {
-    color: "#fff",
+    color: colors.white,
     fontSize: 16,
     fontWeight: "600",
     letterSpacing: 0.3,
