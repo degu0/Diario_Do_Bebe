@@ -1,58 +1,52 @@
-import { useAuth } from "@/context/AuthContext";
-import { router, usePathname } from "expo-router";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import theme from "../constants/colors";
-const { colors } = theme;
-
-const icons = {
-  home: require("@/assets/images/home-black.png"),
-  homeActive: require("@/assets/images/home-purple.png"),
-  class: require("@/assets/images/book-black.png"),
-  classActive: require("@/assets/images/book-purple.png"),
-  profile: require("@/assets/images/user-black.png"),
-  profileActive: require("@/assets/images/user-purple.png"),
-};
+import { useAuth } from '@/context/AuthContext';
+import { router, usePathname } from 'expo-router';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Home, Calendar, Book, Profile } from 'iconsax-react-native';
 
 type NavLink = {
   label: string;
   href: string;
   icon: any;
-  iconActive: any;
 };
 
 const teacherLinks: NavLink[] = [
   {
-    label: "Home",
-    href: "/(teacher)/home",
-    icon: icons.home,
-    iconActive: icons.homeActive,
+    label: 'Home',
+    href: '/(teacher)/home',
+    icon: Home,
   },
   {
-    label: "class",
-    href: "/(teacher)/class",
-    icon: icons.class,
-    iconActive: icons.classActive,
+    label: 'Calendario',
+    href: '/calendar',
+    icon: Calendar,
   },
   {
-    label: "Perfil",
-    href: "/(teacher)/profile",
-    icon: icons.profile,
-    iconActive: icons.profileActive,
+    label: 'class',
+    href: '/(teacher)/class',
+    icon: Book,
+  },
+  {
+    label: 'Perfil',
+    href: '/(teacher)/profile',
+    icon: Profile,
   },
 ];
 
 const responsibleLinks: NavLink[] = [
   {
-    label: "Home",
-    href: "/(responsible)/home",
-    icon: icons.home,
-    iconActive: icons.homeActive,
+    label: 'Home',
+    href: '/(responsible)/home',
+    icon: Home,
   },
   {
-    label: "Perfil",
-    href: "/(responsible)/profile",
-    icon: icons.profile,
-    iconActive: icons.profileActive,
+    label: 'Calendario',
+    href: '/calendar',
+    icon: Calendar,
+  },
+  {
+    label: 'Perfil',
+    href: '/(responsible)/profile',
+    icon: Profile,
   },
 ];
 
@@ -60,14 +54,16 @@ export default function Navbar() {
   const pathname = usePathname();
   const { user } = useAuth();
 
-  const links = user?.type === "teacher" ? teacherLinks : responsibleLinks;
+  const links = user?.type === 'teacher' ? teacherLinks : responsibleLinks;
 
   return (
     <View style={styles.container}>
       <View style={styles.containerNav}>
         {links.map((link) => {
-          const routeName = link.href.split("/").pop();
-          const isActive = pathname.endsWith(routeName ?? "");
+          const routeName = link.href.split('/').pop();
+          const isActive = pathname.endsWith(routeName ?? '');
+
+          const Icon = link.icon;
 
           return (
             <TouchableOpacity
@@ -75,9 +71,10 @@ export default function Navbar() {
               style={[styles.link, isActive && styles.activeLink]}
               onPress={() => router.push(link.href as any)}
             >
-              <Image
-                source={isActive ? link.iconActive : link.icon}
-                style={styles.image}
+              <Icon
+                size={25}
+                color={isActive ? '#8B4FFC' : '#aaa'}
+                variant={isActive ? 'Bold' : 'Outline'}
               />
               <Text style={[styles.text, isActive && styles.activeText]}>
                 {link.label}
@@ -103,14 +100,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: colors.white,
     borderRadius: 120,
-    justifyContent: "space-around",
-    alignItems: "center",
-    height: "100%",
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    height: '100%',
   },
   link: {
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingHorizontal: 4,
     paddingVertical: 17,
   },
