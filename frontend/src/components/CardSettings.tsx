@@ -1,12 +1,22 @@
 import { useAuth } from '@/context/AuthContext';
 import { useThemeContext } from '@/context/ThemeContext';
-import { useRef, useMemo } from 'react';
+import { useRef } from 'react';
 import { Animated, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-function SettingsButton({ icon, label }: { icon: any; label: string }) {
-  const { theme, toggleTheme } = useThemeContext();
+function SettingsButton({
+  icon,
+  label,
+  onPress,
+  surfaceColor,
+  textColor,
+}: {
+  icon: any;
+  label: string;
+  onPress: () => void;
+  surfaceColor: string;
+  textColor: string;
+}) {
   const bgAnim = useRef(new Animated.Value(0)).current;
-  const { logout } = useAuth();
 
   const handlePressIn = () => {
     Animated.timing(bgAnim, {
@@ -19,77 +29,71 @@ function SettingsButton({ icon, label }: { icon: any; label: string }) {
   const handlePressOut = () => {
     Animated.timing(bgAnim, {
       toValue: 0,
-      duration: 300,
+      duration: 250,
       useNativeDriver: false,
     }).start();
   };
 
-  const handleOnPress = async () => {
-    if (label.toLowerCase() === 'modo escuro') {
-      toggleTheme();
-    } else if (label === 'Logout') {
-      await logout();
-    }
-  };
-
   const backgroundColor = bgAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [
-      'rgba(0,0,0,0)', 
-      theme.dark ? 'rgba(255,255,255,0.1)' : theme.colors.messageUserBackground,
-    ],
+    outputRange: ['rgba(237,224,247,0)', '#ede0f7'],
   });
-
-  const styles = useMemo(() => createStyles(theme), [theme]);
 
   return (
     <TouchableOpacity
       activeOpacity={1}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      onPress={handleOnPress}
+      onPress={onPress}
     >
       <Animated.View style={[styles.button, { backgroundColor }]}>
-        <View style={styles.iconBox}>
-          <Image 
-            style={[styles.image, { tintColor: theme.colors.primary }]} 
-            source={icon} 
-          />
+        <View style={[styles.iconBox, { backgroundColor: surfaceColor }]}>
+          <Image style={styles.image} source={icon} />
         </View>
-        <Text style={styles.text}>{label}</Text>
+        <Text style={[styles.text, { color: textColor }]}>{label}</Text>
       </Animated.View>
     </TouchableOpacity>
   );
 }
 
 export default function CardSettings() {
-  const { theme } = useThemeContext();
-  const styles = useMemo(() => createStyles(theme), [theme]);
+  const { theme, toggleTheme, isDark } = useThemeContext();
+  const c = theme.colors;
+  const { logout } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+  };
 
   return (
-    <View style={styles.container}>
-      <SettingsButton 
-        icon={require('@/assets/icon/sun.png')} 
-        label="Modo Escuro" 
+    <View style={[styles.container, { backgroundColor: c.surface }]}>
+      <SettingsButton
+        icon={require('../../assets/icon/sun.png')}
+        label={isDark ? 'Modo Claro' : 'Modo Escuro'}
+        onPress={toggleTheme}
+        surfaceColor={c.background}
+        textColor={c.text}
       />
-      <View style={styles.divider} />
-      <SettingsButton 
-        icon={require('@/assets/icon/logout.png')} 
-        label="Logout" 
+      <View style={[styles.divider, { backgroundColor: c.background }]} />
+      <SettingsButton
+        icon={require('../../assets/icon/profile.png')}
+        label="Logout"
+        onPress={handleLogout}
+        surfaceColor={c.background}
+        textColor={c.text}
       />
     </View>
   );
 }
 
-const createStyles = (theme: any) => StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
-    backgroundColor: theme.colors.surface,
     borderRadius: 18,
     padding: 8,
     marginBottom: 12,
-    shadowColor: theme.isDark ? '#000' : theme.colors.primary,
+    shadowColor: '#8B4FFC',
     shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: theme.isDark ? 0.4 : 0.12,
+    shadowOpacity: 0.12,
     shadowRadius: 8,
     elevation: 3,
   },
@@ -105,22 +109,20 @@ const createStyles = (theme: any) => StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 10,
-    backgroundColor: theme.isDark ? theme.colors.background : theme.colors.messageUserBackground,
     alignItems: 'center',
     justifyContent: 'center',
   },
   image: {
     width: 18,
     height: 18,
+    tintColor: '#a67cc5',
   },
   text: {
     fontSize: 14,
     fontWeight: '500',
-    color: theme.colors.text,
   },
   divider: {
     height: 1,
-    backgroundColor: theme.isDark ? '#333' : '#E8E8E8',
     marginHorizontal: 10,
   },
 });

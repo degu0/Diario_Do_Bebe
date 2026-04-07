@@ -1,8 +1,8 @@
+import { colors } from '@/constants/Colors';
 import { useRoute } from '@react-navigation/native';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { colors } from '@/constants/Colors';
 
 function AccordionSection({
   icon,
@@ -78,7 +78,7 @@ export default function BabyProfile() {
         </View>
 
         <View style={styles.babyInformation}>
-          <Image source={require('@/assets/images/profile-icon.png')} style={styles.babyAvatar} />
+          <Image source={require('@/assets/icon/profile.png')} style={styles.babyAvatar} />
 
           <View style={styles.babyTexts}>
             <Text style={styles.babyName}>Maria Clara</Text>
@@ -94,7 +94,7 @@ export default function BabyProfile() {
           <View style={[styles.card, { backgroundColor: colors.purple_background }]}>
             <View style={styles.cardInformation}>
               <Image
-                source={require('@/assets/images/profile-icon.png')}
+                source={require('@/assets/icon/profile.png')}
                 style={styles.responsibleAvatar}
               />
               <View style={styles.information}>
@@ -108,7 +108,7 @@ export default function BabyProfile() {
           <View style={[styles.card, { backgroundColor: colors.blue_background }]}>
             <View style={styles.cardInformation}>
               <Image
-                source={require('@/assets/images/profile-icon.png')}
+                source={require('@/assets/icon/profile.png')}
                 style={styles.responsibleAvatar}
               />
               <View style={styles.information}>

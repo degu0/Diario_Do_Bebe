@@ -1,13 +1,7 @@
 import { useThemeContext } from '@/context/ThemeContext';
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const profileIcon = require('@/assets/images/profile-icon.png');
+const profileIcon = require('@/assets/icon/profile.png');
 
 const kids = [
   { id: 1, image: profileIcon, name: 'Maria Fernanda', age: '1 ano e 2 meses', initials: 'MF' },

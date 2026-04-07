@@ -3,18 +3,18 @@ import { useRoute } from '@react-navigation/native';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import {
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 
-const profileIcon = require('@/assets/images/profile-icon.png');
+const profileIcon = require('@/assets/icon/profile.png');
 
 const kids = [
   { id: 1, image: profileIcon, name: 'Charles Junior', class: 'A1' },
