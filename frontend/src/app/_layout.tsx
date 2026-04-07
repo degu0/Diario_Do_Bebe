@@ -1,11 +1,12 @@
-import { AuthProvider } from "@/context/AuthContext";
-import { Stack } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { AuthProvider } from '@/context/AuthContext';
+import { ThemeProvider } from '@/context/ThemeContext';
+import { Stack } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 function LayoutWrapper() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <Stack screenOptions={{ animation: "none", headerShown: false }} />
+      <Stack screenOptions={{ animation: 'none', headerShown: false }} />
     </SafeAreaView>
   );
 }
@@ -13,7 +14,9 @@ function LayoutWrapper() {
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <LayoutWrapper />
+      <ThemeProvider>
+        <LayoutWrapper />
+      </ThemeProvider>
     </AuthProvider>
   );
 }

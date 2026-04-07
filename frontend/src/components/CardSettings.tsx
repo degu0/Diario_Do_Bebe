@@ -1,18 +1,10 @@
-import { useAuth } from "@/context/AuthContext";
-import { useRef } from "react";
-import {
-  Animated,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-
-import theme from "../constants/Colors";
-const { colors } = theme;
+import { useAuth } from '@/context/AuthContext';
+import { useThemeContext } from '@/context/ThemeContext';
+import { useRef, useMemo } from 'react';
+import { Animated, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 function SettingsButton({ icon, label }: { icon: any; label: string }) {
+  const { theme, toggleTheme } = useThemeContext();
   const bgAnim = useRef(new Animated.Value(0)).current;
   const { logout } = useAuth();
 
@@ -32,29 +24,37 @@ function SettingsButton({ icon, label }: { icon: any; label: string }) {
     }).start();
   };
 
-  const handleOnPress = async (label: string) => {
-    if (label === "Logout") {
+  const handleOnPress = async () => {
+    if (label.toLowerCase() === 'modo escuro') {
+      toggleTheme();
+    } else if (label === 'Logout') {
       await logout();
-    } else if (label === "Modo escuro") {
-      console.log("Dark mod");
     }
   };
 
   const backgroundColor = bgAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: ["rgba(237,224,247,0)", colors.purple_background],
+    outputRange: [
+      'rgba(0,0,0,0)', 
+      theme.dark ? 'rgba(255,255,255,0.1)' : theme.colors.messageUserBackground,
+    ],
   });
+
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   return (
     <TouchableOpacity
       activeOpacity={1}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      onPress={() => handleOnPress(label)}
+      onPress={handleOnPress}
     >
       <Animated.View style={[styles.button, { backgroundColor }]}>
         <View style={styles.iconBox}>
-          <Image style={styles.image} source={icon} />
+          <Image 
+            style={[styles.image, { tintColor: theme.colors.primary }]} 
+            source={icon} 
+          />
         </View>
         <Text style={styles.text}>{label}</Text>
       </Animated.View>
@@ -63,36 +63,39 @@ function SettingsButton({ icon, label }: { icon: any; label: string }) {
 }
 
 export default function CardSettings() {
+  const { theme } = useThemeContext();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   return (
     <View style={styles.container}>
-      <SettingsButton
-        icon={require("@/assets/icon/sun.png")}
-        label="Modo Escuro"
+      <SettingsButton 
+        icon={require('@/assets/icon/sun.png')} 
+        label="Modo Escuro" 
       />
       <View style={styles.divider} />
-      <SettingsButton
-        icon={require("@/assets/icon/logout.png")}
-        label="Logout"
+      <SettingsButton 
+        icon={require('@/assets/icon/logout.png')} 
+        label="Logout" 
       />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
-    backgroundColor: colors.white, 
+    backgroundColor: theme.colors.surface,
     borderRadius: 18,
     padding: 8,
     marginBottom: 12,
-    shadowColor: colors.light_purple, 
+    shadowColor: theme.isDark ? '#000' : theme.colors.primary,
     shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
+    shadowOpacity: theme.isDark ? 0.4 : 0.12,
     shadowRadius: 8,
     elevation: 3,
   },
   button: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 12,
     paddingVertical: 11,
     paddingHorizontal: 10,
@@ -102,24 +105,22 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 10,
-    backgroundColor: colors.purple_background, 
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: theme.isDark ? theme.colors.background : theme.colors.messageUserBackground,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   image: {
     width: 18,
     height: 18,
-    tintColor: colors.light_purple, 
   },
   text: {
     fontSize: 14,
-    fontWeight: "500",
-    color: colors.dark_gray, 
+    fontWeight: '500',
+    color: theme.colors.text,
   },
   divider: {
     height: 1,
-    backgroundColor: colors.light_gray, 
+    backgroundColor: theme.isDark ? '#333' : '#E8E8E8',
     marginHorizontal: 10,
   },
 });
-

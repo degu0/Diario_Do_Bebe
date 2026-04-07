@@ -1,8 +1,8 @@
 import { CardDateSpecial } from '@/components/CardDateSpecial';
-import Colors from '@/constants/Colors';
+import { useThemeContext } from '@/context/ThemeContext'; // Ajuste o path conforme seu projeto
 import { typeConfig } from '@/utils/typeConfig';
 import { Feather } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -17,6 +17,7 @@ import { ptBR } from '../../utils/LocaleCalendarConfig';
 LocaleConfig.locales['pt-br'] = ptBR;
 LocaleConfig.defaultLocale = 'pt-br';
 
+
 const daySpecial = [
   {
     date: '2026-04-03',
@@ -26,81 +27,46 @@ const daySpecial = [
     type: 'holiday' as const,
     location: 'Feriado',
   },
-  {
-    date: '2026-04-10',
-    title: 'Reunião de Pais',
-    timeStart: '18:00',
-    timeEnd: '20:00',
-    type: 'reunion' as const,
-    location: 'Sala de reuniões',
-  },
-  {
-    date: '2026-04-15',
-    title: 'Sem Aula',
-    timeStart: '00:00',
-    timeEnd: '00:00',
-    type: 'no_class' as const,
-    location: 'Maternal',
-  },
-  {
-    date: '2026-04-22',
-    title: 'Visita ao Parque',
-    timeStart: '08:00',
-    timeEnd: '11:00',
-    type: 'tour' as const,
-    location: 'Parque Estadual',
-  },
-  {
-    date: '2026-04-28',
-    title: 'Reunião Pedagógica',
-    timeStart: '14:00',
-    timeEnd: '16:00',
-    type: 'reunion' as const,
-    location: 'Auditório',
-  },
 ];
 
 export default function CalendarScreen() {
+  const { theme } = useThemeContext();
   const [day, setDay] = useState<DateData>();
+
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   const selectedDaySpecial = daySpecial.find(
     (item) => item.date === day?.dateString,
   );
 
-  const markedDates = daySpecial.reduce(
-    (acc, item) => {
-      acc[item.date] = { marked: true, dotColor: Colors.colors.purple_dark };
-      return acc;
-    },
-    {} as Record<string, object>,
-  );
+  const markedDates = useMemo(() => {
+    return daySpecial.reduce(
+      (acc, item) => {
+        acc[item.date] = { marked: true, dotColor: theme.colors.secondary };
+        return acc;
+      },
+      {} as Record<string, object>,
+    );
+  }, [theme]);
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <Calendar
         style={styles.calendar}
         renderArrow={(direction: 'right' | 'left') => (
-          <Feather size={24} color="#E8E8E8" name={`chevron-${direction}`} />
+          <Feather size={24} color={theme.colors.text} name={`chevron-${direction}`} />
         )}
-        headerStyle={{
-          borderBottomWidth: 0.5,
-          borderBottomColor: '#E8E8E8',
-          paddingBottom: 10,
-          marginBottom: 10,
-        }}
+        headerStyle={styles.calendarHeader}
         theme={{
           textMonthFontSize: 18,
-          monthTextColor: '#E8E8E8',
-          todayTextColor: Colors.colors.purple_dark,
-          selectedDayBackgroundColor: Colors.colors.purple_dark,
-          selectedDayTextColor: '#E8E8E8',
-          calendarBackground: '#585858',
-          textDayStyle: { color: '#E8E8E8' },
-          textDisabledColor: '#717171',
-          arrowStyle: {
-            margin: 0,
-            padding: 0,
-          },
+          monthTextColor: theme.colors.text,
+          todayTextColor: theme.colors.primary,
+          selectedDayBackgroundColor: theme.colors.primary,
+          selectedDayTextColor: theme.colors.surface,
+          calendarBackground: theme.colors.surface,
+          textDayStyle: { color: theme.colors.text },
+          textDisabledColor: theme.isDark ? '#555' : '#ccc',
+          arrowStyle: { margin: 0, padding: 0 },
         }}
         minDate={new Date().toDateString()}
         hideExtraDays
@@ -126,21 +92,22 @@ export default function CalendarScreen() {
             (item) => item.date === date.dateString,
           );
           const hasEvent = !!markedDates[date.dateString];
+          const isSelected = date.dateString === day?.dateString;
+
           return (
             <TouchableOpacity
               style={[
                 styles.day,
-                date.dateString === day?.dateString && styles.daySelected,
+                isSelected && styles.daySelected,
               ]}
               onPress={() => setDay(date)}
             >
               <Text
                 style={[
                   styles.dayText,
-                  (state === 'inactive' || state === 'disabled') &&
-                    styles.disabled,
+                  (state === 'inactive' || state === 'disabled') && styles.disabled,
                   state === 'today' && styles.today,
-                  date.dateString === day?.dateString && styles.dayTextSelected,
+                  isSelected && styles.dayTextSelected,
                 ]}
               >
                 {date.day}
@@ -149,9 +116,11 @@ export default function CalendarScreen() {
                 <View
                   style={[
                     styles.dot,
-                    date.dateString === day?.dateString && styles.dotSelected,
+                    isSelected && styles.dotSelected,
                     {
-                      backgroundColor: specialInfo?.type ? typeConfig[specialInfo?.type].border : undefined
+                      backgroundColor: specialInfo?.type 
+                        ? typeConfig[specialInfo?.type].border 
+                        : theme.colors.secondary
                     },
                   ]}
                 />
@@ -183,22 +152,30 @@ export default function CalendarScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f0fa',
+    backgroundColor: theme.colors.background,
     padding: 16,
   },
   calendar: {
     borderRadius: 18,
     overflow: 'hidden',
     paddingBottom: 12,
-    shadowColor: '#b39dcc',
+    elevation: 4,
+    marginBottom: 20,
+    backgroundColor: theme.colors.surface,
+    shadowColor: theme.isDark ? '#000' : theme.colors.primary,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.15,
     shadowRadius: 10,
-    elevation: 4,
-    marginBottom: 20,
+  },
+  calendarHeader: {
+    borderBottomWidth: 0.5,
+    borderBottomColor: theme.isDark ? '#444' : '#E8E8E8',
+    paddingBottom: 10,
+    marginBottom: 10,
+    backgroundColor: theme.colors.surface,
   },
   day: {
     width: 36,
@@ -208,23 +185,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   daySelected: {
-    backgroundColor: Colors.colors.purple_dark,
+    backgroundColor: theme.colors.primary,
   },
   dayText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#E8E8E8',
+    color: theme.colors.text,
   },
   dayTextSelected: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#fff',
+    color: theme.colors.surface,
   },
   disabled: {
-    color: '#717171',
+    opacity: 0.3,
   },
   today: {
-    color: Colors.colors.purple_dark,
+    color: theme.colors.primary,
     fontWeight: '700',
   },
   dot: {
@@ -234,7 +211,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   dotSelected: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.colors.surface,
   },
   eventsSection: {
     flex: 1,
@@ -245,6 +222,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 13,
-    color: '#9a9a9a',
+    color: theme.colors.text,
+    opacity: 0.6,
   },
 });

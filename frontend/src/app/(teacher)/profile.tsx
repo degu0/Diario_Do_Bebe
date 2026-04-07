@@ -1,31 +1,25 @@
-import CardSettings from "@/components/CardSettings";
+import CardSettings from '@/components/CardSettings';
 import {
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import colors from "../constants/colors"; 
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
+} from 'react-native';
+import {colors} from '../../constants/Colors';
 
 export default function Profile() {
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-      <ScrollView
-        contentContainerStyle={styles.scroll}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <View style={styles.avatarWrapper}>
-            <Image
-              source={require("@/assets/images/profile-icon.png")}
-              style={styles.avatar}
-            />
+            <Image source={require('@/assets/images/profile-icon.png')} style={styles.avatar} />
             <View style={styles.avatarBadge} />
           </View>
           <View style={styles.headerInfo}>
@@ -90,12 +84,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 20,
     paddingBottom: 36,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 18,
   },
   avatarWrapper: {
-    position: "relative",
+    position: 'relative',
   },
   avatar: {
     width: 72,
@@ -106,7 +100,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.purple,
   },
   avatarBadge: {
-    position: "absolute",
+    position: 'absolute',
     bottom: -3,
     right: -3,
     width: 16,
@@ -120,36 +114,36 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   profileName: {
-    fontFamily: Platform.OS === "ios" ? "Georgia" : "serif",
+    fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif',
     fontSize: 22,
-    fontWeight: "600",
+    fontWeight: '600',
     color: colors.dark_gray,
     marginBottom: 8,
   },
   phonePill: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 6,
     backgroundColor: colors.white,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
-    alignSelf: "flex-start",
+    alignSelf: 'flex-start',
     borderWidth: 1,
     borderColor: colors.white,
   },
   phoneText: {
     fontSize: 13,
-    fontWeight: "500",
+    fontWeight: '500',
     color: colors.dark_gray,
   },
   content: {
-    height: "80%",
+    height: '80%',
     padding: 16,
     marginTop: 5,
   },
   cardRow: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginBottom: 12,
   },
   cardSmall: {
@@ -165,15 +159,15 @@ const styles = StyleSheet.create({
   },
   cardLabel: {
     fontSize: 10,
-    fontWeight: "700",
-    textTransform: "uppercase",
+    fontWeight: '700',
+    textTransform: 'uppercase',
     letterSpacing: 0.8,
     color: colors.gray,
     marginBottom: 5,
   },
   cardValue: {
     fontSize: 13,
-    fontWeight: "500",
+    fontWeight: '500',
     color: colors.dark_gray,
     lineHeight: 19,
   },
@@ -182,12 +176,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 8,
-    alignSelf: "flex-start",
+    alignSelf: 'flex-start',
     marginTop: 5,
   },
   hoursText: {
     fontSize: 11,
-    fontWeight: "600",
+    fontWeight: '600',
     color: colors.violet,
   },
   cardSection: {
@@ -202,8 +196,8 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 8,
     marginBottom: 14,
   },
@@ -214,9 +208,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.purple,
   },
   sectionTitle: {
-    fontFamily: Platform.OS === "ios" ? "Georgia" : "serif",
+    fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif',
     fontSize: 15,
-    fontWeight: "600",
+    fontWeight: '600',
     color: colors.dark_gray,
   },
   sectionLine: {
@@ -225,9 +219,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.light_gray,
   },
   infoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingVertical: 11,
   },
   divider: {
@@ -236,14 +230,14 @@ const styles = StyleSheet.create({
   },
   infoKey: {
     fontSize: 12,
-    fontWeight: "600",
-    textTransform: "uppercase",
+    fontWeight: '600',
+    textTransform: 'uppercase',
     letterSpacing: 0.5,
     color: colors.gray,
   },
   infoVal: {
     fontSize: 13,
-    fontWeight: "600",
+    fontWeight: '600',
     color: colors.dark_gray,
   },
 });
