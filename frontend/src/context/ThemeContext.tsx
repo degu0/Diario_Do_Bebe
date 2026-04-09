@@ -1,20 +1,12 @@
-import { CustomDarkTheme, CustomLightTheme } from "@/constants/Colors";
-import React, {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { useColorScheme } from "react-native";
-import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
-
+import { CustomDarkTheme, CustomLightTheme } from '@/constants/Colors';
+import React, { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
+import { useColorScheme } from 'react-native';
+import { PaperProvider } from 'react-native-paper';
 
 type ThemeContextData = {
   isDark: boolean;
   toggleTheme: () => void;
-  theme: typeof MD3LightTheme;
+  theme: typeof CustomDarkTheme | typeof CustomLightTheme;
 };
 
 const ThemeContext = createContext<ThemeContextData | undefined>(undefined);
@@ -25,21 +17,17 @@ export const useThemeContext = () => {
   return context;
 };
 
-
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const deviceScheme = useColorScheme();
-  const [isDark, setIsDark] = useState(deviceScheme === "dark");
+  const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    setIsDark(deviceScheme === "dark");
+    setIsDark(deviceScheme === 'dark');
   }, [deviceScheme]);
 
   const toggleTheme = () => setIsDark((prev) => !prev);
 
-  const theme = useMemo(
-    () => (isDark ? CustomDarkTheme : CustomLightTheme),
-    [isDark]
-  );
+  const theme = useMemo(() => (isDark ? CustomDarkTheme : CustomLightTheme), [isDark]);
 
   return (
     <ThemeContext.Provider value={{ isDark, toggleTheme, theme }}>

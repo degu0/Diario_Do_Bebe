@@ -1,41 +1,31 @@
-import { useAuth } from "@/context/AuthContext";
-import { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { useAuth } from '@/context/AuthContext';
+import { useState } from 'react';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-import theme from "../constants/colors";
-const { colors } = theme;
+import { colors } from '@/constants/Colors';
 
 export default function FormSignUp() {
   const { login } = useAuth();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [erro, setErro] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [erro, setErro] = useState('');
   const [senhaVisivel, setSenhaVisivel] = useState(false);
 
   const handleSignUp = async () => {
-    setErro("");
+    setErro('');
 
     if (!name || !email || !password) {
-      setErro("Preencha todos os campos.");
+      setErro('Preencha todos os campos.');
       return;
     }
 
     try {
-      const type =
-        email === "teacher@gmail.com" && password === "123"
-          ? "teacher"
-          : "responsible";
+      const type = email === 'teacher@gmail.com' && password === '123' ? 'teacher' : 'responsible';
       await login({ email, type });
     } catch (error) {
-      console.log("Erro no cadastro:", error);
-      setErro("Erro ao tentar criar conta.");
+      console.log('Erro no cadastro:', error);
+      setErro('Erro ao tentar criar conta.');
     }
   };
 
@@ -90,7 +80,7 @@ export default function FormSignUp() {
               secureTextEntry={!senhaVisivel}
             />
             <TouchableOpacity onPress={() => setSenhaVisivel(!senhaVisivel)}>
-              <Text style={styles.inputIcon}>{senhaVisivel ? "🙈" : "👁"}</Text>
+              <Text style={styles.inputIcon}>{senhaVisivel ? '🙈' : '👁'}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -98,11 +88,7 @@ export default function FormSignUp() {
 
       {erro ? <Text style={styles.erro}>{erro}</Text> : null}
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleSignUp}
-        activeOpacity={0.8}
-      >
+      <TouchableOpacity style={styles.button} onPress={handleSignUp} activeOpacity={0.8}>
         <Text style={styles.textButton}>Criar conta</Text>
       </TouchableOpacity>
     </View>
@@ -111,7 +97,7 @@ export default function FormSignUp() {
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
+    width: '100%',
     gap: 24,
   },
   containerTitle: {
@@ -120,12 +106,12 @@ const styles = StyleSheet.create({
   title: {
     color: colors.dark_gray,
     fontSize: 24,
-    fontWeight: "700",
+    fontWeight: '700',
   },
   subtitle: {
     color: colors.gray,
     fontSize: 14,
-    fontWeight: "400",
+    fontWeight: '400',
   },
   form: {
     gap: 16,
@@ -135,13 +121,13 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 11,
-    fontWeight: "600",
+    fontWeight: '600',
     color: colors.gray,
     letterSpacing: 0.8,
   },
   inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: colors.white,
     borderRadius: 10,
     borderWidth: 1,
@@ -162,13 +148,13 @@ const styles = StyleSheet.create({
   erro: {
     color: colors.red,
     fontSize: 13,
-    textAlign: "center",
+    textAlign: 'center',
   },
   button: {
     backgroundColor: colors.purple,
     paddingVertical: 16,
     borderRadius: 12,
-    alignItems: "center",
+    alignItems: 'center',
     shadowColor: colors.purple,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -178,7 +164,7 @@ const styles = StyleSheet.create({
   textButton: {
     color: colors.white,
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
     letterSpacing: 0.3,
   },
 });

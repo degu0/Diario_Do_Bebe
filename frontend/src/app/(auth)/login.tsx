@@ -1,19 +1,21 @@
-import FormLogin from "@/components/FormLogin";
-import FormSignUp from "@/components/FormSignUp";
-import ToggleAuthTabs from "@/components/ToggleAuthTabs";
-import { useState } from "react";
-import { KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
+import FormLogin from '@/components/FormLogin';
+import FormSignUp from '@/components/FormSignUp';
+import ToggleAuthTabs from '@/components/ToggleAuthTabs';
+import { useThemeContext } from '@/context/ThemeContext';
+import { useState } from 'react';
+import { KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 
 export default function Login() {
-  const [tab, setTab] = useState<"signin" | "signup">("signin");
+  const { theme } = useThemeContext();
+  const [tab, setTab] = useState<'signin' | 'signup'>('signin');
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ToggleAuthTabs active={tab} onChange={setTab} />
-      {tab === "signin" ? <FormLogin /> : <FormSignUp />}
+      {tab === 'signin' ? <FormLogin /> : <FormSignUp />}
     </KeyboardAvoidingView>
   );
 }
