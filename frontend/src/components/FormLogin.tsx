@@ -1,6 +1,6 @@
-
 import Fonts from "@/constants/Fonts";
 import { useAuth } from "@/context/AuthContext";
+import { useThemeContext } from "@/context/ThemeContext";
 import { useState } from "react";
 import {
   StyleSheet,
@@ -10,11 +10,12 @@ import {
   View,
 } from "react-native";
 
-import theme from "@/constants/colors";
-const { colors } = theme;
-
 export default function FormLogin() {
   const { login } = useAuth();
+  const { theme } = useThemeContext();
+
+  const styles = createStyles(theme);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [erro, setErro] = useState("");
@@ -39,6 +40,7 @@ export default function FormLogin() {
         setErroPassword(true);
         return;
       }
+
       await login({ email, type });
     } catch (error) {
       console.log("Erro no login:", error);
@@ -66,7 +68,7 @@ export default function FormLogin() {
               keyboardType="email-address"
               autoCapitalize="none"
               placeholder="exemplo@gmail.com"
-              placeholderTextColor={colors.gray}
+              placeholderTextColor={theme.colors.text}
             />
           </View>
         </View>
@@ -83,6 +85,7 @@ export default function FormLogin() {
             style={[styles.inputContainer, erroPassword && styles.inputErro]}
           >
             <Text style={styles.inputIcon}>🔒</Text>
+
             <TextInput
               style={styles.input}
               value={password}
@@ -91,9 +94,10 @@ export default function FormLogin() {
                 setErroPassword(false);
               }}
               placeholder="••••••••"
-              placeholderTextColor={colors.gray}
+              placeholderTextColor={theme.colors.text}
               secureTextEntry={!showPassword}
             />
+
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
               <Text style={styles.inputIcon}>
                 {showPassword ? "🙈" : "👁"}
@@ -116,111 +120,113 @@ export default function FormLogin() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    gap: 24,
-  },
+const createStyles = (theme: any) =>
+  StyleSheet.create({
+    container: {
+      width: "100%",
+      gap: 24,
+    },
 
-  containerTitle: {
-    gap: 4,
-  },
+    containerTitle: {
+      gap: 4,
+    },
 
-  title: {
-    color: colors.dark_gray,
-    fontSize: 24,
-    fontWeight: "700",
-  },
+    title: {
+      color: theme.colors.text,
+      fontSize: 24,
+      fontWeight: "700",
+    },
 
-  subtitle: {
-    color: colors.gray, 
-    fontSize: Fonts.size.sm,
-    fontWeight: "400",
-  },
+    subtitle: {
+      color: theme.colors.gray,
+      fontSize: Fonts.size.sm,
+      fontWeight: "400",
+    },
 
-  form: {
-    gap: 16,
-  },
+    form: {
+      gap: 16,
+    },
 
-  inputWrapper: {
-    gap: 6,
-  },
+    inputWrapper: {
+      gap: 6,
+    },
 
-  labelRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
+    labelRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
 
-  inputLabel: {
-    fontSize: 11,
-    fontWeight: "600",
-    color: colors.gray, 
-    letterSpacing: 0.8,
-  },
+    inputLabel: {
+      fontSize: 11,
+      fontWeight: "600",
+      color: theme.colors.gray,
+      letterSpacing: 0.8,
+    },
 
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.white, 
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colors.light_gray, 
-    paddingHorizontal: 12,
-    paddingVertical: 2,
-    gap: 8,
-  },
+    inputContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: theme.colors.surface,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: theme.colors.grayLight,
+      paddingHorizontal: 12,
+      paddingVertical: 2,
+      gap: 8,
+    },
 
-  inputErro: {
-    borderColor: colors.red, 
-    borderWidth: 1.5,
-  },
+    inputErro: {
+      borderColor: theme.colors.error,
+      borderWidth: 1.5,
+    },
 
-  inputIcon: {
-    fontSize: 15,
-  },
+    inputIcon: {
+      fontSize: 15,
+    },
 
-  input: {
-    flex: 1,
-    fontSize: 15,
-    color: colors.dark_gray, 
-    paddingVertical: 12,
-  },
+    input: {
+      flex: 1,
+      fontSize: 15,
+      color: theme.colors.text,
+      paddingVertical: 12,
+    },
 
-  forgotWrapper: {
-    alignSelf: "flex-end",
-  },
+    forgotWrapper: {
+      alignSelf: "flex-end",
+    },
 
-  forgot: {
-    fontSize: 13,
-    color: colors.purple, 
+    forgot: {
+      fontSize: 13,
+      color: theme.colors.primary,
+    },
 
-  erro: {
-    color: colors.red, 
-    textAlign: "center",
-  },
+    erro: {
+      color: theme.colors.error,
+      textAlign: "center",
+    },
 
-  erroInline: {
-    color: colors.red, 
-    fontSize: 12,
-  },
+    erroInline: {
+      color: theme.colors.error,
+      fontSize: 12,
+    },
 
-  button: {
-    backgroundColor: colors.purple, 
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: "center",
-    shadowColor: colors.purple, 
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
-  },
+    button: {
+      backgroundColor: theme.colors.primary,
+      paddingVertical: 16,
+      borderRadius: 12,
+      alignItems: "center",
+      shadowColor: theme.colors.primary,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+      elevation: 4,
+    },
 
-  textButton: {
-    color: colors.white, 
-    fontSize: 16,
-    fontWeight: "600",
-    letterSpacing: 0.3,
-  },
-});
+    textButton: {
+      color: theme.colors.white,
+      fontSize: 16,
+      fontWeight: "600",
+      letterSpacing: 0.3,
+    },
+  });
