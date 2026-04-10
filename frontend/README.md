@@ -1,56 +1,56 @@
-# Welcome to your Expo app 👋
+# 📱 Frontend — Diário do Bebê
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## 🚀 Como rodar o projeto
 
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+### 1. Clone o repositório
 
 ```bash
-npm run reset-project
+git clone https://github.com/degu0/Diario_Do_Bebe.git
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2. Entre na pasta do frontend
 
-### Other setup steps
+```bash
+cd frontend
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+### 3. Instale as dependências
 
-## Learn more
+```bash
+npm install
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+### 4. Inicie o projeto
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npx expo start
+```
 
-## Join the community
+---
 
-Join our community of developers creating universal apps.
+## 📲 Formas de visualizar
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Após rodar o comando acima, um QR code será exibido no terminal. Você terá 3 opções:
+
+### 🌐 Web *(não recomendado, mas funciona)*
+Pressione **`w`** no terminal após o QR code aparecer.
+
+> Algumas funcionalidades podem não se comportar corretamente na versão web.
+
+---
+
+### 🖥️ Emulador *(melhor experiência)*
+Pressione **`a`** para Android ou **`i`** para iOS no terminal após o QR code aparecer.
+
+> ⚠️ Exige Android Studio ou Xcode instalado. Pode ser pesado em computadores com pouca memória RAM.
+
+---
+
+### 📱 Dispositivo físico *(recomendado)*
+1. Baixe o aplicativo **Expo Go** no seu celular
+   - [Android — Google Play](https://play.google.com/store/apps/details?id=host.exp.exponent)
+   - [iOS — App Store](https://apps.apple.com/app/expo-go/id982107779)
+2. Abra o Expo Go e leia o QR code exibido no terminal
+   > Ou insira manualmente o endereço `exp://` exibido no terminal
+
+> ⚠️ O celular e o computador precisam estar na **mesma rede Wi-Fi**.
