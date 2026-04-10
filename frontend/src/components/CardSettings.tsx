@@ -1,20 +1,22 @@
-import { useAuth } from "@/context/AuthContext";
-import { useRef } from "react";
-import {
-  Animated,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { useAuth } from '@/context/AuthContext';
+import { useThemeContext } from '@/context/ThemeContext';
+import { useRef } from 'react';
+import { Animated, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import theme from "../constants/Colors";
-const { colors } = theme;
-
-function SettingsButton({ icon, label }: { icon: any; label: string }) {
+function SettingsButton({
+  icon,
+  label,
+  onPress,
+  surfaceColor,
+  textColor,
+}: {
+  icon: any;
+  label: string;
+  onPress: () => void;
+  surfaceColor: string;
+  textColor: string;
+}) {
   const bgAnim = useRef(new Animated.Value(0)).current;
-  const { logout } = useAuth();
 
   const handlePressIn = () => {
     Animated.timing(bgAnim, {
@@ -27,22 +29,14 @@ function SettingsButton({ icon, label }: { icon: any; label: string }) {
   const handlePressOut = () => {
     Animated.timing(bgAnim, {
       toValue: 0,
-      duration: 300,
+      duration: 250,
       useNativeDriver: false,
     }).start();
   };
 
-  const handleOnPress = async (label: string) => {
-    if (label === "Logout") {
-      await logout();
-    } else if (label === "Modo escuro") {
-      console.log("Dark mod");
-    }
-  };
-
   const backgroundColor = bgAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: ["rgba(237,224,247,0)", colors.purple_background],
+    outputRange: ['rgba(237,224,247,0)', '#ede0f7'],
   });
 
   return (
@@ -50,29 +44,43 @@ function SettingsButton({ icon, label }: { icon: any; label: string }) {
       activeOpacity={1}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      onPress={() => handleOnPress(label)}
+      onPress={onPress}
     >
       <Animated.View style={[styles.button, { backgroundColor }]}>
-        <View style={styles.iconBox}>
+        <View style={[styles.iconBox, { backgroundColor: surfaceColor }]}>
           <Image style={styles.image} source={icon} />
         </View>
-        <Text style={styles.text}>{label}</Text>
+        <Text style={[styles.text, { color: textColor }]}>{label}</Text>
       </Animated.View>
     </TouchableOpacity>
   );
 }
 
 export default function CardSettings() {
+  const { theme, toggleTheme, isDark } = useThemeContext();
+  const c = theme.colors;
+  const { logout } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: c.surface }]}>
       <SettingsButton
-        icon={require("@/assets/icon/sun.png")}
-        label="Modo Escuro"
+        icon={require('../../assets/icon/sun.png')}
+        label={isDark ? 'Modo Claro' : 'Modo Escuro'}
+        onPress={toggleTheme}
+        surfaceColor={c.background}
+        textColor={c.text}
       />
-      <View style={styles.divider} />
+      <View style={[styles.divider, { backgroundColor: c.background }]} />
       <SettingsButton
-        icon={require("@/assets/icon/logout.png")}
+        icon={require('../../assets/icon/profile.png')}
         label="Logout"
+        onPress={handleLogout}
+        surfaceColor={c.background}
+        textColor={c.text}
       />
     </View>
   );
@@ -80,19 +88,18 @@ export default function CardSettings() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.white, 
     borderRadius: 18,
     padding: 8,
     marginBottom: 12,
-    shadowColor: colors.light_purple, 
+    shadowColor: '#8B4FFC',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.12,
     shadowRadius: 8,
     elevation: 3,
   },
   button: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 12,
     paddingVertical: 11,
     paddingHorizontal: 10,
@@ -102,24 +109,20 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 10,
-    backgroundColor: colors.purple_background, 
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   image: {
     width: 18,
     height: 18,
-    tintColor: colors.light_purple, 
+    tintColor: '#a67cc5',
   },
   text: {
     fontSize: 14,
-    fontWeight: "500",
-    color: colors.dark_gray, 
+    fontWeight: '500',
   },
   divider: {
     height: 1,
-    backgroundColor: colors.light_gray, 
     marginHorizontal: 10,
   },
 });
-
