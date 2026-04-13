@@ -76,13 +76,13 @@ const createStyles = (theme: any) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.purple_background,
+      backgroundColor: theme.colors.background,
       padding: 16,
     },
     searchContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: theme.colors.white,
+      backgroundColor: theme.colors.surface,
       borderRadius: 12,
       paddingHorizontal: 14,
       paddingVertical: 10,
@@ -92,7 +92,7 @@ const createStyles = (theme: any) =>
     inputSearch: {
       flex: 1,
       fontSize: 14,
-      color: theme.colors.dark_gray,
+      color: theme.colors.text,
     },
     buttonSearch: {
       padding: 2,
@@ -100,7 +100,7 @@ const createStyles = (theme: any) =>
     searchIcon: {
       width: 18,
       height: 18,
-      tintColor: theme.colors.gray,
+      tintColor: theme.colors.text,
     },
     content: {
       flex: 1,
@@ -109,11 +109,11 @@ const createStyles = (theme: any) =>
       flexDirection: 'row',
       alignItems: 'center',
       gap: 14,
-      backgroundColor: theme.colors.white,
+      backgroundColor: theme.colors.surface,
       marginBottom: 10,
       borderRadius: 16,
       padding: 14,
-      shadowColor: theme.colors.purple,
+      shadowColor: theme.colors.primary,
       shadowOffset: { width: 0, height: 3 },
       shadowOpacity: 0.1,
       shadowRadius: 8,
@@ -124,7 +124,6 @@ const createStyles = (theme: any) =>
       width: 48,
       height: 48,
       borderRadius: 14,
-      backgroundColor: theme.colors.light_purple,
     },
     informationContainer: {
       flexDirection: 'column',
@@ -133,10 +132,10 @@ const createStyles = (theme: any) =>
     kidName: {
       fontSize: 14,
       fontWeight: '600',
-      color: theme.colors.dark_gray,
+      color: theme.colors.text,
     },
     kidClass: {
       fontSize: 12,
-      color: theme.colors.gray,
+      color: theme.colors.text,
     },
   });

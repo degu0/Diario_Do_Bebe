@@ -1,7 +1,7 @@
 import { useAuth } from '@/context/AuthContext';
 import { useThemeContext } from '@/context/ThemeContext';
 import { router, usePathname } from 'expo-router';
-import { Book, Calendar, Home, Profile } from 'iconsax-react-native';
+import { Book, Calendar2, Home, Profile } from 'iconsax-react-native';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 type NavLink = {
@@ -12,14 +12,14 @@ type NavLink = {
 
 const teacherLinks: NavLink[] = [
   { label: 'Home', href: '/(teacher)/home', icon: Home },
-  { label: 'Calendario', href: '/calendar', icon: Calendar },
+  { label: 'Calendario', href: '/calendar', icon: Calendar2 },
   { label: 'class', href: '/(teacher)/class', icon: Book },
   { label: 'Perfil', href: '/(teacher)/profile', icon: Profile },
 ];
 
 const responsibleLinks: NavLink[] = [
   { label: 'Home', href: '/(responsible)/home', icon: Home },
-  { label: 'Calendario', href: '/calendar', icon: Calendar },
+  { label: 'Calendario', href: '/calendar', icon: Calendar2 },
   { label: 'Perfil', href: '/(responsible)/profile', icon: Profile },
 ];
 
@@ -65,8 +65,8 @@ export default function Navbar() {
 const createStyles = (theme: any) =>
   StyleSheet.create({
     container: {
-      backgroundColor: theme.colors.grayLight + '4D',
-      borderColor: theme.colors.white,
+      backgroundColor: theme.colors.surface + '4D',
+      borderColor: theme.colors.surface,
       borderRadius: 120,
       width: 350,
       height: 100,
@@ -98,7 +98,7 @@ const createStyles = (theme: any) =>
     text: {
       marginTop: 4,
       fontSize: 10,
-      color: theme.colors.gray,
+      color: theme.colors.text,
     },
 
     activeText: {

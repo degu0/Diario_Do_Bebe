@@ -2,9 +2,10 @@ import { useAuth } from '@/context/AuthContext';
 import { useThemeContext } from '@/context/ThemeContext';
 import { useRef } from 'react';
 import { Animated, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Sun1, Moon, Logout } from 'iconsax-react-nativejs';
 
 function SettingsButton({
-  icon,
+  icon: Icon,
   label,
   onPress,
   surfaceColor,
@@ -17,6 +18,7 @@ function SettingsButton({
   textColor: string;
 }) {
   const bgAnim = useRef(new Animated.Value(0)).current;
+  const { isDark } = useThemeContext();
 
   const handlePressIn = () => {
     Animated.timing(bgAnim, {
@@ -47,8 +49,8 @@ function SettingsButton({
       onPress={onPress}
     >
       <Animated.View style={[styles.button, { backgroundColor }]}>
-        <View style={[styles.iconBox, { backgroundColor: surfaceColor }]}>
-          <Image style={styles.image} source={icon} />
+        <View style={styles.iconBox}>
+          <Icon size={20} color={textColor} variant={isDark ? 'Bold' : 'Outline'} />
         </View>
         <Text style={[styles.text, { color: textColor }]}>{label}</Text>
       </Animated.View>
@@ -68,7 +70,7 @@ export default function CardSettings() {
   return (
     <View style={[styles.container, { backgroundColor: c.surface }]}>
       <SettingsButton
-        icon={require('../../assets/icon/sun.png')}
+        icon={isDark ? Sun1 : Moon}
         label={isDark ? 'Modo Claro' : 'Modo Escuro'}
         onPress={toggleTheme}
         surfaceColor={c.background}
@@ -76,7 +78,7 @@ export default function CardSettings() {
       />
       <View style={[styles.divider, { backgroundColor: c.background }]} />
       <SettingsButton
-        icon={require('../../assets/icon/profile.png')}
+        icon={Logout}
         label="Logout"
         onPress={handleLogout}
         surfaceColor={c.background}
@@ -108,14 +110,8 @@ const styles = StyleSheet.create({
   iconBox: {
     width: 34,
     height: 34,
-    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  image: {
-    width: 18,
-    height: 18,
-    tintColor: '#a67cc5',
   },
   text: {
     fontSize: 14,
