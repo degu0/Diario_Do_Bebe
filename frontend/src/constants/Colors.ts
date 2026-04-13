@@ -4,27 +4,40 @@ import {
 } from 'react-native-paper';
 
 export const colors = {
-  black: '#000000',
   white: '#FFFFFF',
+  black: '#0B0F19',
 
-  purple: '#8B4FFC',
-  purpleDark: '#5D3A7E',
-  purpleLight: '#A57AB2',
-  purpleBackground: '#C2BBF2',
+  transparent: 'transparent',
 
-  red: '#EC6B6B',
-  redBackground: '#FBE7E4',
+  backgroundLight: '#F8FAFC',
+  backgroundDark: '#140f2aff',
 
-  blue: '#2BA7D9',
-  blueBackground: '#D7E7F8',
+  surfaceLight: '#FFFFFF',
+  surfaceDark: '#1E293B',
 
-  green: '#5FC7B1',
-  greenLight: '#B2E0B2',
-  greenBackground: '#DBF5F0',
+  borderLight: '#E5E7EB',
+  borderDark: '#334155',
 
-  gray: '#808080',
-  grayLight: '#E8E8E8',
-  grayDark: '#2F2F2F',
+  textPrimaryLight: '#111827',
+  textSecondaryLight: '#6B7280',
+
+  textPrimaryDark: '#F9FAFB',
+  textSecondaryDark: '#94A3B8',
+
+  primary: '#7C3AED',
+  primaryHover: '#6D28D9',
+  primarySoft: '#EDE9FE',
+
+  success: '#22C55E',
+  successSoft: '#DCFCE7',
+
+  error: '#EF4444',
+  errorSoft: '#FEE2E2',
+
+  info: '#3B82F6',
+  infoSoft: '#DBEAFE',
+
+  gray: '#64748B',
 };
 
 export const CustomLightTheme = {
@@ -32,27 +45,29 @@ export const CustomLightTheme = {
   colors: {
     ...PaperLightTheme.colors,
 
-    primary: colors.purple,
-    secondary: colors.purpleDark,
-    tertiary: colors.purpleLight,
+    primary: colors.primary,
+    secondary: colors.primaryHover,
+    tertiary: colors.primarySoft,
 
-    background: colors.grayLight,
-    surface: colors.white,
+    background: colors.backgroundLight,
+    surface: colors.surfaceLight,
 
-    text: colors.grayDark,
+    text: colors.textPrimaryLight,
 
-    messageBackground: colors.white,
-    messageUserBackground: colors.purpleBackground,
+    outline: colors.borderLight,
 
-    profileMessageBackground: colors.grayDark,
+    messageBackground: colors.surfaceLight,
+    messageUserBackground: colors.primarySoft,
 
-    error: colors.red,
+    profileMessageBackground: colors.borderLight,
 
-    success: colors.green,
-    successBackground: colors.greenBackground,
+    error: colors.error,
 
-    info: colors.blue,
-    infoBackground: colors.blueBackground,
+    success: colors.success,
+    successBackground: colors.successSoft,
+
+    info: colors.info,
+    infoBackground: colors.infoSoft,
   },
 };
 
@@ -61,26 +76,28 @@ export const CustomDarkTheme = {
   colors: {
     ...PaperDarkTheme.colors,
 
-    primary: colors.purple,
-    secondary: colors.purpleDark,
-    tertiary: colors.purpleLight,
+    primary: '#8B5CF6',
+    secondary: colors.primary,
+    tertiary: colors.primarySoft,
 
-    background: colors.black,
-    surface: colors.grayDark,
+    background: colors.backgroundDark,
+    surface: colors.surfaceDark,
 
-    text: colors.white,
+    text: colors.textPrimaryDark,
 
-    messageBackground: colors.grayDark,
-    messageUserBackground: colors.purpleDark,
+    outline: colors.borderDark,
 
-    profileMessageBackground: colors.purpleLight,
+    messageBackground: colors.surfaceDark,
+    messageUserBackground: '#5B21B6',
 
-    error: colors.red,
+    profileMessageBackground: '#312E81',
 
-    success: colors.green,
-    successBackground: colors.greenBackground,
+    error: colors.error,
 
-    info: colors.blue,
-    infoBackground: colors.blueBackground,
+    success: colors.success,
+    successBackground: '#052e16',
+
+    info: colors.info,
+    infoBackground: '#1e3a8a',
   },
 };
