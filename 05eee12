@@ -1,0 +1,49 @@
+[33madc56a0[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Merge pull request #4 from degu0/gabriel-branch
+[33m0db7910[m Merge branch 'main' into gabriel-branch
+[33m05eee12[m Update frontend readme
+[33m3f7f394[m feat: first backend endpoints
+[33m3f20e16[m Merge branch 'main' of https://github.com/degu0/Diario_Do_Bebe
+[33m92fc0ed[m feat: add Input componente
+[33m04cf9cf[m[33m ([m[1;31morigin/gabriel-branch[m[33m)[m Novos ajustes no projeto
+[33m51ab061[m Novos ajustes no codigo
+[33m2a98752[m Merge pull request #3 from degu0/branch-front-dark-mode
+[33m89d861e[m[33m ([m[1;31morigin/branch-front-dark-mode[m[33m)[m style: upgrade profile style
+[33m1f4a3fc[m refactor: add Theme context in screens
+[33m890df86[m feat: add Dark Mode Context
+[33m5b8e455[m chore: add prettier config and editorconfig
+[33m51a4cbb[m fix: fix the profile screen
+[33mf6117ea[m Merge pull request #2 from degu0/gabriel-branch
+[33m0132c02[m Merge branch 'main' into gabriel-branch
+[33mb677f04[m minhas alterações no projeto
+[33m5c9039f[m style: change icons
+[33m45e2a2a[m feat: add card date special
+[33m3a1cd2b[m feat: add calendar page
+[33md14320d[m feat: add responsible home
+[33m4cd1522[m feat: add teacher home
+[33m74513d3[m feat: `initialize` express server
+[33mf8088f1[m feat: add `seed.ts` and other prisma settings
+[33m4dd326b[m Merge branch 'main' of https://github.com/degu0/Diario_Do_Bebe
+[33mc2ec7de[m feat: add constants colors and fonts
+[33m41fbda6[m feat: add baby profile page
+[33m160cd37[m chore: add docker, prettier and editorconfig
+[33m141e21f[m chore: initialize prisma configuration and project dependencies
+[33m4e995da[m feat: add class screen with kid list and search filter
+[33m3781cbf[m Merge pull request #1 from degu0/branch-front-26-03-2026
+[33mb27482f[m[33m ([m[1;31morigin/branch-front-26-03-2026[m[33m)[m chore: remove example files and rename home screens
+[33m3bed0a4[m fix: add function logout
+[33mdc12068[m fix: correct navbar icon refs, active route logic and teacher routes
+[33m28cd63a[m style: update page name
+[33m63d40ec[m feat: add teacher profile screen and CardSettings component
+[33m18d6932[m style: update profile page style
+[33mcc449c5[m style: update navbar component style
+[33m4fff71c[m feat: add navbar component and test pages
+[33m2ec1d5c[m refactor: add auth form component in login page
+[33ma94c7da[m feat: add auth form components
+[33m71e3a9c[m feat: add toggle auth tab
+[33m003d6b7[m feat: add index page
+[33m5d42429[m feat: adiciona `schema.prisma` e outras pastas/arquivos iniciais do backend
+[33m68e77af[m feat(auth): add login screen and basic authentication context
+[33m57d131d[m docs: Add rules in README
+[33m6cc93ce[m Delete the example files
+[33mef771b8[m Remaking the frontend
+[33m122e96b[m first commit
