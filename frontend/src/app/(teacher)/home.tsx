@@ -1,4 +1,5 @@
 import { useThemeContext } from '@/context/ThemeContext';
+import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -13,6 +14,7 @@ const kids = [
 
 export default function Home() {
   const { theme } = useThemeContext();
+  const router = useRouter();
 
   const styles = useMemo(() => createStyles(theme), [theme]);
 
@@ -38,7 +40,6 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      {/* Header - Mantém tom de roxo/primário mesmo no Light Mode */}
       <View style={styles.presentation}>
         <View style={styles.dateUser}>
           <Image source={profileIcon} style={styles.imageUser} />
@@ -81,7 +82,7 @@ export default function Home() {
         <View style={styles.kidsSection}>
           <View style={styles.kidsSectionHeader}>
             <Text style={styles.kidsSectionTitle}>Crianças da turma</Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/(teacher)/class')}>
               <Text style={styles.seeMore}>Ver mais</Text>
             </TouchableOpacity>
           </View>
@@ -93,7 +94,11 @@ export default function Home() {
             };
 
             return (
-              <TouchableOpacity key={item.id} style={styles.kidRow}>
+              <TouchableOpacity
+                key={item.id}
+                style={styles.kidRow}
+                onPress={() => router.push(`/register/${id}`)}
+              >
                 <Image source={item.image} style={styles.kidAvatar} />
                 <Text style={styles.kidName}>{item.name}</Text>
 

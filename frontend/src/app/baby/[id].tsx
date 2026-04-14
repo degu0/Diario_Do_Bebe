@@ -94,6 +94,20 @@ export default function BabyProfile() {
       </View>
 
       <View style={styles.content}>
+        <TouchableOpacity
+          onPress={() => router.push(`/register/${id}`)}
+          style={{
+            backgroundColor: theme.colors.primary,
+            padding: 8,
+            borderRadius: 12,
+            alignSelf: 'flex-start',
+            marginBottom: 16,
+            width: '100%',
+          }}
+        >
+          <Text style={{ color: '#fff', fontWeight: 'bold', textAlign: 'center' }}>Cadastro</Text>
+        </TouchableOpacity>
+
         <Text style={styles.sectionTitle}>Responsáveis</Text>
 
         <View style={styles.containerCardResponsible}>
