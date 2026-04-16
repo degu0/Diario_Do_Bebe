@@ -2,8 +2,9 @@ import { colors } from '@/constants/Colors';
 import { useThemeContext } from '@/context/ThemeContext';
 import { useRoute } from '@react-navigation/native';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 function AccordionSection({
   icon,
@@ -77,7 +78,7 @@ export default function BabyProfile() {
       <View style={{ padding: 16 }}>
         <View style={styles.containerPage}>
           <TouchableOpacity onPress={() => router.back()}>
-            <Image source={require('@/assets/icon/arrow-left.png')} style={styles.arrowIcon} />
+            <Ionicons name="arrow-back" size={22} color={theme.colors.text} />
           </TouchableOpacity>
 
           <Text style={styles.pageTitle}>Perfil da criança</Text>
