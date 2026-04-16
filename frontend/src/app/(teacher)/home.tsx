@@ -24,7 +24,7 @@ export default function Home() {
   const totalCount = 8;
   const progress = filledCount / totalCount;
 
-  const statustheme: Record<string, { bg: string; text: string }> = {
+  const statusTheme: Record<string, { bg: string; text: string }> = {
     Preenchida: {
       bg: theme.colors.successBackground,
       text: theme.colors.success,
@@ -41,78 +41,91 @@ export default function Home() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <View style={styles.presentation}>
-        <View style={styles.dateUser}>
-          <Image source={profileIcon} style={styles.imageUser} />
-          <Text style={styles.title}>Bom dia, {name} 👋</Text>
-        </View>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.hero}>
+          <View style={styles.heroGlowLarge} />
+          <View style={styles.heroGlowSmall} />
 
-        <Text style={styles.subtitle}>Sexta-feira, 13 de março</Text>
-        <Text style={styles.subtitle}>Escola | Turma A1</Text>
-      </View>
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.banner}>
-          <Text style={styles.bannerText}>⚠️ Feriado em 3 dias</Text>
-        </View>
-
-        <View style={styles.bigCard}>
-          <Text style={styles.titleCard}>Fichas preenchidas</Text>
-
-          <View style={styles.numberCard}>
-            <Text style={styles.numberBig}>{filledCount}</Text>
-            <Text style={styles.numberSmall}>/{totalCount}</Text>
+          <View style={styles.dateUser}>
+            <Image source={profileIcon} style={styles.imageUser} />
+            <View>
+              <Text style={styles.title}>Bom dia, {name} 👋</Text>
+              <Text style={styles.subtitle}>Sexta-feira, 13 de março</Text>
+              <Text style={styles.subtitle}>Escola | Turma A1</Text>
+            </View>
           </View>
 
-          <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
+          <View style={styles.banner}>
+            <Text style={styles.bannerText}>⚠️ Feriado em 3 dias</Text>
           </View>
         </View>
 
-        <View style={styles.smallCardsRow}>
-          <View style={styles.smallCard}>
-            <Text style={styles.smallCardNumber}>2</Text>
-            <Text style={styles.smallCardLabel}>Ausentes hoje</Text>
+        <View style={styles.contentCard}>
+          <View style={styles.bigCard}>
+            <Text style={styles.titleCard}>Fichas preenchidas</Text>
+
+            <View style={styles.numberCard}>
+              <Text style={styles.numberBig}>{filledCount}</Text>
+              <Text style={styles.numberSmall}>/{totalCount}</Text>
+            </View>
+
+            <View style={styles.progressBar}>
+              <View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
+            </View>
           </View>
 
-          <View style={styles.smallCard}>
-            <Text style={[styles.smallCardNumber, { color: theme.colors.primary }]}>1</Text>
-            <Text style={styles.smallCardLabel}>Ocorrência</Text>
-          </View>
-        </View>
+          <View style={styles.smallCardsRow}>
+            <View style={styles.smallCard}>
+              <Text style={styles.smallCardNumber}>2</Text>
+              <Text style={styles.smallCardLabel}>Ausentes hoje</Text>
+            </View>
 
-        <View style={styles.kidsSection}>
-          <View style={styles.kidsSectionHeader}>
-            <Text style={styles.kidsSectionTitle}>Crianças da turma</Text>
-            <TouchableOpacity onPress={() => router.push('/(teacher)/class')}>
-              <Text style={styles.seeMore}>Ver mais</Text>
-            </TouchableOpacity>
+            <View style={styles.smallCard}>
+              <Text style={[styles.smallCardNumber, { color: theme.colors.primary }]}>1</Text>
+              <Text style={styles.smallCardLabel}>Ocorrência</Text>
+            </View>
           </View>
 
-          {kids.map((item) => {
-            const statusStyle = statustheme[item.status] ?? {
-              bg: theme.colors.surface,
-              text: theme.colors.text,
-            };
-
-            return (
-              <TouchableOpacity
-                key={item.id}
-                style={styles.kidRow}
-                onPress={() => router.push(`/register/${item.id}`)}
-              >
-                <Image source={item.image} style={styles.kidAvatar} />
-                <Text style={styles.kidName}>{item.name}</Text>
-
-                <View style={[styles.statusBadge, { backgroundColor: statusStyle.bg }]}>
-                  <Text style={[styles.statusText, { color: statusStyle.text }]}>
-                    {item.status}
-                  </Text>
-                </View>
-
-                <Text style={styles.chevron}>›</Text>
+          <View style={styles.kidsSection}>
+            <View style={styles.kidsSectionHeader}>
+              <Text style={styles.kidsSectionTitle}>Crianças da turma</Text>
+              <TouchableOpacity onPress={() => router.push('/(teacher)/class')}>
+                <Text style={styles.seeMore}>Ver mais</Text>
               </TouchableOpacity>
-            );
-          })}
+            </View>
+
+            <View style={styles.kidsList}>
+              {kids.map((item) => {
+                const statusStyle = statusTheme[item.status] ?? {
+                  bg: theme.colors.surface,
+                  text: theme.colors.text,
+                };
+
+                return (
+                  <TouchableOpacity
+                    key={item.id}
+                    style={styles.kidRow}
+                    onPress={() => router.push(`/register/${item.id}`)}
+                  >
+                    <Image source={item.image} style={styles.kidAvatar} />
+                    <Text style={styles.kidName}>{item.name}</Text>
+
+                    <View style={[styles.statusBadge, { backgroundColor: statusStyle.bg }]}>
+                      <Text style={[styles.statusText, { color: statusStyle.text }]}>
+                        {item.status}
+                      </Text>
+                    </View>
+
+                    <Text style={styles.chevron}>›</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -123,75 +136,113 @@ const createStyles = (theme: any, isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: isDark ? theme.colors.background : theme.colors.secondary,
+      backgroundColor: isDark ? '#120F1F' : '#6C4ED9',
     },
 
-    presentation: {
-      padding: 20,
-      paddingBottom: 32,
+    scroll: {
+      flex: 1,
+    },
+
+    scrollContent: {
+      paddingBottom: 40,
+    },
+
+    hero: {
+      position: 'relative',
+      paddingHorizontal: 20,
+      paddingTop: 18,
+      paddingBottom: 88,
+      overflow: 'hidden',
+    },
+
+    heroGlowLarge: {
+      position: 'absolute',
+      width: 240,
+      height: 240,
+      borderRadius: 120,
+      backgroundColor: 'rgba(255,255,255,0.10)',
+      top: -90,
+      right: -60,
+    },
+
+    heroGlowSmall: {
+      position: 'absolute',
+      width: 130,
+      height: 130,
+      borderRadius: 65,
+      backgroundColor: 'rgba(255,255,255,0.08)',
+      bottom: 20,
+      left: -40,
     },
 
     dateUser: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 14,
-      marginBottom: 10,
+      marginBottom: 22,
     },
 
     imageUser: {
-      width: 52,
-      height: 52,
-      borderRadius: 26,
-      backgroundColor: theme.colors.tertiary,
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: 'rgba(255,255,255,0.18)',
+      borderWidth: 2,
+      borderColor: 'rgba(255,255,255,0.22)',
     },
 
     title: {
-      fontSize: 22,
+      fontSize: 24,
       color: '#FFFFFF',
       fontWeight: '700',
+      marginBottom: 4,
     },
 
     subtitle: {
-      color: 'rgba(255, 255, 255, 0.7)',
+      color: 'rgba(255, 255, 255, 0.76)',
       fontSize: 13,
       marginTop: 2,
     },
 
-    content: {
-      flex: 1,
-      backgroundColor: theme.colors.background,
-      borderTopLeftRadius: 28,
-      borderTopRightRadius: 28,
-      padding: 20,
-    },
-
     banner: {
-      backgroundColor: isDark ? '#3d341a' : '#FFF9C4',
+      backgroundColor: isDark ? 'rgba(61,52,26,0.92)' : '#FFF4B8',
       borderWidth: 1,
       borderColor: '#FBC02D',
-      borderRadius: 12,
+      borderRadius: 16,
       paddingVertical: 12,
       paddingHorizontal: 16,
-      marginBottom: 20,
       alignItems: 'center',
     },
 
     bannerText: {
       fontSize: 13,
       fontWeight: '600',
-      color: isDark ? '#FFF' : '#7F5F00',
+      color: isDark ? '#FFF4C7' : '#7F5F00',
+    },
+
+    contentCard: {
+      marginTop: -44,
+      marginHorizontal: 12,
+      padding: 16,
+      borderRadius: 28,
+      backgroundColor: theme.colors.background,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.12,
+      shadowRadius: 18,
+      elevation: 8,
     },
 
     bigCard: {
       backgroundColor: theme.colors.surface,
-      borderRadius: 18,
+      borderRadius: 20,
       padding: 16,
       marginBottom: 14,
-      elevation: 3,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.1,
+      shadowOpacity: 0.08,
       shadowRadius: 8,
+      elevation: 2,
     },
 
     titleCard: {
@@ -244,13 +295,13 @@ const createStyles = (theme: any, isDark: boolean) =>
     smallCard: {
       flex: 1,
       backgroundColor: theme.colors.surface,
-      borderRadius: 18,
+      borderRadius: 20,
       padding: 16,
-      elevation: 3,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.1,
+      shadowOpacity: 0.08,
       shadowRadius: 8,
+      elevation: 2,
       gap: 6,
     },
 
@@ -268,7 +319,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
 
     kidsSection: {
-      marginBottom: 32,
+      marginBottom: 12,
     },
 
     kidsSectionHeader: {
@@ -276,6 +327,7 @@ const createStyles = (theme: any, isDark: boolean) =>
       justifyContent: 'space-between',
       alignItems: 'center',
       marginBottom: 12,
+      paddingHorizontal: 2,
     },
 
     kidsSectionTitle: {
@@ -290,19 +342,31 @@ const createStyles = (theme: any, isDark: boolean) =>
       fontWeight: '500',
     },
 
+    kidsList: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: 20,
+      paddingHorizontal: 16,
+      paddingVertical: 4,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 3 },
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+      elevation: 2,
+    },
+
     kidRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      paddingVertical: 12,
+      paddingVertical: 14,
       borderBottomWidth: 1,
-      borderBottomColor: isDark ? '#222' : theme.colors.background,
+      borderBottomColor: isDark ? '#222' : '#F1ECFB',
       gap: 12,
     },
 
     kidAvatar: {
-      width: 36,
-      height: 36,
-      borderRadius: 18,
+      width: 40,
+      height: 40,
+      borderRadius: 20,
       backgroundColor: theme.colors.tertiary,
     },
 
@@ -325,7 +389,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
 
     chevron: {
-      fontSize: 18,
+      fontSize: 20,
       color: theme.colors.text,
       opacity: 0.3,
     },

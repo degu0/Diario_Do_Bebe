@@ -10,66 +10,77 @@ const kids = [
 ];
 
 export default function Home() {
-  const { theme } = useThemeContext();
-  const styles = createStyles(theme);
+  const { theme, isDark } = useThemeContext();
+  const styles = createStyles(theme, isDark);
 
   const name = 'Carlos';
   const selectedKid = kids[0];
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <View style={styles.apresentation}>
-        <Text style={styles.title}>Olá, {name}</Text>
-        <Text style={styles.subtitle}>Sexta-feira, 13 de março</Text>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.hero}>
+          <View style={styles.heroGlowLarge} />
+          <View style={styles.heroGlowSmall} />
 
-        <View style={styles.banner}>
-          <Text style={styles.bannerText}>⚠️ Feriado em 3 dias</Text>
-        </View>
+          <View style={styles.heroTextBlock}>
+            <Text style={styles.title}>Olá, {name}</Text>
+            <Text style={styles.subtitle}>Sexta-feira, 13 de março</Text>
+          </View>
 
-        <View style={styles.kidsRow}>
-          {kids.map((kid) => {
-            const isSelected = kid.id === selectedKid.id;
+          <View style={styles.banner}>
+            <Text style={styles.bannerText}>⚠️ Feriado em 3 dias</Text>
+          </View>
 
-            return (
-              <TouchableOpacity
-                key={kid.id}
-                style={[styles.kidChip, isSelected && styles.kidChipSelected]}
-              >
-                <View style={styles.kidInitials}>
-                  <Text style={styles.kidInitialsText}>{kid.initials}</Text>
-                </View>
+          <View style={styles.kidsRow}>
+            {kids.map((kid) => {
+              const isSelected = kid.id === selectedKid.id;
 
-                {isSelected && (
-                  <View>
-                    <Text style={styles.kidChipName}>{kid.name}</Text>
-                    <Text style={styles.kidChipAge}>{kid.age}</Text>
+              return (
+                <TouchableOpacity
+                  key={kid.id}
+                  style={[styles.kidChip, isSelected && styles.kidChipSelected]}
+                >
+                  <View style={styles.kidInitials}>
+                    <Text style={styles.kidInitialsText}>{kid.initials}</Text>
                   </View>
-                )}
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.bigCard}>
-          <Text style={styles.titleCard}>Status de hoje</Text>
-
-          <View style={styles.statusRow}>
-            <View style={styles.statusDot} />
-            <Text style={styles.statusText}>Presente na creche</Text>
+                  {isSelected && (
+                    <View>
+                      <Text style={styles.kidChipName}>{kid.name}</Text>
+                      <Text style={styles.kidChipAge}>{kid.age}</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
 
-        <View style={styles.smallCardsRow}>
-          <View style={styles.smallCard}>
-            <Text style={styles.smallCardNumber}>Bem</Text>
-            <Text style={styles.smallCardLabel}>Alimentação</Text>
+        <View style={styles.contentCard}>
+          <View style={styles.bigCard}>
+            <Text style={styles.titleCard}>Status de hoje</Text>
+
+            <View style={styles.statusRow}>
+              <View style={styles.statusDot} />
+              <Text style={styles.statusText}>Presente na creche</Text>
+            </View>
           </View>
 
-          <View style={[styles.smallCard, styles.smallCardDivider]}>
-            <Text style={styles.smallCardNumber}>1 h 20 min</Text>
-            <Text style={styles.smallCardLabel}>Sono/Soneca</Text>
+          <View style={styles.smallCardsRow}>
+            <View style={styles.smallCard}>
+              <Text style={styles.smallCardNumber}>Bem</Text>
+              <Text style={styles.smallCardLabel}>Alimentação</Text>
+            </View>
+
+            <View style={[styles.smallCard, styles.smallCardDivider]}>
+              <Text style={styles.smallCardNumber}>1 h 20 min</Text>
+              <Text style={styles.smallCardLabel}>Sono/Soneca</Text>
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -77,37 +88,70 @@ export default function Home() {
   );
 }
 
-const createStyles = (theme: any) =>
+const createStyles = (theme: any, isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.purpleDark,
+      backgroundColor: isDark ? '#120F1F' : theme.colors.purpleDark,
     },
 
-    apresentation: {
-      padding: 20,
-      paddingBottom: 28,
-      gap: 6,
+    scroll: {
+      flex: 1,
+    },
+
+    scrollContent: {
+      paddingBottom: 40,
+    },
+
+    hero: {
+      position: 'relative',
+      paddingHorizontal: 20,
+      paddingTop: 18,
+      paddingBottom: 88,
+      overflow: 'hidden',
+    },
+
+    heroGlowLarge: {
+      position: 'absolute',
+      width: 220,
+      height: 220,
+      borderRadius: 110,
+      backgroundColor: 'rgba(255,255,255,0.08)',
+      top: -70,
+      right: -55,
+    },
+
+    heroGlowSmall: {
+      position: 'absolute',
+      width: 120,
+      height: 120,
+      borderRadius: 60,
+      backgroundColor: 'rgba(255,255,255,0.06)',
+      bottom: 28,
+      left: -34,
+    },
+
+    heroTextBlock: {
+      marginBottom: 18,
     },
 
     title: {
       fontSize: 26,
       color: theme.colors.white,
       fontWeight: '700',
-      marginBottom: 2,
+      marginBottom: 4,
     },
 
     subtitle: {
-      color: theme.colors.white + 'CC',
+      color: 'rgba(255,255,255,0.78)',
       fontSize: 13,
-      marginBottom: 14,
     },
 
     banner: {
       backgroundColor: theme.colors.yellowLight,
       borderWidth: 1,
       borderColor: theme.colors.yellowBorder,
-      borderRadius: 12,
+      borderRadius: 16,
       paddingVertical: 10,
       paddingHorizontal: 16,
       marginBottom: 16,
@@ -130,23 +174,23 @@ const createStyles = (theme: any) =>
       flexDirection: 'row',
       alignItems: 'center',
       gap: 8,
-      backgroundColor: theme.colors.white + '26',
-      borderRadius: 30,
+      backgroundColor: 'rgba(255,255,255,0.14)',
+      borderRadius: 32,
       paddingVertical: 6,
       paddingHorizontal: 10,
     },
 
     kidChipSelected: {
-      backgroundColor: theme.colors.white + '40',
+      backgroundColor: 'rgba(255,255,255,0.22)',
     },
 
     kidInitials: {
-      width: 32,
-      height: 32,
-      borderRadius: 16,
+      width: 34,
+      height: 34,
+      borderRadius: 17,
       backgroundColor: theme.colors.purpleDark,
       borderWidth: 2,
-      borderColor: theme.colors.white + '80',
+      borderColor: 'rgba(255,255,255,0.45)',
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -165,27 +209,32 @@ const createStyles = (theme: any) =>
 
     kidChipAge: {
       fontSize: 10,
-      color: theme.colors.white + 'BF',
+      color: 'rgba(255,255,255,0.74)',
     },
 
-    content: {
-      flex: 1,
+    contentCard: {
+      marginTop: -44,
+      marginHorizontal: 12,
+      padding: 16,
+      borderRadius: 28,
       backgroundColor: theme.colors.surface,
-      borderTopLeftRadius: 28,
-      borderTopRightRadius: 28,
-      padding: 20,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.12,
+      shadowRadius: 18,
+      elevation: 8,
     },
 
     bigCard: {
       backgroundColor: theme.colors.grayLight,
-      borderRadius: 18,
+      borderRadius: 20,
       padding: 16,
       marginBottom: 14,
       shadowColor: theme.colors.shadow,
       shadowOffset: { width: 0, height: 3 },
       shadowOpacity: 0.1,
       shadowRadius: 8,
-      elevation: 3,
+      elevation: 2,
     },
 
     titleCard: {
@@ -216,13 +265,13 @@ const createStyles = (theme: any) =>
     smallCardsRow: {
       flexDirection: 'row',
       backgroundColor: theme.colors.surface,
-      borderRadius: 18,
+      borderRadius: 20,
       shadowColor: theme.colors.shadow,
       shadowOffset: { width: 0, height: 3 },
       shadowOpacity: 0.1,
       shadowRadius: 8,
-      elevation: 3,
-      marginBottom: 20,
+      elevation: 2,
+      marginBottom: 12,
     },
 
     smallCard: {
