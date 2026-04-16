@@ -1,152 +1,321 @@
-import { useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import { CustomRadioButton } from '@/components/CustomRadioButton';
 import MultiSelectTabs from '@/components/MultiSelectTabs';
 import { useThemeContext } from '@/context/ThemeContext';
 import {
-  ScrollView,
-  View,
-  StyleSheet,
   Image,
+  ScrollView,
+  StyleSheet,
   Text,
-  TouchableOpacity,
   TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+type SectionCardProps = {
+  title: string;
+  subtitle?: string;
+  children: ReactNode;
+  titleColor: string;
+  subtitleColor: string;
+};
+
+function SectionCard({ title, subtitle, children, titleColor, subtitleColor }: SectionCardProps) {
+  return (
+    <View style={sharedStyles.sectionCard}>
+      <View style={sharedStyles.sectionHeader}>
+        <Text style={[sharedStyles.sectionTitle, { color: titleColor }]}>{title}</Text>
+        {subtitle ? (
+          <Text style={[sharedStyles.sectionSubtitle, { color: subtitleColor }]}>{subtitle}</Text>
+        ) : null}
+      </View>
+      {children}
+    </View>
+  );
+}
+
 export default function Register() {
-  const { theme } = useThemeContext();
-  const styles = createStyles(theme);
+  const { theme, isDark } = useThemeContext();
   const router = useRouter();
+  const styles = useMemo(() => createStyles(theme, isDark), [theme, isDark]);
 
   const [presenca, setPresenca] = useState('presente');
   const [humor, setHumor] = useState('animado');
   const [alimentacao, setAlimentacao] = useState('bem');
   const [atividades, setAtividades] = useState<string[]>([]);
+  const [fraldaTrocada, setFraldaTrocada] = useState('sim');
+  const [quantidadeFraldas, setQuantidadeFraldas] = useState('1');
+  const [inicioSoneca, setInicioSoneca] = useState('');
+  const [fimSoneca, setFimSoneca] = useState('');
   const [observacoes, setObservacoes] = useState('');
 
+  const subtitleColor = `${theme.colors.text}AA`;
+  const isAusente = presenca === 'ausente';
+
+  const dailyReportPayload = useMemo(
+    () => ({
+      presenca,
+      humor: isAusente ? null : humor,
+      alimentacao: isAusente ? null : alimentacao,
+      sonecaInicio: isAusente ? null : inicioSoneca || null,
+      sonecaFim: isAusente ? null : fimSoneca || null,
+      fraldaTrocada: isAusente ? null : fraldaTrocada === 'sim',
+      quantidadeFraldas: isAusente
+        ? null
+        : fraldaTrocada === 'sim'
+          ? Number(quantidadeFraldas || 0)
+          : 0,
+      atividades: isAusente ? null : atividades,
+      observacoes: isAusente ? null : observacoes || null,
+    }),
+    [
+      presenca,
+      isAusente,
+      humor,
+      alimentacao,
+      inicioSoneca,
+      fimSoneca,
+      fraldaTrocada,
+      quantidadeFraldas,
+      atividades,
+      observacoes,
+    ],
+  );
+
+  const handleSave = () => {
+    const payload = dailyReportPayload;
+    void payload;
+    // TODO: enviar `payload` para o backend quando o hook de submissao estiver pronto.
+  };
+
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-          activeOpacity={0.7}
-        >
-          <Ionicons name="arrow-back" size={22} color={theme.colors.text} />
-        </TouchableOpacity>
+    <SafeAreaView style={styles.screen} edges={['top']}>
+      <ScrollView
+        style={styles.screen}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.hero}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="arrow-back" size={20} color="#fff" />
+          </TouchableOpacity>
 
-        <View style={styles.header}>
-          <Image
-            source={require('@/assets/icon/profile.png')}
-            style={styles.avatar}
-            resizeMode="contain"
-          />
-          <View style={styles.headerText}>
-            <Text style={styles.name}>Maria Clara</Text>
-            <Text style={styles.subtitle}>Maternal I - Segunda, 14 de Agosto</Text>
-          </View>
-        </View>
+          <View style={styles.heroGlowLarge} />
+          <View style={styles.heroGlowSmall} />
 
-        <View style={styles.content}>
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Presença</Text>
-            <View style={styles.rowBetween}>
-              <CustomRadioButton
-                label="Presente"
-                selected={presenca === 'presente'}
-                onSelect={() => setPresenca('presente')}
-                color={theme.colors.success}
-                style={styles.flex}
-              />
-              <CustomRadioButton
-                label="Ausente"
-                selected={presenca === 'ausente'}
-                onSelect={() => setPresenca('ausente')}
-                color={theme.colors.error}
-                style={styles.flex}
-              />
-            </View>
-          </View>
+          <View style={styles.childSummary}>
+            <Image
+              source={require('@/assets/icon/profile.png')}
+              style={styles.avatar}
+              resizeMode="contain"
+            />
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Humor do dia</Text>
-            <View style={styles.wrapRow}>
-              {['animado', 'neutro', 'triste', 'agitado'].map((item) => (
-                <CustomRadioButton
-                  key={item}
-                  label={item.charAt(0).toUpperCase() + item.slice(1)}
-                  selected={humor === item}
-                  onSelect={() => setHumor(item)}
-                  size="lg"
-                />
-              ))}
-            </View>
-          </View>
-
-          <View style={styles.row}>
-            <View style={styles.flex}>
-              <Text style={styles.sectionTitle}>Alimentação</Text>
-              {[
-                { label: 'Comeu bem', value: 'bem' },
-                { label: 'Comeu pouco', value: 'pouco' },
-                { label: 'Não comeu', value: 'nao' },
-              ].map((item) => (
-                <CustomRadioButton
-                  key={item.value}
-                  label={item.label}
-                  selected={alimentacao === item.value}
-                  onSelect={() => setAlimentacao(item.value)}
-                />
-              ))}
-            </View>
-
-            <View style={styles.flex}>
-              <Text style={styles.sectionTitle}>Soneca</Text>
-              <View style={styles.inputGroup}>
-                <TextInput
-                  placeholder="Início"
-                  placeholderTextColor={theme.colors.text}
-                  style={styles.input}
-                />
-                <TextInput
-                  placeholder="Fim"
-                  placeholderTextColor={theme.colors.text}
-                  style={styles.input}
-                />
+            <View style={styles.headerText}>
+              <Text style={styles.name}>Maria Clara</Text>
+              <Text style={styles.subtitle}>Maternal I • Segunda, 14 de Agosto</Text>
+              <View style={styles.infoPill}>
+                <Text style={styles.infoPillText}>Relatorio diario</Text>
               </View>
             </View>
           </View>
+        </View>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Atividades do dia</Text>
-            <MultiSelectTabs
-              options={[
-                { label: 'Pintura', value: 'pintura' },
-                { label: 'Musicalização', value: 'musica' },
-                { label: 'Parque', value: 'parque' },
-                { label: 'Leitura', value: 'leitura' },
-                { label: 'Psicomotora', value: 'psicomotora' },
-              ]}
-              onChange={setAtividades}
-            />
-          </View>
+        <View style={styles.formCard}>
+          <SectionCard
+            title="Presenca e humor"
+            subtitle="Comece registrando como a crianca passou o dia."
+            titleColor={theme.colors.text}
+            subtitleColor={subtitleColor}
+          >
+            <View style={styles.fieldGroup}>
+              <Text style={styles.fieldLabel}>Presenca</Text>
+              <View style={styles.rowBetween}>
+                <CustomRadioButton
+                  label="Presente"
+                  selected={presenca === 'presente'}
+                  onSelect={() => setPresenca('presente')}
+                  color={theme.colors.success}
+                  style={styles.flexButton}
+                />
+                <CustomRadioButton
+                  label="Ausente"
+                  selected={presenca === 'ausente'}
+                  onSelect={() => setPresenca('ausente')}
+                  color={theme.colors.error}
+                  style={styles.flexButton}
+                />
+              </View>
+            </View>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Observações</Text>
+            <View style={styles.fieldGroup}>
+              <Text style={styles.fieldLabel}>Humor do dia</Text>
+              <View
+                style={[styles.wrapRow, isAusente && styles.disabledSection]}
+                pointerEvents={isAusente ? 'none' : 'auto'}
+              >
+                {['animado', 'neutro', 'triste', 'agitado'].map((item) => (
+                  <CustomRadioButton
+                    key={item}
+                    label={item.charAt(0).toUpperCase() + item.slice(1)}
+                    selected={humor === item}
+                    onSelect={() => setHumor(item)}
+                    size="md"
+                    style={styles.chipButton}
+                  />
+                ))}
+              </View>
+            </View>
+          </SectionCard>
+
+          <SectionCard
+            title="Cuidados basicos"
+            subtitle="Preencha alimentacao, soneca e troca de fralda."
+            titleColor={theme.colors.text}
+            subtitleColor={subtitleColor}
+          >
+            <View
+              style={isAusente && styles.disabledSection}
+              pointerEvents={isAusente ? 'none' : 'auto'}
+            >
+              <View style={styles.fieldGroup}>
+                <Text style={styles.fieldLabel}>Alimentacao</Text>
+                <View style={styles.stack}>
+                  {[
+                    { label: 'Comeu bem', value: 'bem' },
+                    { label: 'Comeu pouco', value: 'pouco' },
+                    { label: 'Nao comeu', value: 'nao' },
+                  ].map((item) => (
+                    <CustomRadioButton
+                      key={item.value}
+                      label={item.label}
+                      selected={alimentacao === item.value}
+                      onSelect={() => setAlimentacao(item.value)}
+                    />
+                  ))}
+                </View>
+              </View>
+
+              <View style={styles.twoColumnRow}>
+                <View style={styles.column}>
+                  <Text style={styles.fieldLabel}>Soneca</Text>
+                  <View style={styles.inputGroup}>
+                    <TextInput
+                      placeholder="Inicio"
+                      placeholderTextColor={styles.placeholder.color}
+                      style={styles.input}
+                      value={inicioSoneca}
+                      onChangeText={setInicioSoneca}
+                      editable={!isAusente}
+                    />
+                    <TextInput
+                      placeholder="Fim"
+                      placeholderTextColor={styles.placeholder.color}
+                      style={styles.input}
+                      value={fimSoneca}
+                      onChangeText={setFimSoneca}
+                      editable={!isAusente}
+                    />
+                  </View>
+                </View>
+
+                <View style={styles.column}>
+                  <Text style={styles.fieldLabel}>Fralda</Text>
+                  <View style={styles.rowBetween}>
+                    <CustomRadioButton
+                      label="Trocou"
+                      selected={fraldaTrocada === 'sim'}
+                      onSelect={() => {
+                        setFraldaTrocada('sim');
+                        if (quantidadeFraldas === '0') setQuantidadeFraldas('1');
+                      }}
+                      color={theme.colors.primary}
+                      style={styles.flexButton}
+                    />
+                    <CustomRadioButton
+                      label="Nao trocou"
+                      selected={fraldaTrocada === 'nao'}
+                      onSelect={() => {
+                        setFraldaTrocada('nao');
+                        setQuantidadeFraldas('0');
+                      }}
+                      color={theme.colors.error}
+                      style={styles.flexButton}
+                    />
+                  </View>
+
+                  <TextInput
+                    placeholder="Quantas vezes?"
+                    placeholderTextColor={styles.placeholder.color}
+                    style={[styles.input, fraldaTrocada === 'nao' && styles.inputDisabled]}
+                    value={quantidadeFraldas}
+                    onChangeText={setQuantidadeFraldas}
+                    editable={!isAusente && fraldaTrocada === 'sim'}
+                    keyboardType="number-pad"
+                  />
+                </View>
+              </View>
+            </View>
+          </SectionCard>
+
+          <SectionCard
+            title="Atividades"
+            subtitle="Selecione tudo o que a crianca participou hoje."
+            titleColor={theme.colors.text}
+            subtitleColor={subtitleColor}
+          >
+            <View
+              style={isAusente && styles.disabledSection}
+              pointerEvents={isAusente ? 'none' : 'auto'}
+            >
+              <MultiSelectTabs
+                options={[
+                  { label: 'Pintura', value: 'pintura' },
+                  { label: 'Musicalizacao', value: 'musica' },
+                  { label: 'Parque', value: 'parque' },
+                  { label: 'Leitura', value: 'leitura' },
+                  { label: 'Psicomotora', value: 'psicomotora' },
+                ]}
+                onChange={setAtividades}
+              />
+            </View>
+          </SectionCard>
+
+          <SectionCard
+            title="Observacoes finais"
+            subtitle="Anote recados e detalhes importantes para a familia."
+            titleColor={theme.colors.text}
+            subtitleColor={subtitleColor}
+          >
             <TextInput
-              placeholder="Escreva aqui..."
-              placeholderTextColor={theme.colors.text}
+              placeholder="Escreva como foi o dia da crianca, recados e detalhes importantes..."
+              placeholderTextColor={styles.placeholder.color}
               multiline
               value={observacoes}
               onChangeText={setObservacoes}
-              style={styles.textArea}
+              style={[styles.textArea, isAusente && styles.disabledSection]}
+              editable={!isAusente}
             />
-          </View>
+          </SectionCard>
 
-          <TouchableOpacity style={styles.button} activeOpacity={0.8}>
-            <Text style={styles.buttonText}>Registrar</Text>
+          {isAusente ? (
+            <View style={styles.absentNotice}>
+              <Ionicons name="information-circle-outline" size={18} color={theme.colors.text} />
+              <Text style={styles.absentNoticeText}>
+                Como a crianca esta ausente, os demais campos ficam bloqueados e serao enviados como
+                `null`.
+              </Text>
+            </View>
+          ) : null}
+
+          <TouchableOpacity style={styles.button} activeOpacity={0.85} onPress={handleSave}>
+            <Text style={styles.buttonText}>Salvar relatorio diario</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -154,82 +323,158 @@ export default function Register() {
   );
 }
 
-const createStyles = (theme: any) =>
+const sharedStyles = StyleSheet.create({
+  sectionCard: {
+    gap: 16,
+  },
+  sectionHeader: {
+    gap: 4,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  sectionSubtitle: {
+    fontSize: 13,
+    lineHeight: 18,
+  },
+});
+
+const createStyles = (theme: any, isDark: boolean) =>
   StyleSheet.create({
-    container: {
+    screen: {
       flex: 1,
-      backgroundColor: theme.colors.primary,
+      backgroundColor: isDark ? '#110E1B' : '#6C4ED9',
+    },
+
+    scrollContent: {
+      paddingBottom: 40,
+    },
+
+    hero: {
+      position: 'relative',
+      paddingHorizontal: 16,
+      paddingTop: 10,
+      paddingBottom: 90,
+      overflow: 'hidden',
+    },
+
+    heroGlowLarge: {
+      position: 'absolute',
+      width: 220,
+      height: 220,
+      borderRadius: 110,
+      backgroundColor: 'rgba(255,255,255,0.10)',
+      top: -70,
+      right: -40,
+    },
+
+    heroGlowSmall: {
+      position: 'absolute',
+      width: 120,
+      height: 120,
+      borderRadius: 60,
+      backgroundColor: 'rgba(255,255,255,0.08)',
+      bottom: 18,
+      left: -28,
     },
 
     backButton: {
-      marginTop: 10,
-      marginLeft: 12,
-      width: 40,
-      height: 40,
-      borderRadius: 20,
+      width: 42,
+      height: 42,
+      borderRadius: 21,
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: theme.colors.background,
-
-      elevation: 3,
+      backgroundColor: 'rgba(255,255,255,0.18)',
+      borderWidth: 1,
+      borderColor: 'rgba(255,255,255,0.22)',
+      marginBottom: 18,
     },
 
-    header: {
+    childSummary: {
       flexDirection: 'row',
+      gap: 14,
       alignItems: 'center',
-      gap: 12,
-      paddingHorizontal: 16,
-      paddingBottom: 8,
-      marginTop: 15,
-      marginBottom: 10,
     },
 
     avatar: {
-      width: 50,
-      height: 50,
+      width: 64,
+      height: 64,
+      borderRadius: 22,
+      backgroundColor: 'rgba(255,255,255,0.18)',
+      borderWidth: 2,
+      borderColor: 'rgba(255,255,255,0.22)',
     },
 
     headerText: {
-      gap: 2,
+      flex: 1,
+      gap: 4,
     },
 
     name: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      color: theme.colors.text,
+      fontSize: 24,
+      fontWeight: '700',
+      color: '#fff',
     },
 
     subtitle: {
-      fontSize: 14,
-      color: theme.colors.text,
+      fontSize: 13,
+      color: 'rgba(255,255,255,0.76)',
     },
 
-    content: {
+    infoPill: {
       marginTop: 8,
-      padding: 16,
+      alignSelf: 'flex-start',
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 999,
+      backgroundColor: 'rgba(255,255,255,0.16)',
+      borderWidth: 1,
+      borderColor: 'rgba(255,255,255,0.20)',
+    },
+
+    infoPillText: {
+      color: '#fff',
+      fontSize: 12,
+      fontWeight: '600',
+    },
+
+    formCard: {
+      marginTop: -40,
+      marginHorizontal: 12,
+      padding: 18,
+      borderRadius: 28,
       backgroundColor: theme.colors.background,
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.14,
+      shadowRadius: 20,
+      elevation: 8,
       gap: 18,
     },
 
-    section: {
-      gap: 8,
+    fieldGroup: {
+      gap: 10,
     },
 
-    sectionTitle: {
-      fontSize: 16,
-      fontWeight: 'bold',
+    fieldLabel: {
+      fontSize: 14,
+      fontWeight: '700',
       color: theme.colors.text,
-    },
-
-    row: {
-      flexDirection: 'row',
-      gap: 16,
     },
 
     rowBetween: {
       flexDirection: 'row',
+      gap: 10,
+    },
+
+    twoColumnRow: {
+      flexDirection: 'row',
+      gap: 14,
+    },
+
+    column: {
+      flex: 1,
       gap: 10,
     },
 
@@ -239,9 +484,16 @@ const createStyles = (theme: any) =>
       gap: 8,
     },
 
-    flex: {
+    stack: {
+      gap: 2,
+    },
+
+    flexButton: {
       flex: 1,
-      gap: 8,
+    },
+
+    chipButton: {
+      marginBottom: 0,
     },
 
     inputGroup: {
@@ -250,34 +502,71 @@ const createStyles = (theme: any) =>
 
     input: {
       borderWidth: 1,
-      borderColor: theme.colors.surface,
-      borderRadius: 8,
-      padding: 10,
+      borderColor: isDark ? '#2C2440' : '#E7DDF7',
+      backgroundColor: isDark ? '#191327' : '#FBF8FF',
+      borderRadius: 14,
+      paddingHorizontal: 14,
+      paddingVertical: 12,
       color: theme.colors.text,
+      fontSize: 14,
+    },
+
+    inputDisabled: {
+      opacity: 0.5,
+    },
+
+    disabledSection: {
+      opacity: 0.45,
     },
 
     textArea: {
       borderWidth: 1,
-      borderColor: theme.colors.surface,
-      borderRadius: 8,
-      padding: 10,
-      minHeight: 90,
+      borderColor: isDark ? '#2C2440' : '#E7DDF7',
+      backgroundColor: isDark ? '#191327' : '#FBF8FF',
+      borderRadius: 16,
+      paddingHorizontal: 14,
+      paddingVertical: 14,
+      minHeight: 130,
       textAlignVertical: 'top',
       color: theme.colors.text,
+      fontSize: 14,
+      lineHeight: 20,
     },
 
     button: {
       backgroundColor: theme.colors.primary,
-      padding: 16,
-      borderRadius: 12,
+      paddingVertical: 16,
+      borderRadius: 16,
       alignItems: 'center',
-      marginTop: 10,
-      marginBottom: 20,
+      marginTop: 6,
     },
 
     buttonText: {
       color: '#fff',
-      fontWeight: 'bold',
+      fontWeight: '700',
       fontSize: 16,
+    },
+
+    absentNotice: {
+      flexDirection: 'row',
+      gap: 8,
+      alignItems: 'flex-start',
+      borderRadius: 16,
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+      backgroundColor: isDark ? '#1B162A' : '#F4EEFF',
+      borderWidth: 1,
+      borderColor: isDark ? '#2C2440' : '#E7DDF7',
+    },
+
+    absentNoticeText: {
+      flex: 1,
+      color: theme.colors.text,
+      fontSize: 13,
+      lineHeight: 18,
+    },
+
+    placeholder: {
+      color: isDark ? '#8E8AA5' : '#94A3B8',
     },
   });
