@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Register() {
   const { theme } = useThemeContext();
@@ -26,124 +27,130 @@ export default function Register() {
   const [observacoes, setObservacoes] = useState('');
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <TouchableOpacity style={styles.backButton} onPress={() => router.back()} activeOpacity={0.7}>
-        <Ionicons name="arrow-back" size={22} color={theme.colors.text} />
-      </TouchableOpacity>
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="arrow-back" size={22} color={theme.colors.text} />
+        </TouchableOpacity>
 
-      <View style={styles.header}>
-        <Image
-          source={require('@/assets/icon/profile.png')}
-          style={styles.avatar}
-          resizeMode="contain"
-        />
-        <View style={styles.headerText}>
-          <Text style={styles.name}>Maria Clara</Text>
-          <Text style={styles.subtitle}>Maternal I - Segunda, 14 de Agosto</Text>
-        </View>
-      </View>
-
-      <View style={styles.content}>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Presença</Text>
-          <View style={styles.rowBetween}>
-            <CustomRadioButton
-              label="Presente"
-              selected={presenca === 'presente'}
-              onSelect={() => setPresenca('presente')}
-              color={theme.colors.success}
-              style={styles.flex}
-            />
-            <CustomRadioButton
-              label="Ausente"
-              selected={presenca === 'ausente'}
-              onSelect={() => setPresenca('ausente')}
-              color={theme.colors.error}
-              style={styles.flex}
-            />
+        <View style={styles.header}>
+          <Image
+            source={require('@/assets/icon/profile.png')}
+            style={styles.avatar}
+            resizeMode="contain"
+          />
+          <View style={styles.headerText}>
+            <Text style={styles.name}>Maria Clara</Text>
+            <Text style={styles.subtitle}>Maternal I - Segunda, 14 de Agosto</Text>
           </View>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Humor do dia</Text>
-          <View style={styles.wrapRow}>
-            {['animado', 'neutro', 'triste', 'agitado'].map((item) => (
+        <View style={styles.content}>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Presença</Text>
+            <View style={styles.rowBetween}>
               <CustomRadioButton
-                key={item}
-                label={item.charAt(0).toUpperCase() + item.slice(1)}
-                selected={humor === item}
-                onSelect={() => setHumor(item)}
-                size="lg"
+                label="Presente"
+                selected={presenca === 'presente'}
+                onSelect={() => setPresenca('presente')}
+                color={theme.colors.success}
+                style={styles.flex}
               />
-            ))}
-          </View>
-        </View>
-
-        <View style={styles.row}>
-          <View style={styles.flex}>
-            <Text style={styles.sectionTitle}>Alimentação</Text>
-            {[
-              { label: 'Comeu bem', value: 'bem' },
-              { label: 'Comeu pouco', value: 'pouco' },
-              { label: 'Não comeu', value: 'nao' },
-            ].map((item) => (
               <CustomRadioButton
-                key={item.value}
-                label={item.label}
-                selected={alimentacao === item.value}
-                onSelect={() => setAlimentacao(item.value)}
-              />
-            ))}
-          </View>
-
-          <View style={styles.flex}>
-            <Text style={styles.sectionTitle}>Soneca</Text>
-            <View style={styles.inputGroup}>
-              <TextInput
-                placeholder="Início"
-                placeholderTextColor={theme.colors.text}
-                style={styles.input}
-              />
-              <TextInput
-                placeholder="Fim"
-                placeholderTextColor={theme.colors.text}
-                style={styles.input}
+                label="Ausente"
+                selected={presenca === 'ausente'}
+                onSelect={() => setPresenca('ausente')}
+                color={theme.colors.error}
+                style={styles.flex}
               />
             </View>
           </View>
-        </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Atividades do dia</Text>
-          <MultiSelectTabs
-            options={[
-              { label: 'Pintura', value: 'pintura' },
-              { label: 'Musicalização', value: 'musica' },
-              { label: 'Parque', value: 'parque' },
-              { label: 'Leitura', value: 'leitura' },
-              { label: 'Psicomotora', value: 'psicomotora' },
-            ]}
-            onChange={setAtividades}
-          />
-        </View>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Humor do dia</Text>
+            <View style={styles.wrapRow}>
+              {['animado', 'neutro', 'triste', 'agitado'].map((item) => (
+                <CustomRadioButton
+                  key={item}
+                  label={item.charAt(0).toUpperCase() + item.slice(1)}
+                  selected={humor === item}
+                  onSelect={() => setHumor(item)}
+                  size="lg"
+                />
+              ))}
+            </View>
+          </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Observações</Text>
-          <TextInput
-            placeholder="Escreva aqui..."
-            placeholderTextColor={theme.colors.text}
-            multiline
-            value={observacoes}
-            onChangeText={setObservacoes}
-            style={styles.textArea}
-          />
-        </View>
+          <View style={styles.row}>
+            <View style={styles.flex}>
+              <Text style={styles.sectionTitle}>Alimentação</Text>
+              {[
+                { label: 'Comeu bem', value: 'bem' },
+                { label: 'Comeu pouco', value: 'pouco' },
+                { label: 'Não comeu', value: 'nao' },
+              ].map((item) => (
+                <CustomRadioButton
+                  key={item.value}
+                  label={item.label}
+                  selected={alimentacao === item.value}
+                  onSelect={() => setAlimentacao(item.value)}
+                />
+              ))}
+            </View>
 
-        <TouchableOpacity style={styles.button} activeOpacity={0.8}>
-          <Text style={styles.buttonText}>Registrar</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+            <View style={styles.flex}>
+              <Text style={styles.sectionTitle}>Soneca</Text>
+              <View style={styles.inputGroup}>
+                <TextInput
+                  placeholder="Início"
+                  placeholderTextColor={theme.colors.text}
+                  style={styles.input}
+                />
+                <TextInput
+                  placeholder="Fim"
+                  placeholderTextColor={theme.colors.text}
+                  style={styles.input}
+                />
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Atividades do dia</Text>
+            <MultiSelectTabs
+              options={[
+                { label: 'Pintura', value: 'pintura' },
+                { label: 'Musicalização', value: 'musica' },
+                { label: 'Parque', value: 'parque' },
+                { label: 'Leitura', value: 'leitura' },
+                { label: 'Psicomotora', value: 'psicomotora' },
+              ]}
+              onChange={setAtividades}
+            />
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Observações</Text>
+            <TextInput
+              placeholder="Escreva aqui..."
+              placeholderTextColor={theme.colors.text}
+              multiline
+              value={observacoes}
+              onChangeText={setObservacoes}
+              style={styles.textArea}
+            />
+          </View>
+
+          <TouchableOpacity style={styles.button} activeOpacity={0.8}>
+            <Text style={styles.buttonText}>Registrar</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

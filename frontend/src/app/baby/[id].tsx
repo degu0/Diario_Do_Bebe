@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 function AccordionSection({
   icon,
@@ -74,102 +75,104 @@ export default function BabyProfile() {
   const medications = ['Dipirona', 'Amoxicilina', 'Loratadina'];
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={{ padding: 16 }}>
-        <View style={styles.containerPage}>
-          <TouchableOpacity onPress={() => router.back()}>
-            <Ionicons name="arrow-back" size={22} color={theme.colors.text} />
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <ScrollView style={styles.container}>
+        <View style={{ padding: 16 }}>
+          <View style={styles.containerPage}>
+            <TouchableOpacity onPress={() => router.back()}>
+              <Ionicons name="arrow-back" size={22} color={theme.colors.text} />
+            </TouchableOpacity>
+
+            <Text style={styles.pageTitle}>Perfil da criança</Text>
+          </View>
+
+          <View style={styles.babyInformation}>
+            <Image source={require('@/assets/icon/profile.png')} style={styles.babyAvatar} />
+
+            <View style={styles.babyTexts}>
+              <Text style={styles.babyName}>Maria Clara</Text>
+              <Text style={styles.babyBirthday}>Aniversário: 01/01/2025</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.content}>
+          <TouchableOpacity
+            onPress={() => router.push(`/register/${id}`)}
+            style={{
+              backgroundColor: theme.colors.primary,
+              padding: 8,
+              borderRadius: 12,
+              alignSelf: 'flex-start',
+              marginBottom: 16,
+              width: '100%',
+            }}
+          >
+            <Text style={{ color: '#fff', fontWeight: 'bold', textAlign: 'center' }}>Cadastro</Text>
           </TouchableOpacity>
 
-          <Text style={styles.pageTitle}>Perfil da criança</Text>
-        </View>
+          <Text style={styles.sectionTitle}>Responsáveis</Text>
 
-        <View style={styles.babyInformation}>
-          <Image source={require('@/assets/icon/profile.png')} style={styles.babyAvatar} />
-
-          <View style={styles.babyTexts}>
-            <Text style={styles.babyName}>Maria Clara</Text>
-            <Text style={styles.babyBirthday}>Aniversário: 01/01/2025</Text>
-          </View>
-        </View>
-      </View>
-
-      <View style={styles.content}>
-        <TouchableOpacity
-          onPress={() => router.push(`/register/${id}`)}
-          style={{
-            backgroundColor: theme.colors.primary,
-            padding: 8,
-            borderRadius: 12,
-            alignSelf: 'flex-start',
-            marginBottom: 16,
-            width: '100%',
-          }}
-        >
-          <Text style={{ color: '#fff', fontWeight: 'bold', textAlign: 'center' }}>Cadastro</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.sectionTitle}>Responsáveis</Text>
-
-        <View style={styles.containerCardResponsible}>
-          <View style={[styles.card, { backgroundColor: theme.colors.secondary }]}>
-            <View style={styles.cardInformation}>
-              <Image
-                source={require('@/assets/icon/profile.png')}
-                style={styles.responsibleAvatar}
-              />
-              <View style={styles.information}>
-                <Text style={styles.responsibleName}>Heloisa Santos</Text>
-                <Text style={styles.responsibleRole}>Mãe</Text>
+          <View style={styles.containerCardResponsible}>
+            <View style={[styles.card, { backgroundColor: theme.colors.secondary }]}>
+              <View style={styles.cardInformation}>
+                <Image
+                  source={require('@/assets/icon/profile.png')}
+                  style={styles.responsibleAvatar}
+                />
+                <View style={styles.information}>
+                  <Text style={styles.responsibleName}>Heloisa Santos</Text>
+                  <Text style={styles.responsibleRole}>Mãe</Text>
+                </View>
               </View>
+              <Text style={styles.responsiblePhone}>(81) 99111-1111</Text>
             </View>
-            <Text style={styles.responsiblePhone}>(81) 99111-1111</Text>
-          </View>
 
-          <View style={[styles.card, { backgroundColor: colors.info }]}>
-            <View style={styles.cardInformation}>
-              <Image
-                source={require('@/assets/icon/profile.png')}
-                style={styles.responsibleAvatar}
-              />
-              <View style={styles.information}>
-                <Text style={styles.responsibleName}>João Santos</Text>
-                <Text style={styles.responsibleRole}>Pai</Text>
+            <View style={[styles.card, { backgroundColor: colors.info }]}>
+              <View style={styles.cardInformation}>
+                <Image
+                  source={require('@/assets/icon/profile.png')}
+                  style={styles.responsibleAvatar}
+                />
+                <View style={styles.information}>
+                  <Text style={styles.responsibleName}>João Santos</Text>
+                  <Text style={styles.responsibleRole}>Pai</Text>
+                </View>
               </View>
+              <Text style={styles.responsiblePhone}>(81) 99222-2222</Text>
             </View>
-            <Text style={styles.responsiblePhone}>(81) 99222-2222</Text>
           </View>
+
+          <Text style={styles.sectionTitle}>Contato de emergência</Text>
+
+          <View style={styles.contactList}>
+            {contacts.map((item) => (
+              <View key={item.id} style={styles.contactRow}>
+                <Text style={styles.contactName}>{item.name}</Text>
+                <Text style={styles.contactNumber}>{item.number}</Text>
+              </View>
+            ))}
+          </View>
+
+          <Text style={styles.sectionTitle}>Pessoas autorizadas para buscar</Text>
+
+          <View style={styles.authorizedRow}>
+            {authorized.map((item, index) => (
+              <View key={index} style={styles.authorizedCard}>
+                <Text style={styles.authorizedName}>{item.name}</Text>
+                <Text style={styles.authorizedRole}>{item.role}</Text>
+              </View>
+            ))}
+          </View>
+
+          <Text style={styles.sectionTitle}>Saúde</Text>
+
+          <AccordionSection icon="🔥" title="Alergias" items={allergies} itemIcon="⚠️" />
+
+          <AccordionSection icon="💊" title="Medicações" items={medications} itemIcon="🩺" />
         </View>
-
-        <Text style={styles.sectionTitle}>Contato de emergência</Text>
-
-        <View style={styles.contactList}>
-          {contacts.map((item) => (
-            <View key={item.id} style={styles.contactRow}>
-              <Text style={styles.contactName}>{item.name}</Text>
-              <Text style={styles.contactNumber}>{item.number}</Text>
-            </View>
-          ))}
-        </View>
-
-        <Text style={styles.sectionTitle}>Pessoas autorizadas para buscar</Text>
-
-        <View style={styles.authorizedRow}>
-          {authorized.map((item, index) => (
-            <View key={index} style={styles.authorizedCard}>
-              <Text style={styles.authorizedName}>{item.name}</Text>
-              <Text style={styles.authorizedRole}>{item.role}</Text>
-            </View>
-          ))}
-        </View>
-
-        <Text style={styles.sectionTitle}>Saúde</Text>
-
-        <AccordionSection icon="🔥" title="Alergias" items={allergies} itemIcon="⚠️" />
-
-        <AccordionSection icon="💊" title="Medicações" items={medications} itemIcon="🩺" />
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

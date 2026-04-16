@@ -1,5 +1,6 @@
 import { useThemeContext } from '@/context/ThemeContext';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const profileIcon = require('@/assets/icon/profile.png');
 
@@ -16,7 +17,7 @@ export default function Home() {
   const selectedKid = kids[0];
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.apresentation}>
         <Text style={styles.title}>Olá, {name}</Text>
         <Text style={styles.subtitle}>Sexta-feira, 13 de março</Text>
@@ -72,7 +73,7 @@ export default function Home() {
           </View>
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -85,7 +86,6 @@ const createStyles = (theme: any) =>
 
     apresentation: {
       padding: 20,
-      paddingTop: 52,
       paddingBottom: 28,
       gap: 6,
     },

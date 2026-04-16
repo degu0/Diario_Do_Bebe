@@ -9,6 +9,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Profile() {
   const { theme } = useThemeContext();
@@ -19,91 +20,93 @@ export default function Profile() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={[styles.container, { backgroundColor: c.background }]}
     >
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-        <View style={[styles.header, { backgroundColor: c.surface }]}>
-          <View style={styles.avatarWrapper}>
-            <Image
-              source={require('../../../assets/icon/profile.png')}
-              style={[styles.avatar, { borderColor: c.surface, backgroundColor: c.primary }]}
-            />
-            <View style={styles.avatarBadge} />
-          </View>
-          <View style={styles.headerInfo}>
-            <Text style={[styles.profileName, { color: c.text }]}>Rafaela Bezerra</Text>
-            <View
-              style={[
-                styles.phonePill,
-                { backgroundColor: c.background, borderColor: c.background },
-              ]}
-            >
-              <Text style={styles.phoneIcon}>📞</Text>
-              <Text style={[styles.phoneText, { color: c.text }]}>(81) 99111-1111</Text>
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+          <View style={[styles.header, { backgroundColor: c.surface }]}>
+            <View style={styles.avatarWrapper}>
+              <Image
+                source={require('../../../assets/icon/profile.png')}
+                style={[styles.avatar, { borderColor: c.surface, backgroundColor: c.primary }]}
+              />
+              <View style={styles.avatarBadge} />
             </View>
-          </View>
-        </View>
-
-        <View style={styles.content}>
-          <View style={styles.cardRow}>
-            <View style={[styles.cardSmall, { marginRight: 6, backgroundColor: c.surface }]}>
-              <Text style={[styles.cardLabel, { color: c.secondary }]}>Endereço</Text>
-              <Text style={[styles.cardValue, { color: c.text }]}>Nº100, Rua aqui do lado</Text>
-              <Text style={[styles.cardValue, { color: c.text }]}>Indianopolis</Text>
-            </View>
-            <View style={[styles.cardSmall, { marginLeft: 6, backgroundColor: c.surface }]}>
-              <Text style={[styles.cardLabel, { color: c.secondary }]}>Local de Trabalho</Text>
-              <Text style={[styles.cardValue, { color: c.text }]}>Nº129, Avenida aqui perto</Text>
-              <Text style={[styles.cardValue, { color: c.text }]}>Nova Caruaru</Text>
-              <View style={[styles.hoursBadge, { backgroundColor: c.background }]}>
-                <Text style={[styles.hoursText, { color: c.primary }]}>8 às 18h</Text>
+            <View style={styles.headerInfo}>
+              <Text style={[styles.profileName, { color: c.text }]}>Rafaela Bezerra</Text>
+              <View
+                style={[
+                  styles.phonePill,
+                  { backgroundColor: c.background, borderColor: c.background },
+                ]}
+              >
+                <Text style={styles.phoneIcon}>📞</Text>
+                <Text style={[styles.phoneText, { color: c.text }]}>(81) 99111-1111</Text>
               </View>
             </View>
           </View>
 
-          <View style={[styles.card, {backgroundColor: c.surface}]}>
-            <View style={[styles.emailIconBox, {backgroundColor: c.tertiary}]}>
-              <Text style={styles.emailIconText}>✉️</Text>
-            </View>
-            <View>
-              <Text style={[styles.cardLabel, { color: c.secondary }]}>Email</Text>
-              <Text style={[styles.cardValue, { color: c.text }]}>contatomeu@gmail.com</Text>
-            </View>
-          </View>
-
-          <View style={[styles.cardSection, {backgroundColor: c.surface}]}>
-            <View style={styles.sectionHeader}>
-              <View style={[styles.sectionDot, {backgroundColor: c.primary}]} />
-              <Text style={[styles.sectionTitle, {color: c.text}]}>Informações</Text>
-              <View style={styles.sectionLine} />
-            </View>
-
-            <View style={styles.infoRow}>
-              <Text style={[styles.infoKey, {color: c.tertiary}]}>Nome</Text>
-              <Text style={[styles.infoVal, {color: c.text}]}>Rafaela Bezerra</Text>
-            </View>
-            <View style={styles.divider} />
-
-            <View style={styles.infoRow}>
-              <Text style={[styles.infoKey, {color: c.tertiary}]}>CPF</Text>
-              <Text style={[styles.infoVal, {color: c.text}]}>000.000.000-00</Text>
-            </View>
-            <View style={styles.divider} />
-
-            <View style={styles.infoRow}>
-              <Text style={[styles.infoKey, {color: c.tertiary}]}>RG</Text>
-              <Text style={[styles.infoVal, {color: c.text}]}>00.000.00</Text>
-            </View>
-            <View style={styles.divider} />
-
-            <View style={styles.infoRow}>
-              <Text style={[styles.infoKey, {color: c.tertiary}]}>Parentesco</Text>
-              <View style={[styles.parentescoBadge, { backgroundColor: c.primary}]}>
-                <Text style={[styles.parentescoText, {color: c.surface}]}>Mãe</Text>
+          <View style={styles.content}>
+            <View style={styles.cardRow}>
+              <View style={[styles.cardSmall, { marginRight: 6, backgroundColor: c.surface }]}>
+                <Text style={[styles.cardLabel, { color: c.secondary }]}>Endereço</Text>
+                <Text style={[styles.cardValue, { color: c.text }]}>Nº100, Rua aqui do lado</Text>
+                <Text style={[styles.cardValue, { color: c.text }]}>Indianopolis</Text>
+              </View>
+              <View style={[styles.cardSmall, { marginLeft: 6, backgroundColor: c.surface }]}>
+                <Text style={[styles.cardLabel, { color: c.secondary }]}>Local de Trabalho</Text>
+                <Text style={[styles.cardValue, { color: c.text }]}>Nº129, Avenida aqui perto</Text>
+                <Text style={[styles.cardValue, { color: c.text }]}>Nova Caruaru</Text>
+                <View style={[styles.hoursBadge, { backgroundColor: c.background }]}>
+                  <Text style={[styles.hoursText, { color: c.primary }]}>8 às 18h</Text>
+                </View>
               </View>
             </View>
+
+            <View style={[styles.card, { backgroundColor: c.surface }]}>
+              <View style={[styles.emailIconBox, { backgroundColor: c.tertiary }]}>
+                <Text style={styles.emailIconText}>✉️</Text>
+              </View>
+              <View>
+                <Text style={[styles.cardLabel, { color: c.secondary }]}>Email</Text>
+                <Text style={[styles.cardValue, { color: c.text }]}>contatomeu@gmail.com</Text>
+              </View>
+            </View>
+
+            <View style={[styles.cardSection, { backgroundColor: c.surface }]}>
+              <View style={styles.sectionHeader}>
+                <View style={[styles.sectionDot, { backgroundColor: c.primary }]} />
+                <Text style={[styles.sectionTitle, { color: c.text }]}>Informações</Text>
+                <View style={styles.sectionLine} />
+              </View>
+
+              <View style={styles.infoRow}>
+                <Text style={[styles.infoKey, { color: c.tertiary }]}>Nome</Text>
+                <Text style={[styles.infoVal, { color: c.text }]}>Rafaela Bezerra</Text>
+              </View>
+              <View style={styles.divider} />
+
+              <View style={styles.infoRow}>
+                <Text style={[styles.infoKey, { color: c.tertiary }]}>CPF</Text>
+                <Text style={[styles.infoVal, { color: c.text }]}>000.000.000-00</Text>
+              </View>
+              <View style={styles.divider} />
+
+              <View style={styles.infoRow}>
+                <Text style={[styles.infoKey, { color: c.tertiary }]}>RG</Text>
+                <Text style={[styles.infoVal, { color: c.text }]}>00.000.00</Text>
+              </View>
+              <View style={styles.divider} />
+
+              <View style={styles.infoRow}>
+                <Text style={[styles.infoKey, { color: c.tertiary }]}>Parentesco</Text>
+                <View style={[styles.parentescoBadge, { backgroundColor: c.primary }]}>
+                  <Text style={[styles.parentescoText, { color: c.surface }]}>Mãe</Text>
+                </View>
+              </View>
+            </View>
+            <CardSettings />
           </View>
-          <CardSettings />
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </SafeAreaView>
     </KeyboardAvoidingView>
   );
 }

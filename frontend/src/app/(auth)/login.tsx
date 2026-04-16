@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Login() {
   const [active, setActive] = useState(false);
@@ -24,6 +25,7 @@ export default function Login() {
   const { theme, isDark } = useThemeContext();
   const { login } = useAuth();
   const c = theme.colors;
+  const insets = useSafeAreaInsets();
 
   const bannerFlex = useRef(new Animated.Value(2.8)).current;
   const cardFlex = useRef(new Animated.Value(1.2)).current;
@@ -146,7 +148,7 @@ export default function Login() {
           colors={gradientColors}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={styles.banner}
+          style={[styles.banner, { paddingTop: insets.top }]}
         >
           {[dot1, dot2, dot3].map((dot, i) => (
             <Animated.View
@@ -188,6 +190,7 @@ export default function Login() {
           {
             flex: cardFlex,
             backgroundColor: c.surface,
+            paddingBottom: 28 + insets.bottom,
           },
         ]}
       >

@@ -2,6 +2,7 @@ import { useThemeContext } from '@/context/ThemeContext';
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const profileIcon = require('@/assets/icon/profile.png');
 
@@ -13,10 +14,10 @@ const kids = [
 ];
 
 export default function Home() {
-  const { theme } = useThemeContext();
+  const { theme, isDark } = useThemeContext();
   const router = useRouter();
 
-  const styles = useMemo(() => createStyles(theme), [theme]);
+  const styles = useMemo(() => createStyles(theme, isDark), [theme, isDark]);
 
   const name = 'Aline';
   const filledCount = 5;
@@ -29,7 +30,7 @@ export default function Home() {
       text: theme.colors.success,
     },
     Ausente: {
-      bg: theme.isDark ? '#442222' : '#FBE7E4',
+      bg: isDark ? '#442222' : '#FBE7E4',
       text: theme.colors.error,
     },
     Pendente: {
@@ -39,7 +40,7 @@ export default function Home() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.presentation}>
         <View style={styles.dateUser}>
           <Image source={profileIcon} style={styles.imageUser} />
@@ -97,7 +98,7 @@ export default function Home() {
               <TouchableOpacity
                 key={item.id}
                 style={styles.kidRow}
-                onPress={() => router.push(`/register/${id}`)}
+                onPress={() => router.push(`/register/${item.id}`)}
               >
                 <Image source={item.image} style={styles.kidAvatar} />
                 <Text style={styles.kidName}>{item.name}</Text>
@@ -114,20 +115,19 @@ export default function Home() {
           })}
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
-const createStyles = (theme: any) =>
+const createStyles = (theme: any, isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.isDark ? theme.colors.background : theme.colors.secondary,
+      backgroundColor: isDark ? theme.colors.background : theme.colors.secondary,
     },
 
     presentation: {
       padding: 20,
-      paddingTop: 48,
       paddingBottom: 32,
     },
 
@@ -166,7 +166,7 @@ const createStyles = (theme: any) =>
     },
 
     banner: {
-      backgroundColor: theme.isDark ? '#3d341a' : '#FFF9C4',
+      backgroundColor: isDark ? '#3d341a' : '#FFF9C4',
       borderWidth: 1,
       borderColor: '#FBC02D',
       borderRadius: 12,
@@ -179,7 +179,7 @@ const createStyles = (theme: any) =>
     bannerText: {
       fontSize: 13,
       fontWeight: '600',
-      color: theme.isDark ? '#FFF' : '#7F5F00',
+      color: isDark ? '#FFF' : '#7F5F00',
     },
 
     bigCard: {
@@ -225,7 +225,7 @@ const createStyles = (theme: any) =>
 
     progressBar: {
       height: 6,
-      backgroundColor: theme.isDark ? '#333' : theme.colors.tertiary,
+      backgroundColor: isDark ? '#333' : theme.colors.tertiary,
       borderRadius: 10,
     },
 
@@ -295,7 +295,7 @@ const createStyles = (theme: any) =>
       alignItems: 'center',
       paddingVertical: 12,
       borderBottomWidth: 1,
-      borderBottomColor: theme.isDark ? '#222' : theme.colors.background,
+      borderBottomColor: isDark ? '#222' : theme.colors.background,
       gap: 12,
     },
 

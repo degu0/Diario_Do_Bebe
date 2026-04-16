@@ -3,16 +3,17 @@ import { useRoute } from '@react-navigation/native';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import {
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const profileIcon = require('@/assets/icon/profile.png');
 
@@ -39,35 +40,37 @@ export default function Claass() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.inputSearch}
-          placeholder="Pesquisa..."
-          placeholderTextColor={theme.colors.text}
-          value={search}
-          onChangeText={handleSearch}
-          returnKeyType="search"
-        />
-        <TouchableOpacity style={styles.buttonSearch}>
-          <Image source={require('@/assets/icon/search.png')} style={styles.searchIcon} />
-        </TouchableOpacity>
-      </View>
-
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {filteredKids.map((item) => (
-          <TouchableOpacity
-            key={item.id}
-            style={styles.card}
-            onPress={() => router.navigate(`/baby/${item.id}`)}
-          >
-            <Image source={item.image} style={styles.imageKid} />
-            <View style={styles.informationContainer}>
-              <Text style={styles.kidName}>{item.name}</Text>
-              <Text style={styles.kidClass}>{item.class}</Text>
-            </View>
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.inputSearch}
+            placeholder="Pesquisa..."
+            placeholderTextColor={theme.colors.text}
+            value={search}
+            onChangeText={handleSearch}
+            returnKeyType="search"
+          />
+          <TouchableOpacity style={styles.buttonSearch}>
+            <Image source={require('@/assets/icon/search.png')} style={styles.searchIcon} />
           </TouchableOpacity>
-        ))}
-      </ScrollView>
+        </View>
+
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          {filteredKids.map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              style={styles.card}
+              onPress={() => router.navigate(`/baby/${item.id}`)}
+            >
+              <Image source={item.image} style={styles.imageKid} />
+              <View style={styles.informationContainer}>
+                <Text style={styles.kidName}>{item.name}</Text>
+                <Text style={styles.kidClass}>{item.class}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </SafeAreaView>
     </KeyboardAvoidingView>
   );
 }
