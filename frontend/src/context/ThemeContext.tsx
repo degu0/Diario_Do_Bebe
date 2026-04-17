@@ -1,7 +1,10 @@
 import { CustomDarkTheme, CustomLightTheme } from '@/constants/Colors';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 import { useColorScheme } from 'react-native';
 import { PaperProvider } from 'react-native-paper';
+
+type ThemePreference = 'dark' | 'light' | null;
 
 type ThemeContextData = {
   isDark: boolean;
@@ -10,6 +13,7 @@ type ThemeContextData = {
 };
 
 const ThemeContext = createContext<ThemeContextData | undefined>(undefined);
+const THEME_PREFERENCE_KEY = '@diario_bebe:theme_preference';
 
 export const useThemeContext = () => {
   const context = useContext(ThemeContext);
@@ -19,19 +23,57 @@ export const useThemeContext = () => {
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const deviceScheme = useColorScheme();
-  const [isDark, setIsDark] = useState(false);
+  const [themePreference, setThemePreference] = useState<ThemePreference>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    setIsDark(deviceScheme === 'dark');
-  }, [deviceScheme]);
+    let isMounted = true;
 
-  const toggleTheme = () => setIsDark((prev) => !prev);
+    const loadThemePreference = async () => {
+      try {
+        const storedPreference = await AsyncStorage.getItem(THEME_PREFERENCE_KEY);
+
+        if (!isMounted) return;
+
+        if (storedPreference === 'dark' || storedPreference === 'light') {
+          setThemePreference(storedPreference);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoaded(true);
+        }
+      }
+    };
+
+    loadThemePreference();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const isDark = themePreference ? themePreference === 'dark' : deviceScheme === 'dark';
+
+  const toggleTheme = async () => {
+    const nextPreference: ThemePreference = isDark ? 'light' : 'dark';
+
+    setThemePreference(nextPreference);
+
+    try {
+      await AsyncStorage.setItem(THEME_PREFERENCE_KEY, nextPreference);
+    } catch {
+      // If persistence fails, we still keep the in-memory theme change.
+    }
+  };
 
   const theme = useMemo(() => (isDark ? CustomDarkTheme : CustomLightTheme), [isDark]);
+  const fallbackIsDark = deviceScheme === 'dark';
+  const resolvedIsDark = isLoaded ? isDark : fallbackIsDark;
+  const resolvedTheme = resolvedIsDark ? CustomDarkTheme : CustomLightTheme;
 
   return (
-    <ThemeContext.Provider value={{ isDark, toggleTheme, theme }}>
-      <PaperProvider theme={theme}>{children}</PaperProvider>
+    <ThemeContext.Provider value={{ isDark: resolvedIsDark, toggleTheme, theme: resolvedTheme }}>
+      <PaperProvider theme={resolvedTheme}>{children}</PaperProvider>
     </ThemeContext.Provider>
   );
 };
