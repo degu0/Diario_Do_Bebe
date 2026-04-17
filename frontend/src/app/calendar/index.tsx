@@ -43,7 +43,11 @@ export default function CalendarScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
+      >
         <Calendar
           style={styles.calendar}
           renderArrow={(direction: 'right' | 'left') => (
@@ -141,6 +145,9 @@ const createStyles = (theme: any, isDark: boolean) =>
       flex: 1,
       backgroundColor: theme.colors.background,
       padding: 16,
+    },
+    contentContainer: {
+      paddingBottom: 160,
     },
     calendar: {
       borderRadius: 18,

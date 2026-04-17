@@ -144,7 +144,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
 
     scrollContent: {
-      paddingBottom: 40,
+      paddingBottom: 160,
     },
 
     hero: {
