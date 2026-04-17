@@ -1,11 +1,8 @@
 import { useThemeContext } from '@/context/ThemeContext';
-import { useRoute } from '@react-navigation/native';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Image,
-  KeyboardAvoidingView,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -23,11 +20,10 @@ const kids = [
 ];
 
 export default function Claass() {
-  const { theme } = useThemeContext();
-  const styles = createStyles(theme);
+  const { theme, isDark } = useThemeContext();
+  const styles = useMemo(() => createStyles(theme, isDark), [theme, isDark]);
   const [search, setSearch] = useState('');
   const [filteredKids, setFilteredKids] = useState(kids);
-  const route = useRoute();
 
   const handleSearch = (text: string) => {
     setSearch(text);
@@ -36,60 +32,125 @@ export default function Claass() {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
-    >
-      <SafeAreaView style={styles.container} edges={['top']}>
-        <View style={styles.searchContainer}>
-          <TextInput
-            style={styles.inputSearch}
-            placeholder="Pesquisa..."
-            placeholderTextColor={theme.colors.text}
-            value={search}
-            onChangeText={handleSearch}
-            returnKeyType="search"
-          />
-          <TouchableOpacity style={styles.buttonSearch}>
-            <Image source={require('@/assets/icon/search.png')} style={styles.searchIcon} />
-          </TouchableOpacity>
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.hero}>
+          <View style={styles.heroGlowLarge} />
+          <View style={styles.heroGlowSmall} />
+
+          <Text style={styles.title}>Turma</Text>
+          <Text style={styles.subtitle}>Pesquise e acesse o perfil de cada crianca.</Text>
         </View>
 
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          {filteredKids.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={styles.card}
-              onPress={() => router.navigate(`/baby/${item.id}`)}
-            >
-              <Image source={item.image} style={styles.imageKid} />
-              <View style={styles.informationContainer}>
-                <Text style={styles.kidName}>{item.name}</Text>
-                <Text style={styles.kidClass}>{item.class}</Text>
-              </View>
+        <View style={styles.contentCard}>
+          <View style={styles.searchContainer}>
+            <TextInput
+              style={styles.inputSearch}
+              placeholder="Pesquisar crianca..."
+              placeholderTextColor={styles.placeholder.color}
+              value={search}
+              onChangeText={handleSearch}
+              returnKeyType="search"
+            />
+            <TouchableOpacity style={styles.buttonSearch}>
+              <Image source={require('@/assets/icon/search.png')} style={styles.searchIcon} />
             </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </SafeAreaView>
-    </KeyboardAvoidingView>
+          </View>
+
+          <View style={styles.listCard}>
+            {filteredKids.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                style={styles.card}
+                onPress={() => router.navigate(`/baby/${item.id}`)}
+              >
+                <Image source={item.image} style={styles.imageKid} />
+                <View style={styles.informationContainer}>
+                  <Text style={styles.kidName}>{item.name}</Text>
+                  <Text style={styles.kidClass}>Turma {item.class}</Text>
+                </View>
+                <Text style={styles.chevron}>›</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
-const createStyles = (theme: any) =>
+const createStyles = (theme: any, isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.background,
+      backgroundColor: isDark ? '#120F1F' : '#6C4ED9',
+    },
+    scroll: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingBottom: 160,
+    },
+    hero: {
+      position: 'relative',
+      paddingHorizontal: 20,
+      paddingTop: 18,
+      paddingBottom: 88,
+      overflow: 'hidden',
+    },
+    heroGlowLarge: {
+      position: 'absolute',
+      width: 240,
+      height: 240,
+      borderRadius: 120,
+      backgroundColor: 'rgba(255,255,255,0.10)',
+      top: -90,
+      right: -60,
+    },
+    heroGlowSmall: {
+      position: 'absolute',
+      width: 130,
+      height: 130,
+      borderRadius: 65,
+      backgroundColor: 'rgba(255,255,255,0.08)',
+      bottom: 20,
+      left: -40,
+    },
+    title: {
+      fontSize: 24,
+      color: '#FFFFFF',
+      fontWeight: '700',
+      marginBottom: 4,
+    },
+    subtitle: {
+      color: 'rgba(255, 255, 255, 0.76)',
+      fontSize: 13,
+      marginTop: 2,
+    },
+    contentCard: {
+      marginTop: -44,
+      marginHorizontal: 12,
       padding: 16,
+      borderRadius: 28,
+      backgroundColor: theme.colors.background,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.12,
+      shadowRadius: 18,
+      elevation: 8,
+      gap: 14,
     },
     searchContainer: {
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: theme.colors.surface,
-      borderRadius: 12,
+      borderRadius: 16,
       paddingHorizontal: 14,
       paddingVertical: 10,
-      marginBottom: 16,
       gap: 8,
     },
     inputSearch: {
@@ -105,23 +166,24 @@ const createStyles = (theme: any) =>
       height: 18,
       tintColor: theme.colors.text,
     },
-    content: {
-      flex: 1,
+    listCard: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: 20,
+      paddingHorizontal: 16,
+      paddingVertical: 6,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 3 },
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+      elevation: 2,
     },
     card: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 14,
-      backgroundColor: theme.colors.surface,
-      marginBottom: 10,
-      borderRadius: 16,
-      padding: 14,
-      shadowColor: theme.colors.primary,
-      shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.1,
-      shadowRadius: 8,
-      elevation: 3,
-      cursor: 'pointer',
+      paddingVertical: 14,
+      borderBottomWidth: 1,
+      borderBottomColor: isDark ? '#222' : '#F1ECFB',
     },
     imageKid: {
       width: 48,
@@ -131,6 +193,7 @@ const createStyles = (theme: any) =>
     informationContainer: {
       flexDirection: 'column',
       gap: 4,
+      flex: 1,
     },
     kidName: {
       fontSize: 14,
@@ -140,5 +203,14 @@ const createStyles = (theme: any) =>
     kidClass: {
       fontSize: 12,
       color: theme.colors.text,
+      opacity: 0.7,
+    },
+    chevron: {
+      fontSize: 20,
+      color: theme.colors.text,
+      opacity: 0.3,
+    },
+    placeholder: {
+      color: isDark ? '#8E8AA5' : '#94A3B8',
     },
   });

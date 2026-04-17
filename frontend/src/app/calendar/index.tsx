@@ -1,5 +1,5 @@
 import { CardDateSpecial } from '@/components/CardDateSpecial';
-import { useThemeContext } from '@/context/ThemeContext'; // Ajuste o path conforme seu projeto
+import { useThemeContext } from '@/context/ThemeContext';
 import { typeConfig } from '@/utils/typeConfig';
 import { Feather } from '@expo/vector-icons';
 import { useMemo, useState } from 'react';
@@ -44,95 +44,105 @@ export default function CalendarScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <Calendar
-          style={styles.calendar}
-          renderArrow={(direction: 'right' | 'left') => (
-            <Feather size={24} color={theme.colors.text} name={`chevron-${direction}`} />
-          )}
-          headerStyle={styles.calendarHeader}
-          theme={{
-            textMonthFontSize: 18,
-            monthTextColor: theme.colors.text,
-            todayTextColor: theme.colors.primary,
-            selectedDayBackgroundColor: theme.colors.primary,
-            selectedDayTextColor: theme.colors.surface,
-            calendarBackground: theme.colors.surface,
-            textDayStyle: { color: theme.colors.text },
-            textDisabledColor: isDark ? '#555' : '#ccc',
-            arrowStyle: { margin: 0, padding: 0 },
-          }}
-          minDate={new Date().toDateString()}
-          hideExtraDays
-          onDayPress={setDay}
-          markedDates={{
-            ...markedDates,
-            ...(day && {
-              [day.dateString]: {
-                selected: true,
-                marked: !!markedDates[day.dateString],
-              },
-            }),
-          }}
-          dayComponent={({ date, state }: { date?: DateData; state?: DayState }) => {
-            if (!date) return null;
-            const specialInfo = daySpecial.find((item) => item.date === date.dateString);
-            const hasEvent = !!markedDates[date.dateString];
-            const isSelected = date.dateString === day?.dateString;
+        <View style={styles.hero}>
+          <View style={styles.heroGlowLarge} />
+          <View style={styles.heroGlowSmall} />
 
-            return (
-              <TouchableOpacity
-                style={[styles.day, isSelected && styles.daySelected]}
-                onPress={() => setDay(date)}
-              >
-                <Text
-                  style={[
-                    styles.dayText,
-                    (state === 'inactive' || state === 'disabled') && styles.disabled,
-                    state === 'today' && styles.today,
-                    isSelected && styles.dayTextSelected,
-                  ]}
+          <Text style={styles.title}>Calendario</Text>
+          <Text style={styles.subtitle}>Veja eventos, feriados e datas importantes.</Text>
+        </View>
+
+        <View style={styles.contentCard}>
+          <Calendar
+            style={styles.calendar}
+            renderArrow={(direction: 'right' | 'left') => (
+              <Feather size={24} color={theme.colors.text} name={`chevron-${direction}`} />
+            )}
+            headerStyle={styles.calendarHeader}
+            theme={{
+              textMonthFontSize: 18,
+              monthTextColor: theme.colors.text,
+              todayTextColor: theme.colors.primary,
+              selectedDayBackgroundColor: theme.colors.primary,
+              selectedDayTextColor: theme.colors.surface,
+              calendarBackground: theme.colors.surface,
+              textDayStyle: { color: theme.colors.text },
+              textDisabledColor: isDark ? '#555' : '#ccc',
+              arrowStyle: { margin: 0, padding: 0 },
+            }}
+            minDate={new Date().toDateString()}
+            hideExtraDays
+            onDayPress={setDay}
+            markedDates={{
+              ...markedDates,
+              ...(day && {
+                [day.dateString]: {
+                  selected: true,
+                  marked: !!markedDates[day.dateString],
+                },
+              }),
+            }}
+            dayComponent={({ date, state }: { date?: DateData; state?: DayState }) => {
+              if (!date) return null;
+              const specialInfo = daySpecial.find((item) => item.date === date.dateString);
+              const hasEvent = !!markedDates[date.dateString];
+              const isSelected = date.dateString === day?.dateString;
+
+              return (
+                <TouchableOpacity
+                  style={[styles.day, isSelected && styles.daySelected]}
+                  onPress={() => setDay(date)}
                 >
-                  {date.day}
-                </Text>
-                {hasEvent && (
-                  <View
+                  <Text
                     style={[
-                      styles.dot,
-                      isSelected && styles.dotSelected,
-                      {
-                        backgroundColor: specialInfo?.type
-                          ? typeConfig[specialInfo?.type].border
-                          : theme.colors.secondary,
-                      },
+                      styles.dayText,
+                      (state === 'inactive' || state === 'disabled') && styles.disabled,
+                      state === 'today' && styles.today,
+                      isSelected && styles.dayTextSelected,
                     ]}
-                  />
-                )}
-              </TouchableOpacity>
-            );
-          }}
-        />
+                  >
+                    {date.day}
+                  </Text>
+                  {hasEvent && (
+                    <View
+                      style={[
+                        styles.dot,
+                        isSelected && styles.dotSelected,
+                        {
+                          backgroundColor: specialInfo?.type
+                            ? typeConfig[specialInfo?.type].border
+                            : theme.colors.secondary,
+                        },
+                      ]}
+                    />
+                  )}
+                </TouchableOpacity>
+              );
+            }}
+          />
 
-        <View style={styles.eventsSection}>
-          {selectedDaySpecial ? (
-            <CardDateSpecial
-              date={selectedDaySpecial.date}
-              title={selectedDaySpecial.title}
-              timeStart={selectedDaySpecial.timeStart}
-              timeEnd={selectedDaySpecial.timeEnd}
-              type={selectedDaySpecial.type}
-              location={selectedDaySpecial.location}
-            />
-          ) : (
-            day && (
-              <View style={styles.emptyState}>
-                <Text style={styles.emptyText}>Nenhum evento para este dia</Text>
-              </View>
-            )
-          )}
+          <View style={styles.eventsSection}>
+            {selectedDaySpecial ? (
+              <CardDateSpecial
+                date={selectedDaySpecial.date}
+                title={selectedDaySpecial.title}
+                timeStart={selectedDaySpecial.timeStart}
+                timeEnd={selectedDaySpecial.timeEnd}
+                type={selectedDaySpecial.type}
+                location={selectedDaySpecial.location}
+              />
+            ) : (
+              day && (
+                <View style={styles.emptyState}>
+                  <Text style={styles.emptyText}>Nenhum evento para este dia</Text>
+                </View>
+              )
+            )}
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -143,11 +153,61 @@ const createStyles = (theme: any, isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.background,
-      padding: 16,
+      backgroundColor: isDark ? '#120F1F' : '#6C4ED9',
     },
-    contentContainer: {
+    scroll: {
+      flex: 1,
+    },
+    scrollContent: {
       paddingBottom: 160,
+    },
+    hero: {
+      position: 'relative',
+      paddingHorizontal: 20,
+      paddingTop: 18,
+      paddingBottom: 88,
+      overflow: 'hidden',
+    },
+    heroGlowLarge: {
+      position: 'absolute',
+      width: 240,
+      height: 240,
+      borderRadius: 120,
+      backgroundColor: 'rgba(255,255,255,0.10)',
+      top: -90,
+      right: -60,
+    },
+    heroGlowSmall: {
+      position: 'absolute',
+      width: 130,
+      height: 130,
+      borderRadius: 65,
+      backgroundColor: 'rgba(255,255,255,0.08)',
+      bottom: 20,
+      left: -40,
+    },
+    title: {
+      fontSize: 24,
+      color: '#FFFFFF',
+      fontWeight: '700',
+      marginBottom: 4,
+    },
+    subtitle: {
+      color: 'rgba(255, 255, 255, 0.76)',
+      fontSize: 13,
+      marginTop: 2,
+    },
+    contentCard: {
+      marginTop: -44,
+      marginHorizontal: 12,
+      padding: 16,
+      borderRadius: 28,
+      backgroundColor: theme.colors.background,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.12,
+      shadowRadius: 18,
+      elevation: 8,
     },
     calendar: {
       borderRadius: 18,
