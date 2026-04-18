@@ -1,6 +1,6 @@
 import Banner from '@/components/Banner';
 import { useThemeContext } from '@/context/ThemeContext';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const profileIcon = require('@/assets/icon/profile.png');
@@ -33,12 +33,17 @@ export default function Home() {
           <View style={styles.heroGlowLarge} />
           <View style={styles.heroGlowSmall} />
 
-          <View style={styles.heroTextBlock}>
-            <Text style={styles.title}>Ola, {name}</Text>
-            <Text style={styles.subtitle}>Sexta-feira, 13 de marco</Text>
+          <View style={styles.dateUser}>
+            <Image source={profileIcon} style={styles.imageUser} />
+            <View style={{ flexDirection: 'column' }}>
+              <Text style={styles.title}>Ola, {name}</Text>
+              <Text style={styles.subtitle}>Sexta-feira, 13 de marco</Text>{' '}
+            </View>
           </View>
 
-          {alert ? <Banner title={alert.title} subtitle={alert.subtitle} type={alert.type} /> : null}
+          {alert ? (
+            <Banner title={alert.title} subtitle={alert.subtitle} type={alert.type} />
+          ) : null}
 
           <View style={styles.kidsRow}>
             {kids.map((kid) => {
@@ -96,7 +101,7 @@ const createStyles = (theme: any, isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: isDark ? '#120F1F' : theme.colors.purpleDark,
+      backgroundColor: isDark ? '#120F1F' : '#6C4ED9',
     },
     scroll: {
       flex: 1,
@@ -113,12 +118,12 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     heroGlowLarge: {
       position: 'absolute',
-      width: 220,
-      height: 220,
-      borderRadius: 110,
+      width: 240,
+      height: 240,
+      borderRadius: 120,
       backgroundColor: 'rgba(255,255,255,0.08)',
-      top: -70,
-      right: -55,
+      top: -90,
+      right: -60,
     },
     heroGlowSmall: {
       position: 'absolute',
@@ -129,18 +134,30 @@ const createStyles = (theme: any, isDark: boolean) =>
       bottom: 28,
       left: -34,
     },
-    heroTextBlock: {
-      marginBottom: 18,
+    dateUser: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 14,
+      marginBottom: 22,
+    },
+    imageUser: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: 'rgba(255,255,255,0.18)',
+      borderWidth: 2,
+      borderColor: 'rgba(255,255,255,0.22)',
     },
     title: {
       fontSize: 26,
-      color: theme.colors.white,
+      color: '#ffffff',
       fontWeight: '700',
       marginBottom: 4,
     },
     subtitle: {
       color: 'rgba(255,255,255,0.78)',
       fontSize: 13,
+      marginTop: 2,
     },
     kidsRow: {
       flexDirection: 'row',

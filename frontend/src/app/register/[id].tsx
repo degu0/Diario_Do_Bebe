@@ -88,7 +88,6 @@ export default function Register() {
   const handleSave = () => {
     const payload = dailyReportPayload;
     void payload;
-    // TODO: enviar `payload` para o backend quando o hook de submissao estiver pronto.
   };
 
   return (
