@@ -1,5 +1,6 @@
 import Banner from '@/components/Banner';
 import { useThemeContext } from '@/context/ThemeContext';
+import { router } from 'expo-router';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -90,6 +91,14 @@ export default function Home() {
               <Text style={styles.smallCardNumber}>1 h 20 min</Text>
               <Text style={styles.smallCardLabel}>Sono/Soneca</Text>
             </View>
+          </View>
+
+          <View>
+            <TouchableOpacity style={styles.buttonDailyDetails} onPress={() =>  router.push('/dailyReport/1')}>
+              <Text style={styles.textDailyDetails}>
+                Ver detalhes do dia
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
@@ -274,4 +283,23 @@ const createStyles = (theme: any, isDark: boolean) =>
       color: theme.colors.gray,
       fontWeight: '500',
     },
+    buttonDailyDetails: {
+      backgroundColor: theme.colors.background,
+      paddingVertical: 12,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      marginTop: 8,
+      alignItems: 'center',
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 2, 
+    },
+    textDailyDetails: {
+      fontSize: 14,
+      color: theme.colors.text,
+      fontWeight: '600',
+    }
   });
