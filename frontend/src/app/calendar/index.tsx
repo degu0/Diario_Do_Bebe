@@ -1,8 +1,11 @@
 import { CardDateSpecial } from '@/components/CardDateSpecial';
+import { useAuth } from '@/context/AuthContext';
 import { useThemeContext } from '@/context/ThemeContext';
 import { typeConfig } from '@/utils/typeConfig';
-import { Feather } from '@expo/vector-icons';
-import { useMemo, useState } from 'react';
+import { Feather, Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
+import { useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Calendar, DateData, LocaleConfig } from 'react-native-calendars';
 import { DayState } from 'react-native-calendars/src/types';
@@ -23,23 +26,65 @@ const daySpecial = [
   },
 ];
 
+const DAILY_REPORT_DATES = ['2026-04-14', '2026-04-15', '2026-04-16'];
+const STORAGE_KEY = 'viewed_reports';
+
 export default function CalendarScreen() {
   const { theme, isDark } = useThemeContext();
+  const { user } = useAuth();
+  const router = useRouter();
   const [day, setDay] = useState<DateData>();
+  const [viewedReports, setViewedReports] = useState<string[]>([]);
 
+  const isResponsible = user?.type === 'responsible';
   const styles = useMemo(() => createStyles(theme, isDark), [theme, isDark]);
 
+  useEffect(() => {
+    const load = async () => {
+      const stored = await AsyncStorage.getItem(STORAGE_KEY);
+      if (stored) setViewedReports(JSON.parse(stored));
+    };
+    load();
+  }, []);
+
+  const markAsViewed = async (date: string) => {
+    if (viewedReports.includes(date)) return;
+    const updated = [...viewedReports, date];
+    setViewedReports(updated);
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  };
+
   const selectedDaySpecial = daySpecial.find((item) => item.date === day?.dateString);
+  const selectedHasReport = isResponsible && DAILY_REPORT_DATES.includes(day?.dateString ?? '');
+  const selectedReportViewed = viewedReports.includes(day?.dateString ?? '');
 
   const markedDates = useMemo(() => {
-    return daySpecial.reduce(
-      (acc, item) => {
-        acc[item.date] = { marked: true, dotColor: theme.colors.secondary };
-        return acc;
-      },
-      {} as Record<string, object>,
-    );
-  }, [theme]);
+    const acc: Record<string, object> = {};
+
+    daySpecial.forEach((item) => {
+      acc[item.date] = { marked: true, dotColor: typeConfig[item.type].border };
+    });
+
+    if (isResponsible) {
+      DAILY_REPORT_DATES.forEach((date) => {
+        const alreadyViewed = viewedReports.includes(date);
+        acc[date] = {
+          ...(acc[date] ?? {}),
+          marked: true,
+          dotColor: alreadyViewed ? (isDark ? '#666' : '#bbb') : theme.colors.primary,
+        };
+      });
+    }
+
+    return acc;
+  }, [theme, isDark, isResponsible, viewedReports]);
+
+  const handleOpenReport = () => {
+    if (day?.dateString) {
+      markAsViewed(day.dateString);
+      router.push('/dailyReport/1');
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -51,8 +96,7 @@ export default function CalendarScreen() {
         <View style={styles.hero}>
           <View style={styles.heroGlowLarge} />
           <View style={styles.heroGlowSmall} />
-
-          <Text style={styles.title}>Calendario</Text>
+          <Text style={styles.title}>Calendário</Text>
           <Text style={styles.subtitle}>Veja eventos, feriados e datas importantes.</Text>
         </View>
 
@@ -67,7 +111,7 @@ export default function CalendarScreen() {
               textMonthFontSize: 18,
               monthTextColor: theme.colors.text,
               todayTextColor: theme.colors.primary,
-              selectedDayBackgroundColor: theme.colors.primary,
+              selectedDayBackgroundColor: theme.colors.success,
               selectedDayTextColor: theme.colors.surface,
               calendarBackground: theme.colors.surface,
               textDayStyle: { color: theme.colors.text },
@@ -81,20 +125,27 @@ export default function CalendarScreen() {
               ...markedDates,
               ...(day && {
                 [day.dateString]: {
+                  ...(markedDates[day.dateString] ?? {}),
                   selected: true,
-                  marked: !!markedDates[day.dateString],
                 },
               }),
             }}
             dayComponent={({ date, state }: { date?: DateData; state?: DayState }) => {
               if (!date) return null;
+
               const specialInfo = daySpecial.find((item) => item.date === date.dateString);
-              const hasEvent = !!markedDates[date.dateString];
+              const hasSpecial = !!specialInfo;
+              const hasReport = isResponsible && DAILY_REPORT_DATES.includes(date.dateString);
+              const reportViewed = viewedReports.includes(date.dateString);
               const isSelected = date.dateString === day?.dateString;
 
               return (
                 <TouchableOpacity
-                  style={[styles.day, isSelected && styles.daySelected]}
+                  style={[
+                    styles.day,
+                    isSelected && styles.daySelected,
+                    hasReport && !reportViewed && !isSelected && styles.dayWithReport,
+                  ]}
                   onPress={() => setDay(date)}
                 >
                   <Text
@@ -107,26 +158,84 @@ export default function CalendarScreen() {
                   >
                     {date.day}
                   </Text>
-                  {hasEvent && (
-                    <View
-                      style={[
-                        styles.dot,
-                        isSelected && styles.dotSelected,
-                        {
-                          backgroundColor: specialInfo?.type
-                            ? typeConfig[specialInfo?.type].border
-                            : theme.colors.secondary,
-                        },
-                      ]}
-                    />
-                  )}
+
+                  <View style={styles.dotsRow}>
+                    {hasSpecial && (
+                      <View
+                        style={[
+                          styles.dot,
+                          { backgroundColor: typeConfig[specialInfo.type].border },
+                        ]}
+                      />
+                    )}
+                    {hasReport && (
+                      <View
+                        style={[
+                          styles.dot,
+                          {
+                            backgroundColor: reportViewed
+                              ? isDark
+                                ? '#555'
+                                : '#ccc'
+                              : theme.colors.primary,
+                          },
+                          isSelected && styles.dotSelected,
+                        ]}
+                      />
+                    )}
+                  </View>
                 </TouchableOpacity>
               );
             }}
           />
+          {isResponsible && (
+            <View style={styles.legend}>
+              <View style={styles.legendItem}>
+                <View style={[styles.legendDot, { backgroundColor: theme.colors.primary }]} />
+                <Text style={[styles.legendText, { color: theme.colors.text }]}>
+                  Relatório disponível
+                </Text>
+              </View>
+              <View style={styles.legendItem}>
+                <View style={[styles.legendDot, { backgroundColor: isDark ? '#555' : '#bbb' }]} />
+                <Text style={[styles.legendText, { color: theme.colors.text }]}>
+                  Já visualizado
+                </Text>
+              </View>
+            </View>
+          )}
 
           <View style={styles.eventsSection}>
-            {selectedDaySpecial ? (
+            {selectedHasReport && (
+              <TouchableOpacity
+                style={[styles.reportCard, { backgroundColor: isDark ? '#1E1630' : '#F4EEFF' }]}
+                onPress={handleOpenReport}
+                activeOpacity={0.8}
+              >
+                <View style={[styles.reportIconBox, { backgroundColor: theme.colors.primary }]}>
+                  <Ionicons name="document-text-outline" size={20} color="#fff" />
+                </View>
+
+                <View style={styles.reportCardText}>
+                  <View style={styles.reportCardTitleRow}>
+                    <Text style={[styles.reportCardTitle, { color: theme.colors.text }]}>
+                      Relatório do dia
+                    </Text>
+                    {!selectedReportViewed && (
+                      <View style={[styles.newBadge, { backgroundColor: theme.colors.primary }]}>
+                        <Text style={styles.newBadgeText}>Novo</Text>
+                      </View>
+                    )}
+                  </View>
+                  <Text style={[styles.reportCardSubtitle, { color: `${theme.colors.text}99` }]}>
+                    Veja como foi o dia de Maria Clara
+                  </Text>
+                </View>
+
+                <Ionicons name="chevron-forward" size={18} color={`${theme.colors.text}66`} />
+              </TouchableOpacity>
+            )}
+            {selectedDaySpecial && (
               <CardDateSpecial
                 date={selectedDaySpecial.date}
                 title={selectedDaySpecial.title}
@@ -135,12 +244,11 @@ export default function CalendarScreen() {
                 type={selectedDaySpecial.type}
                 location={selectedDaySpecial.location}
               />
-            ) : (
-              day && (
-                <View style={styles.emptyState}>
-                  <Text style={styles.emptyText}>Nenhum evento para este dia</Text>
-                </View>
-              )
+            )}
+            {day && !selectedDaySpecial && !selectedHasReport && (
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyText}>Nenhum evento para este dia</Text>
+              </View>
             )}
           </View>
         </View>
@@ -155,12 +263,9 @@ const createStyles = (theme: any, isDark: boolean) =>
       flex: 1,
       backgroundColor: isDark ? '#120F1F' : '#6C4ED9',
     },
-    scroll: {
-      flex: 1,
-    },
-    scrollContent: {
-      paddingBottom: 160,
-    },
+    scroll: { flex: 1 },
+    scrollContent: { paddingBottom: 160 },
+
     hero: {
       position: 'relative',
       paddingHorizontal: 20,
@@ -193,10 +298,11 @@ const createStyles = (theme: any, isDark: boolean) =>
       marginBottom: 4,
     },
     subtitle: {
-      color: 'rgba(255, 255, 255, 0.76)',
+      color: 'rgba(255,255,255,0.76)',
       fontSize: 13,
       marginTop: 2,
     },
+
     contentCard: {
       marginTop: -44,
       marginHorizontal: 12,
@@ -209,12 +315,13 @@ const createStyles = (theme: any, isDark: boolean) =>
       shadowRadius: 18,
       elevation: 8,
     },
+
     calendar: {
       borderRadius: 18,
       overflow: 'hidden',
       paddingBottom: 12,
       elevation: 4,
-      marginBottom: 20,
+      marginBottom: 12,
       backgroundColor: theme.colors.surface,
       shadowColor: isDark ? '#000' : theme.colors.primary,
       shadowOffset: { width: 0, height: 3 },
@@ -228,6 +335,7 @@ const createStyles = (theme: any, isDark: boolean) =>
       marginBottom: 10,
       backgroundColor: theme.colors.surface,
     },
+
     day: {
       width: 36,
       height: 36,
@@ -237,6 +345,10 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     daySelected: {
       backgroundColor: theme.colors.primary,
+    },
+    dayWithReport: {
+      borderWidth: 1.5,
+      borderColor: theme.colors.primary,
     },
     dayText: {
       fontSize: 14,
@@ -248,32 +360,83 @@ const createStyles = (theme: any, isDark: boolean) =>
       fontWeight: '700',
       color: theme.colors.surface,
     },
-    disabled: {
-      opacity: 0.3,
-    },
-    today: {
-      color: theme.colors.primary,
-      fontWeight: '700',
+    disabled: { opacity: 0.3 },
+    today: { color: theme.colors.primary, fontWeight: '700' },
+
+    dotsRow: {
+      flexDirection: 'row',
+      gap: 3,
+      marginTop: 1,
     },
     dot: {
       width: 4,
       height: 4,
       borderRadius: 2,
-      marginTop: 2,
     },
     dotSelected: {
       backgroundColor: theme.colors.surface,
     },
-    eventsSection: {
-      flex: 1,
+    legend: {
+      flexDirection: 'row',
+      gap: 16,
+      paddingHorizontal: 4,
+      paddingBottom: 12,
     },
-    emptyState: {
+    legendItem: {
+      flexDirection: 'row',
       alignItems: 'center',
-      paddingVertical: 24,
+      gap: 6,
     },
-    emptyText: {
-      fontSize: 13,
-      color: theme.colors.text,
-      opacity: 0.6,
+    legendDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
     },
+    legendText: {
+      fontSize: 12,
+    },
+
+    eventsSection: { gap: 10 },
+    reportCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      padding: 14,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: isDark ? '#2C2440' : '#E0D0F8',
+    },
+    reportIconBox: {
+      width: 40,
+      height: 40,
+      borderRadius: 12,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    reportCardText: { flex: 1, gap: 3 },
+    reportCardTitleRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    reportCardTitle: {
+      fontSize: 14,
+      fontWeight: '600',
+    },
+    reportCardSubtitle: {
+      fontSize: 12,
+    },
+    newBadge: {
+      paddingHorizontal: 8,
+      paddingVertical: 2,
+      borderRadius: 20,
+    },
+    newBadgeText: {
+      color: '#fff',
+      fontSize: 10,
+      fontWeight: '700',
+    },
+
+    emptyState: { alignItems: 'center', paddingVertical: 24 },
+    emptyText: { fontSize: 13, color: theme.colors.text, opacity: 0.6 },
   });
