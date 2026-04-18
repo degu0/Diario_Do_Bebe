@@ -1,3 +1,4 @@
+import Banner from '@/components/Banner';
 import { useThemeContext } from '@/context/ThemeContext';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -15,6 +16,11 @@ export default function Home() {
 
   const name = 'Carlos';
   const selectedKid = kids[0];
+  const alert = {
+    type: 'meeting' as const,
+    title: 'Reuniao de pais amanha',
+    subtitle: 'Confirme sua presenca com a coordenacao.',
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -28,13 +34,11 @@ export default function Home() {
           <View style={styles.heroGlowSmall} />
 
           <View style={styles.heroTextBlock}>
-            <Text style={styles.title}>Olá, {name}</Text>
-            <Text style={styles.subtitle}>Sexta-feira, 13 de março</Text>
+            <Text style={styles.title}>Ola, {name}</Text>
+            <Text style={styles.subtitle}>Sexta-feira, 13 de marco</Text>
           </View>
 
-          <View style={styles.banner}>
-            <Text style={styles.bannerText}>⚠️ Feriado em 3 dias</Text>
-          </View>
+          {alert ? <Banner title={alert.title} subtitle={alert.subtitle} type={alert.type} /> : null}
 
           <View style={styles.kidsRow}>
             {kids.map((kid) => {
@@ -74,7 +78,7 @@ export default function Home() {
           <View style={styles.smallCardsRow}>
             <View style={styles.smallCard}>
               <Text style={styles.smallCardNumber}>Bem</Text>
-              <Text style={styles.smallCardLabel}>Alimentação</Text>
+              <Text style={styles.smallCardLabel}>Alimentacao</Text>
             </View>
 
             <View style={[styles.smallCard, styles.smallCardDivider]}>
@@ -94,15 +98,12 @@ const createStyles = (theme: any, isDark: boolean) =>
       flex: 1,
       backgroundColor: isDark ? '#120F1F' : theme.colors.purpleDark,
     },
-
     scroll: {
       flex: 1,
     },
-
     scrollContent: {
       paddingBottom: 160,
     },
-
     hero: {
       position: 'relative',
       paddingHorizontal: 20,
@@ -110,7 +111,6 @@ const createStyles = (theme: any, isDark: boolean) =>
       paddingBottom: 88,
       overflow: 'hidden',
     },
-
     heroGlowLarge: {
       position: 'absolute',
       width: 220,
@@ -120,7 +120,6 @@ const createStyles = (theme: any, isDark: boolean) =>
       top: -70,
       right: -55,
     },
-
     heroGlowSmall: {
       position: 'absolute',
       width: 120,
@@ -130,46 +129,24 @@ const createStyles = (theme: any, isDark: boolean) =>
       bottom: 28,
       left: -34,
     },
-
     heroTextBlock: {
       marginBottom: 18,
     },
-
     title: {
       fontSize: 26,
       color: theme.colors.white,
       fontWeight: '700',
       marginBottom: 4,
     },
-
     subtitle: {
       color: 'rgba(255,255,255,0.78)',
       fontSize: 13,
     },
-
-    banner: {
-      backgroundColor: theme.colors.yellowLight,
-      borderWidth: 1,
-      borderColor: theme.colors.yellowBorder,
-      borderRadius: 16,
-      paddingVertical: 10,
-      paddingHorizontal: 16,
-      marginBottom: 16,
-      alignItems: 'center',
-    },
-
-    bannerText: {
-      fontSize: 13,
-      fontWeight: '600',
-      color: theme.colors.yellowDark,
-    },
-
     kidsRow: {
       flexDirection: 'row',
       gap: 10,
       alignItems: 'center',
     },
-
     kidChip: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -179,11 +156,9 @@ const createStyles = (theme: any, isDark: boolean) =>
       paddingVertical: 6,
       paddingHorizontal: 10,
     },
-
     kidChipSelected: {
       backgroundColor: 'rgba(255,255,255,0.22)',
     },
-
     kidInitials: {
       width: 34,
       height: 34,
@@ -194,24 +169,20 @@ const createStyles = (theme: any, isDark: boolean) =>
       alignItems: 'center',
       justifyContent: 'center',
     },
-
     kidInitialsText: {
       fontSize: 11,
       fontWeight: '700',
       color: theme.colors.white,
     },
-
     kidChipName: {
       fontSize: 12,
       fontWeight: '600',
       color: theme.colors.white,
     },
-
     kidChipAge: {
       fontSize: 10,
       color: 'rgba(255,255,255,0.74)',
     },
-
     contentCard: {
       marginTop: -44,
       marginHorizontal: 12,
@@ -224,7 +195,6 @@ const createStyles = (theme: any, isDark: boolean) =>
       shadowRadius: 18,
       elevation: 8,
     },
-
     bigCard: {
       backgroundColor: theme.colors.grayLight,
       borderRadius: 20,
@@ -236,32 +206,27 @@ const createStyles = (theme: any, isDark: boolean) =>
       shadowRadius: 8,
       elevation: 2,
     },
-
     titleCard: {
       fontSize: 13,
       color: theme.colors.gray,
       marginBottom: 8,
     },
-
     statusRow: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 8,
     },
-
     statusDot: {
       width: 10,
       height: 10,
       borderRadius: 5,
       backgroundColor: theme.colors.green,
     },
-
     statusText: {
       fontSize: 18,
       fontWeight: '700',
       color: theme.colors.text,
     },
-
     smallCardsRow: {
       flexDirection: 'row',
       backgroundColor: theme.colors.surface,
@@ -273,24 +238,20 @@ const createStyles = (theme: any, isDark: boolean) =>
       elevation: 2,
       marginBottom: 12,
     },
-
     smallCard: {
       flex: 1,
       padding: 16,
       gap: 6,
     },
-
     smallCardDivider: {
       borderLeftWidth: 1,
       borderLeftColor: theme.colors.border,
     },
-
     smallCardNumber: {
       fontSize: 28,
       fontWeight: '700',
       color: theme.colors.teal,
     },
-
     smallCardLabel: {
       fontSize: 12,
       color: theme.colors.gray,

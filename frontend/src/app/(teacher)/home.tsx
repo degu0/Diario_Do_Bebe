@@ -1,3 +1,4 @@
+import Banner from '@/components/Banner';
 import { useThemeContext } from '@/context/ThemeContext';
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
@@ -9,7 +10,7 @@ const profileIcon = require('@/assets/icon/profile.png');
 const kids = [
   { id: 1, image: profileIcon, name: 'Charles Junior', status: 'Preenchida' },
   { id: 2, image: profileIcon, name: 'Maria Silva', status: 'Ausente' },
-  { id: 3, image: profileIcon, name: 'João Pedro', status: 'Pendente' },
+  { id: 3, image: profileIcon, name: 'Joao Pedro', status: 'Pendente' },
   { id: 4, image: profileIcon, name: 'Ana Beatriz', status: 'Preenchida' },
 ];
 
@@ -23,6 +24,11 @@ export default function Home() {
   const filledCount = 5;
   const totalCount = 8;
   const progress = filledCount / totalCount;
+  const alert = {
+    type: 'holiday' as const,
+    title: 'Feriado em 3 dias',
+    subtitle: 'A escola não tera atividades neste periodo.',
+  };
 
   const statusTheme: Record<string, { bg: string; text: string }> = {
     Preenchida: {
@@ -54,14 +60,12 @@ export default function Home() {
             <Image source={profileIcon} style={styles.imageUser} />
             <View>
               <Text style={styles.title}>Bom dia, {name} 👋</Text>
-              <Text style={styles.subtitle}>Sexta-feira, 13 de março</Text>
+              <Text style={styles.subtitle}>Sexta-feira, 13 de marco</Text>
               <Text style={styles.subtitle}>Escola | Turma A1</Text>
             </View>
           </View>
 
-          <View style={styles.banner}>
-            <Text style={styles.bannerText}>⚠️ Feriado em 3 dias</Text>
-          </View>
+          {alert ? <Banner title={alert.title} subtitle={alert.subtitle} type={alert.type} /> : null}
         </View>
 
         <View style={styles.contentCard}>
@@ -86,13 +90,13 @@ export default function Home() {
 
             <View style={styles.smallCard}>
               <Text style={[styles.smallCardNumber, { color: theme.colors.primary }]}>1</Text>
-              <Text style={styles.smallCardLabel}>Ocorrência</Text>
+              <Text style={styles.smallCardLabel}>Ocorrencia</Text>
             </View>
           </View>
 
           <View style={styles.kidsSection}>
             <View style={styles.kidsSectionHeader}>
-              <Text style={styles.kidsSectionTitle}>Crianças da turma</Text>
+              <Text style={styles.kidsSectionTitle}>Criancas da turma</Text>
               <TouchableOpacity onPress={() => router.push('/(teacher)/class')}>
                 <Text style={styles.seeMore}>Ver mais</Text>
               </TouchableOpacity>
@@ -138,15 +142,12 @@ const createStyles = (theme: any, isDark: boolean) =>
       flex: 1,
       backgroundColor: isDark ? '#120F1F' : '#6C4ED9',
     },
-
     scroll: {
       flex: 1,
     },
-
     scrollContent: {
       paddingBottom: 160,
     },
-
     hero: {
       position: 'relative',
       paddingHorizontal: 20,
@@ -154,7 +155,6 @@ const createStyles = (theme: any, isDark: boolean) =>
       paddingBottom: 88,
       overflow: 'hidden',
     },
-
     heroGlowLarge: {
       position: 'absolute',
       width: 240,
@@ -164,7 +164,6 @@ const createStyles = (theme: any, isDark: boolean) =>
       top: -90,
       right: -60,
     },
-
     heroGlowSmall: {
       position: 'absolute',
       width: 130,
@@ -174,14 +173,12 @@ const createStyles = (theme: any, isDark: boolean) =>
       bottom: 20,
       left: -40,
     },
-
     dateUser: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 14,
       marginBottom: 22,
     },
-
     imageUser: {
       width: 56,
       height: 56,
@@ -190,36 +187,17 @@ const createStyles = (theme: any, isDark: boolean) =>
       borderWidth: 2,
       borderColor: 'rgba(255,255,255,0.22)',
     },
-
     title: {
       fontSize: 24,
       color: '#FFFFFF',
       fontWeight: '700',
       marginBottom: 4,
     },
-
     subtitle: {
       color: 'rgba(255, 255, 255, 0.76)',
       fontSize: 13,
       marginTop: 2,
     },
-
-    banner: {
-      backgroundColor: isDark ? 'rgba(61,52,26,0.92)' : '#FFF4B8',
-      borderWidth: 1,
-      borderColor: '#FBC02D',
-      borderRadius: 16,
-      paddingVertical: 12,
-      paddingHorizontal: 16,
-      alignItems: 'center',
-    },
-
-    bannerText: {
-      fontSize: 13,
-      fontWeight: '600',
-      color: isDark ? '#FFF4C7' : '#7F5F00',
-    },
-
     contentCard: {
       marginTop: -44,
       marginHorizontal: 12,
@@ -232,7 +210,6 @@ const createStyles = (theme: any, isDark: boolean) =>
       shadowRadius: 18,
       elevation: 8,
     },
-
     bigCard: {
       backgroundColor: theme.colors.surface,
       borderRadius: 20,
@@ -244,28 +221,24 @@ const createStyles = (theme: any, isDark: boolean) =>
       shadowRadius: 8,
       elevation: 2,
     },
-
     titleCard: {
       fontSize: 14,
       fontWeight: '600',
       color: theme.colors.text,
       marginBottom: 8,
     },
-
     numberCard: {
       flexDirection: 'row',
       alignItems: 'flex-end',
       gap: 2,
       marginBottom: 12,
     },
-
     numberBig: {
       fontSize: 42,
       fontWeight: '600',
       color: theme.colors.text,
       lineHeight: 48,
     },
-
     numberSmall: {
       fontSize: 20,
       fontWeight: '500',
@@ -273,25 +246,21 @@ const createStyles = (theme: any, isDark: boolean) =>
       opacity: 0.5,
       marginBottom: 6,
     },
-
     progressBar: {
       height: 6,
       backgroundColor: isDark ? '#333' : theme.colors.tertiary,
       borderRadius: 10,
     },
-
     progressFill: {
       height: 6,
       backgroundColor: theme.colors.primary,
       borderRadius: 10,
     },
-
     smallCardsRow: {
       flexDirection: 'row',
       gap: 12,
       marginBottom: 20,
     },
-
     smallCard: {
       flex: 1,
       backgroundColor: theme.colors.surface,
@@ -304,24 +273,20 @@ const createStyles = (theme: any, isDark: boolean) =>
       elevation: 2,
       gap: 6,
     },
-
     smallCardNumber: {
       fontSize: 36,
       fontWeight: '600',
       color: theme.colors.error,
     },
-
     smallCardLabel: {
       fontSize: 12,
       color: theme.colors.text,
       opacity: 0.6,
       fontWeight: '500',
     },
-
     kidsSection: {
       marginBottom: 12,
     },
-
     kidsSectionHeader: {
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -329,19 +294,16 @@ const createStyles = (theme: any, isDark: boolean) =>
       marginBottom: 12,
       paddingHorizontal: 2,
     },
-
     kidsSectionTitle: {
       fontSize: 14,
       fontWeight: '600',
       color: theme.colors.text,
     },
-
     seeMore: {
       fontSize: 13,
       color: theme.colors.primary,
       fontWeight: '500',
     },
-
     kidsList: {
       backgroundColor: theme.colors.surface,
       borderRadius: 20,
@@ -353,7 +315,6 @@ const createStyles = (theme: any, isDark: boolean) =>
       shadowRadius: 8,
       elevation: 2,
     },
-
     kidRow: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -362,32 +323,27 @@ const createStyles = (theme: any, isDark: boolean) =>
       borderBottomColor: isDark ? '#222' : '#F1ECFB',
       gap: 12,
     },
-
     kidAvatar: {
       width: 40,
       height: 40,
       borderRadius: 20,
       backgroundColor: theme.colors.tertiary,
     },
-
     kidName: {
       flex: 1,
       fontSize: 13,
       fontWeight: '500',
       color: theme.colors.text,
     },
-
     statusBadge: {
       paddingHorizontal: 10,
       paddingVertical: 4,
       borderRadius: 20,
     },
-
     statusText: {
       fontSize: 11,
       fontWeight: '600',
     },
-
     chevron: {
       fontSize: 20,
       color: theme.colors.text,

@@ -37,6 +37,12 @@ export const colors = {
   info: '#3B82F6',
   infoSoft: '#DBEAFE',
 
+  warning: '#F59E0B',
+  warningSoft: '#FEF3C7',
+
+  meeting: '#2563EB',
+  meetingSoft: '#DBEAFE',
+
   gray: '#64748B',
 };
 
@@ -68,6 +74,12 @@ export const CustomLightTheme = {
 
     info: colors.info,
     infoBackground: colors.infoSoft,
+
+    warning: colors.warning,
+    warningBackground: colors.warningSoft,
+
+    meeting: colors.meeting,
+    meetingBackground: colors.meetingSoft,
   },
 };
 
@@ -99,5 +111,11 @@ export const CustomDarkTheme = {
 
     info: colors.info,
     infoBackground: '#1e3a8a',
+
+    warning: '#FBBF24',
+    warningBackground: '#3D341A',
+
+    meeting: '#60A5FA',
+    meetingBackground: '#172554',
   },
 };
