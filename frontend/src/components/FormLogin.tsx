@@ -1,4 +1,5 @@
 import { useThemeContext } from "@/context/ThemeContext";
+import { Lock, Sms } from 'iconsax-react-native';
 import {
   StyleSheet,
   Text,
@@ -31,7 +32,7 @@ export default function FormLogin({
       <View style={styles.inputWrapper}>
         <Text style={styles.inputLabel}>EMAIL</Text>
         <View style={styles.inputContainer}>
-          <Text style={styles.inputIcon}>✉️</Text>
+          <Sms size={16} color={theme.colors.primary} variant="Outline" />
           <TextInput
             style={styles.input}
             placeholder="exemplo@gmail.com"
@@ -47,7 +48,7 @@ export default function FormLogin({
       <View style={styles.inputWrapper}>
         <Text style={styles.inputLabel}>SENHA</Text>
         <View style={[styles.inputContainer, erro ? styles.inputErro : null]}>
-          <Text style={styles.inputIcon}>🔒</Text>
+          <Lock size={16} color={theme.colors.primary} variant="Outline" />
           <TextInput
             style={styles.input}
             placeholder="••••••••"

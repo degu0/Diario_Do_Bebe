@@ -170,7 +170,7 @@ export default function Login() {
 
           <Animated.View style={{ transform: [{ scale: logoScale }, { translateY: logoY }] }}>
             <Image
-              source={require('@/assets/images/user-black.png')}
+              source={require('@/assets/icon/icon-white.png')}
               style={styles.bannerImage}
               resizeMode="contain"
             />
@@ -249,8 +249,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   bannerImage: {
-    width: 110,
-    height: 110,
+    width: 210,
+    height: 210,
     tintColor: 'rgba(255,255,255,0.95)',
   },
   bannerTextWrapper: {
