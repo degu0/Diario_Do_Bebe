@@ -62,7 +62,6 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     try {
       await AsyncStorage.setItem(THEME_PREFERENCE_KEY, nextPreference);
     } catch {
-      // If persistence fails, we still keep the in-memory theme change.
     }
   };
 
