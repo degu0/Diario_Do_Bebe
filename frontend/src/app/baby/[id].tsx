@@ -2,86 +2,12 @@ import { colors } from '@/constants/Colors';
 import { useThemeContext } from '@/context/ThemeContext';
 import { useRoute } from '@react-navigation/native';
 import { router } from 'expo-router';
-import { ReactNode, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-type SectionCardProps = {
-  title: string;
-  subtitle?: string;
-  titleColor: string;
-  subtitleColor: string;
-  children: ReactNode;
-};
-
-function SectionCard({ title, subtitle, titleColor, subtitleColor, children }: SectionCardProps) {
-  return (
-    <View style={sharedStyles.sectionCard}>
-      <View style={sharedStyles.sectionHeader}>
-        <Text style={[sharedStyles.sectionTitle, { color: titleColor }]}>{title}</Text>
-        {subtitle ? (
-          <Text style={[sharedStyles.sectionSubtitle, { color: subtitleColor }]}>{subtitle}</Text>
-        ) : null}
-      </View>
-      {children}
-    </View>
-  );
-}
-
-function AccordionSection({
-  icon,
-  title,
-  items,
-  itemIcon,
-  titleColor,
-  subtitleColor,
-  backgroundColor,
-  badgeBackground,
-  badgeTextColor,
-}: {
-  icon: string;
-  title: string;
-  items: string[];
-  itemIcon: string;
-  titleColor: string;
-  subtitleColor: string;
-  backgroundColor: string;
-  badgeBackground: string;
-  badgeTextColor: string;
-}) {
-  const [expanded, setExpanded] = useState(false);
-  const styles = accordionStyles;
-
-  return (
-    <View style={[styles.container, { backgroundColor }]}>
-      <TouchableOpacity style={styles.header} onPress={() => setExpanded(!expanded)}>
-        <View style={styles.left}>
-          <Text style={styles.icon}>{icon}</Text>
-          <Text style={[styles.title, { color: titleColor }]}>{title}</Text>
-        </View>
-
-        <View style={styles.right}>
-          <View style={[styles.badge, { backgroundColor: badgeBackground }]}>
-            <Text style={[styles.badgeText, { color: badgeTextColor }]}>{items.length} itens</Text>
-          </View>
-          <Text style={[styles.chevron, { color: subtitleColor }]}>{expanded ? '︿' : '﹀'}</Text>
-        </View>
-      </TouchableOpacity>
-
-      {expanded && (
-        <View style={styles.body}>
-          {items.map((item, index) => (
-            <View key={index} style={styles.item}>
-              <Text style={[styles.itemIcon, { color: titleColor }]}>{itemIcon}</Text>
-              <Text style={[styles.itemText, { color: titleColor }]}>{item}</Text>
-            </View>
-          ))}
-        </View>
-      )}
-    </View>
-  );
-}
+import { SectionCard } from '@/components/SectionCard';
+import { AccordionSection } from '@/components/AccordionSection';
 
 export default function BabyProfile() {
   const route = useRoute();
@@ -257,83 +183,6 @@ export default function BabyProfile() {
     </SafeAreaView>
   );
 }
-
-const sharedStyles = StyleSheet.create({
-  sectionCard: {
-    gap: 16,
-  },
-  sectionHeader: {
-    gap: 4,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-  },
-  sectionSubtitle: {
-    fontSize: 13,
-    lineHeight: 18,
-  },
-});
-
-const accordionStyles = StyleSheet.create({
-  container: {
-    borderRadius: 18,
-    marginBottom: 10,
-    overflow: 'hidden',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-  },
-  left: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  right: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  icon: {
-    fontSize: 16,
-  },
-  title: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  badge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 999,
-  },
-  badgeText: {
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  chevron: {
-    fontSize: 12,
-  },
-  body: {
-    paddingHorizontal: 16,
-    paddingBottom: 14,
-    gap: 8,
-  },
-  item: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  itemIcon: {
-    fontSize: 14,
-  },
-  itemText: {
-    fontSize: 13,
-  },
-});
 
 const createStyles = (theme: any, isDark: boolean) =>
   StyleSheet.create({

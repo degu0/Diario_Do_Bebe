@@ -11,6 +11,7 @@ import { Calendar, DateData, LocaleConfig } from 'react-native-calendars';
 import { DayState } from 'react-native-calendars/src/types';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ptBR } from '../../utils/LocaleCalendarConfig';
+import { CardHasReport } from '@/components/CardHasReport';
 
 LocaleConfig.locales['pt-br'] = ptBR;
 LocaleConfig.defaultLocale = 'pt-br';
@@ -207,33 +208,7 @@ export default function CalendarScreen() {
 
           <View style={styles.eventsSection}>
             {selectedHasReport && (
-              <TouchableOpacity
-                style={[styles.reportCard, { backgroundColor: isDark ? '#1E1630' : '#F4EEFF' }]}
-                onPress={handleOpenReport}
-                activeOpacity={0.8}
-              >
-                <View style={[styles.reportIconBox, { backgroundColor: theme.colors.primary }]}>
-                  <Ionicons name="document-text-outline" size={20} color="#fff" />
-                </View>
-
-                <View style={styles.reportCardText}>
-                  <View style={styles.reportCardTitleRow}>
-                    <Text style={[styles.reportCardTitle, { color: theme.colors.text }]}>
-                      Relatório do dia
-                    </Text>
-                    {!selectedReportViewed && (
-                      <View style={[styles.newBadge, { backgroundColor: theme.colors.primary }]}>
-                        <Text style={styles.newBadgeText}>Novo</Text>
-                      </View>
-                    )}
-                  </View>
-                  <Text style={[styles.reportCardSubtitle, { color: `${theme.colors.text}99` }]}>
-                    Veja como foi o dia de Maria Clara
-                  </Text>
-                </View>
-
-                <Ionicons name="chevron-forward" size={18} color={`${theme.colors.text}66`} />
-              </TouchableOpacity>
+              <CardHasReport onPress={handleOpenReport} selectedReportViewed={selectedReportViewed} />
             )}
             {selectedDaySpecial && (
               <CardDateSpecial
@@ -397,46 +372,6 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
 
     eventsSection: { gap: 10 },
-    reportCard: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 12,
-      padding: 14,
-      borderRadius: 16,
-      borderWidth: 1,
-      borderColor: isDark ? '#2C2440' : '#E0D0F8',
-    },
-    reportIconBox: {
-      width: 40,
-      height: 40,
-      borderRadius: 12,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    reportCardText: { flex: 1, gap: 3 },
-    reportCardTitleRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 8,
-    },
-    reportCardTitle: {
-      fontSize: 14,
-      fontWeight: '600',
-    },
-    reportCardSubtitle: {
-      fontSize: 12,
-    },
-    newBadge: {
-      paddingHorizontal: 8,
-      paddingVertical: 2,
-      borderRadius: 20,
-    },
-    newBadgeText: {
-      color: '#fff',
-      fontSize: 10,
-      fontWeight: '700',
-    },
-
     emptyState: { alignItems: 'center', paddingVertical: 24 },
     emptyText: { fontSize: 13, color: theme.colors.text, opacity: 0.6 },
   });

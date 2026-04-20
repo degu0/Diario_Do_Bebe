@@ -1,3 +1,5 @@
+import { InfoRow } from '@/components/InfoRow';
+import { Section } from '@/components/Section';
 import { useThemeContext } from '@/context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -38,70 +40,6 @@ const alimentacaoLabel: Record<string, { label: string; color: string; bg: strin
   nao:   { label: 'Não comeu',   color: '#e74c3c', bg: '#FCEBEB' },
 };
 
-type InfoRowProps = {
-  label: string;
-  value: string;
-  textColor: string;
-  subtitleColor: string;
-  borderColor: string;
-};
-
-function InfoRow({ label, value, textColor, subtitleColor, borderColor }: InfoRowProps) {
-  return (
-    <View style={[infoRowStyles.row, { borderBottomColor: borderColor }]}>
-      <Text style={[infoRowStyles.label, { color: subtitleColor }]}>{label}</Text>
-      <Text style={[infoRowStyles.value, { color: textColor }]}>{value}</Text>
-    </View>
-  );
-}
-
-const infoRowStyles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 0.5,
-  },
-  label: {
-    fontSize: 13,
-    fontWeight: '500',
-  },
-  value: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-});
-
-type SectionProps = {
-  title: string;
-  children: React.ReactNode;
-  textColor: string;
-  subtitleColor: string;
-  cardBg: string;
-};
-
-function Section({ title, children, textColor, cardBg }: SectionProps) {
-  return (
-    <View style={[sectionStyles.card, { backgroundColor: cardBg }]}>
-      <Text style={[sectionStyles.title, { color: textColor }]}>{title}</Text>
-      {children}
-    </View>
-  );
-}
-
-const sectionStyles = StyleSheet.create({
-  card: {
-    borderRadius: 20,
-    padding: 16,
-    gap: 12,
-  },
-  title: {
-    fontSize: 15,
-    fontWeight: '700',
-    marginBottom: 2,
-  },
-});
 
 export default function DailyReportView() {
   const { theme, isDark } = useThemeContext();

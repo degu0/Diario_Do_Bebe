@@ -14,28 +14,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-type SectionCardProps = {
-  title: string;
-  subtitle?: string;
-  children: ReactNode;
-  titleColor: string;
-  subtitleColor: string;
-};
-
-function SectionCard({ title, subtitle, children, titleColor, subtitleColor }: SectionCardProps) {
-  return (
-    <View style={sharedStyles.sectionCard}>
-      <View style={sharedStyles.sectionHeader}>
-        <Text style={[sharedStyles.sectionTitle, { color: titleColor }]}>{title}</Text>
-        {subtitle ? (
-          <Text style={[sharedStyles.sectionSubtitle, { color: subtitleColor }]}>{subtitle}</Text>
-        ) : null}
-      </View>
-      {children}
-    </View>
-  );
-}
+import { SectionCard } from '@/components/SectionCard';
 
 export default function Register() {
   const { theme, isDark } = useThemeContext();
@@ -322,22 +301,6 @@ export default function Register() {
   );
 }
 
-const sharedStyles = StyleSheet.create({
-  sectionCard: {
-    gap: 16,
-  },
-  sectionHeader: {
-    gap: 4,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-  },
-  sectionSubtitle: {
-    fontSize: 13,
-    lineHeight: 18,
-  },
-});
 
 const createStyles = (theme: any, isDark: boolean) =>
   StyleSheet.create({
