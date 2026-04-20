@@ -38,7 +38,7 @@ export default function Home() {
             <Image source={profileIcon} style={styles.imageUser} />
             <View style={{ flexDirection: 'column' }}>
               <Text style={styles.title}>Ola, {name}</Text>
-              <Text style={styles.subtitle}>Sexta-feira, 13 de marco</Text>{' '}
+              <Text style={styles.subtitle}>Sexta-feira, 13 de marco</Text>
             </View>
           </View>
 
