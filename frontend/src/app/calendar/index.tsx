@@ -1,6 +1,7 @@
 import { CardDateSpecial } from '@/components/CardDateSpecial';
 import { useAuth } from '@/context/AuthContext';
 import { useThemeContext } from '@/context/ThemeContext';
+import { getMockSpecialDateEvents } from '@/utils/notifications/catalog';
 import { typeConfig } from '@/utils/typeConfig';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,16 +17,7 @@ import { CardHasReport } from '@/components/CardHasReport';
 LocaleConfig.locales['pt-br'] = ptBR;
 LocaleConfig.defaultLocale = 'pt-br';
 
-const daySpecial = [
-  {
-    date: '2026-04-03',
-    title: 'Feriado Nacional',
-    timeStart: '00:00',
-    timeEnd: '00:00',
-    type: 'holiday' as const,
-    location: 'Feriado',
-  },
-];
+const daySpecial = getMockSpecialDateEvents();
 
 const DAILY_REPORT_DATES = ['2026-04-14', '2026-04-15', '2026-04-16'];
 const STORAGE_KEY = 'viewed_reports';
@@ -208,14 +200,17 @@ export default function CalendarScreen() {
 
           <View style={styles.eventsSection}>
             {selectedHasReport && (
-              <CardHasReport onPress={handleOpenReport} selectedReportViewed={selectedReportViewed} />
+              <CardHasReport
+                onPress={handleOpenReport}
+                selectedReportViewed={selectedReportViewed}
+              />
             )}
             {selectedDaySpecial && (
               <CardDateSpecial
                 date={selectedDaySpecial.date}
                 title={selectedDaySpecial.title}
-                timeStart={selectedDaySpecial.timeStart}
-                timeEnd={selectedDaySpecial.timeEnd}
+                timeStart={selectedDaySpecial.timeStart ?? '00:00'}
+                timeEnd={selectedDaySpecial.timeEnd ?? '00:00'}
                 type={selectedDaySpecial.type}
                 location={selectedDaySpecial.location}
               />

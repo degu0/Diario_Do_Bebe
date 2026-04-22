@@ -43,6 +43,9 @@ export const colors = {
   meeting: '#2563EB',
   meetingSoft: '#DBEAFE',
 
+  reminder: '#8B5CF6',
+  reminderSoft: '#EDE9FE',
+
   gray: '#64748B',
 };
 
@@ -80,6 +83,9 @@ export const CustomLightTheme = {
 
     meeting: colors.meeting,
     meetingBackground: colors.meetingSoft,
+
+    reminder: colors.reminder,
+    reminderBackground: colors.reminderSoft,
   },
 };
 
@@ -117,5 +123,8 @@ export const CustomDarkTheme = {
 
     meeting: '#60A5FA',
     meetingBackground: '#172554',
+
+    reminder: '#A78BFA',
+    reminderBackground: '#2E1065',
   },
 };

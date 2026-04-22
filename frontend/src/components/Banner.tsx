@@ -1,30 +1,62 @@
+import type { BannerVariant } from '@/types/notification';
 import { useThemeContext } from '@/context/ThemeContext';
+import { Ionicons } from '@expo/vector-icons';
 import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 type BannerProps = {
   title: string;
   subtitle?: string;
-  type: 'holiday' | 'meeting';
+  type: BannerVariant;
 };
 
 export default function Banner({ title, subtitle, type }: BannerProps) {
   const { theme, isDark } = useThemeContext();
   const styles = useMemo(() => createStyles(theme, isDark), [theme, isDark]);
 
-  const accentColor = type === 'holiday' ? theme.colors.warning : theme.colors.meeting;
-  const backgroundColor =
-    type === 'holiday' ? theme.colors.warningBackground : theme.colors.meetingBackground;
-  const icon = type === 'holiday' ? '⚠️' : '📅';
+  const config = useMemo(() => {
+    switch (type) {
+      case 'holiday':
+        return {
+          accentColor: theme.colors.warning,
+          backgroundColor: theme.colors.warningBackground,
+          iconName: 'calendar-outline' as const,
+        };
+      case 'meeting':
+        return {
+          accentColor: theme.colors.meeting,
+          backgroundColor: theme.colors.meetingBackground,
+          iconName: 'people-outline' as const,
+        };
+      case 'report_available':
+        return {
+          accentColor: theme.colors.info,
+          backgroundColor: theme.colors.infoBackground,
+          iconName: 'document-text-outline' as const,
+        };
+      case 'report_reminder':
+      default:
+        return {
+          accentColor: theme.colors.reminder,
+          backgroundColor: theme.colors.reminderBackground,
+          iconName: 'notifications-outline' as const,
+        };
+    }
+  }, [theme, type]);
 
   return (
-    <View style={[styles.banner, { backgroundColor, borderColor: accentColor }]}>
-      <View style={[styles.iconWrap, { backgroundColor: `${accentColor}22` }]}>
-        <Text style={styles.icon}>{icon}</Text>
+    <View
+      style={[
+        styles.banner,
+        { backgroundColor: config.backgroundColor, borderColor: config.accentColor },
+      ]}
+    >
+      <View style={[styles.iconWrap, { backgroundColor: `${config.accentColor}22` }]}>
+        <Ionicons name={config.iconName} size={16} color={config.accentColor} />
       </View>
 
       <View style={styles.textWrap}>
-        <Text style={[styles.bannerText, { color: accentColor }]}>{title}</Text>
+        <Text style={[styles.bannerText, { color: config.accentColor }]}>{title}</Text>
         {subtitle ? <Text style={styles.bannerSubtitle}>{subtitle}</Text> : null}
       </View>
     </View>
@@ -49,9 +81,6 @@ const createStyles = (theme: any, isDark: boolean) =>
       borderRadius: 17,
       alignItems: 'center',
       justifyContent: 'center',
-    },
-    icon: {
-      fontSize: 16,
     },
     textWrap: {
       flex: 1,

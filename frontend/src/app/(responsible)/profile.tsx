@@ -110,7 +110,7 @@ const createStyles = (theme: any, isDark: boolean) =>
       backgroundColor: isDark ? '#110E1B' : '#6C4ED9',
     },
     scrollContent: {
-      paddingBottom: 40,
+      paddingBottom: 170,
     },
     hero: {
       position: 'relative',

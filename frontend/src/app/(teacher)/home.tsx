@@ -1,5 +1,6 @@
 import Banner from '@/components/Banner';
 import { useThemeContext } from '@/context/ThemeContext';
+import { getHomeBannerForUser } from '@/utils/notifications/catalog';
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -24,11 +25,7 @@ export default function Home() {
   const filledCount = 5;
   const totalCount = 8;
   const progress = filledCount / totalCount;
-  const alert = {
-    type: 'holiday' as const,
-    title: 'Feriado em 3 dias',
-    subtitle: 'A escola não tera atividades neste periodo.',
-  };
+  const alert = getHomeBannerForUser('teacher');
 
   const statusTheme: Record<string, { bg: string; text: string }> = {
     Preenchida: {
@@ -59,13 +56,15 @@ export default function Home() {
           <View style={styles.dateUser}>
             <Image source={profileIcon} style={styles.imageUser} />
             <View>
-              <Text style={styles.title}>Bom dia, {name} 👋</Text>
+              <Text style={styles.title}>Bom dia, {name}</Text>
               <Text style={styles.subtitle}>Sexta-feira, 13 de marco</Text>
               <Text style={styles.subtitle}>Escola | Turma A1</Text>
             </View>
           </View>
 
-          {alert ? <Banner title={alert.title} subtitle={alert.subtitle} type={alert.type} /> : null}
+          {alert ? (
+            <Banner title={alert.title} subtitle={alert.subtitle} type={alert.type} />
+          ) : null}
         </View>
 
         <View style={styles.contentCard}>

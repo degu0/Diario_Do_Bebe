@@ -1,7 +1,8 @@
 import Banner from '@/components/Banner';
 import { useThemeContext } from '@/context/ThemeContext';
+import { getHomeBannerForUser } from '@/utils/notifications/catalog';
 import { router } from 'expo-router';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const profileIcon = require('@/assets/icon/profile.png');
@@ -17,11 +18,7 @@ export default function Home() {
 
   const name = 'Carlos';
   const selectedKid = kids[0];
-  const alert = {
-    type: 'meeting' as const,
-    title: 'Reuniao de pais amanha',
-    subtitle: 'Confirme sua presenca com a coordenacao.',
-  };
+  const alert = getHomeBannerForUser('responsible');
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -94,10 +91,11 @@ export default function Home() {
           </View>
 
           <View>
-            <TouchableOpacity style={styles.buttonDailyDetails} onPress={() =>  router.push('/dailyReport/1')}>
-              <Text style={styles.textDailyDetails}>
-                Ver detalhes do dia
-              </Text>
+            <TouchableOpacity
+              style={styles.buttonDailyDetails}
+              onPress={() => router.push('/dailyReport/1')}
+            >
+              <Text style={styles.textDailyDetails}>Ver detalhes do dia</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -189,7 +187,7 @@ const createStyles = (theme: any, isDark: boolean) =>
       width: 34,
       height: 34,
       borderRadius: 17,
-      backgroundColor: theme.colors.purpleDark,
+      backgroundColor: theme.colors.primary,
       borderWidth: 2,
       borderColor: 'rgba(255,255,255,0.45)',
       alignItems: 'center',
@@ -198,12 +196,12 @@ const createStyles = (theme: any, isDark: boolean) =>
     kidInitialsText: {
       fontSize: 11,
       fontWeight: '700',
-      color: theme.colors.white,
+      color: '#FFFFFF',
     },
     kidChipName: {
       fontSize: 12,
       fontWeight: '600',
-      color: theme.colors.white,
+      color: '#FFFFFF',
     },
     kidChipAge: {
       fontSize: 10,
@@ -214,7 +212,7 @@ const createStyles = (theme: any, isDark: boolean) =>
       marginHorizontal: 12,
       padding: 16,
       borderRadius: 28,
-      backgroundColor: theme.colors.surface,
+      backgroundColor: theme.colors.background,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.12,
@@ -222,19 +220,20 @@ const createStyles = (theme: any, isDark: boolean) =>
       elevation: 8,
     },
     bigCard: {
-      backgroundColor: theme.colors.grayLight,
+      backgroundColor: theme.colors.surface,
       borderRadius: 20,
       padding: 16,
       marginBottom: 14,
-      shadowColor: theme.colors.shadow,
+      shadowColor: '#000',
       shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.1,
+      shadowOpacity: 0.08,
       shadowRadius: 8,
       elevation: 2,
     },
     titleCard: {
       fontSize: 13,
-      color: theme.colors.gray,
+      color: theme.colors.text,
+      opacity: 0.7,
       marginBottom: 8,
     },
     statusRow: {
@@ -246,7 +245,7 @@ const createStyles = (theme: any, isDark: boolean) =>
       width: 10,
       height: 10,
       borderRadius: 5,
-      backgroundColor: theme.colors.green,
+      backgroundColor: theme.colors.success,
     },
     statusText: {
       fontSize: 18,
@@ -257,9 +256,9 @@ const createStyles = (theme: any, isDark: boolean) =>
       flexDirection: 'row',
       backgroundColor: theme.colors.surface,
       borderRadius: 20,
-      shadowColor: theme.colors.shadow,
+      shadowColor: '#000',
       shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.1,
+      shadowOpacity: 0.08,
       shadowRadius: 8,
       elevation: 2,
       marginBottom: 12,
@@ -271,16 +270,17 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     smallCardDivider: {
       borderLeftWidth: 1,
-      borderLeftColor: theme.colors.border,
+      borderLeftColor: isDark ? '#2C2440' : '#E7DDF7',
     },
     smallCardNumber: {
       fontSize: 28,
       fontWeight: '700',
-      color: theme.colors.teal,
+      color: theme.colors.info,
     },
     smallCardLabel: {
       fontSize: 12,
-      color: theme.colors.gray,
+      color: theme.colors.text,
+      opacity: 0.6,
       fontWeight: '500',
     },
     buttonDailyDetails: {
@@ -288,18 +288,18 @@ const createStyles = (theme: any, isDark: boolean) =>
       paddingVertical: 12,
       borderRadius: 8,
       borderWidth: 1,
-      borderColor: theme.colors.border,
+      borderColor: isDark ? '#2C2440' : '#E7DDF7',
       marginTop: 8,
       alignItems: 'center',
-      shadowColor: theme.colors.shadow,
+      shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
+      shadowOpacity: 0.08,
       shadowRadius: 4,
-      elevation: 2, 
+      elevation: 2,
     },
     textDailyDetails: {
       fontSize: 14,
       color: theme.colors.text,
       fontWeight: '600',
-    }
+    },
   });
