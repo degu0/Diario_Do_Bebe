@@ -5,9 +5,10 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 type CardHasReportType = {
   onPress: () => void;
   selectedReportViewed: boolean;
+  childName: string;
 };
 
-export function CardHasReport({ onPress, selectedReportViewed }: CardHasReportType) {
+export function CardHasReport({ onPress, selectedReportViewed, childName }: CardHasReportType) {
   const { theme, isDark } = useThemeContext();
   const styles = createStyles(theme, isDark);
 
@@ -34,7 +35,7 @@ export function CardHasReport({ onPress, selectedReportViewed }: CardHasReportTy
             )}
           </View>
           <Text style={[styles.reportCardSubtitle, { color: `${theme.colors.text}99` }]}>
-            Veja como foi o dia de Maria Clara
+            Veja como foi o dia de {childName}
           </Text>
         </View>
 

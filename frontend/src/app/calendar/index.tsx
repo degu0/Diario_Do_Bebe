@@ -1,5 +1,6 @@
 import { CardDateSpecial } from '@/components/CardDateSpecial';
 import { useAuth } from '@/context/AuthContext';
+import { useResponsibleChild } from '@/context/ResponsibleChildContext';
 import { useThemeContext } from '@/context/ThemeContext';
 import { getMockSpecialDateEvents } from '@/utils/notifications/catalog';
 import { typeConfig } from '@/utils/typeConfig';
@@ -25,6 +26,7 @@ const STORAGE_KEY = 'viewed_reports';
 export default function CalendarScreen() {
   const { theme, isDark } = useThemeContext();
   const { user } = useAuth();
+  const { selectedChild } = useResponsibleChild();
   const router = useRouter();
   const [day, setDay] = useState<DateData>();
   const [viewedReports, setViewedReports] = useState<string[]>([]);
@@ -73,9 +75,9 @@ export default function CalendarScreen() {
   }, [theme, isDark, isResponsible, viewedReports]);
 
   const handleOpenReport = () => {
-    if (day?.dateString) {
+    if (day?.dateString && selectedChild) {
       markAsViewed(day.dateString);
-      router.push('/dailyReport/1');
+      router.push(`/dailyReport/${selectedChild.id}`);
     }
   };
 
@@ -201,6 +203,7 @@ export default function CalendarScreen() {
               <CardHasReport
                 onPress={handleOpenReport}
                 selectedReportViewed={selectedReportViewed}
+                childName={selectedChild?.name ?? 'sua crianca'}
               />
             )}
             {selectedDaySpecial && (

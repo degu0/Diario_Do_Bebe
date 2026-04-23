@@ -1,4 +1,5 @@
 import { AuthProvider } from '@/context/AuthContext';
+import { ResponsibleChildProvider } from '@/context/ResponsibleChildContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { applyGlobalTypography } from '@/utils/applyGlobalTypography';
 import {
@@ -48,9 +49,11 @@ function LayoutWrapper() {
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <ThemeProvider>
-        <LayoutWrapper />
-      </ThemeProvider>
+      <ResponsibleChildProvider>
+        <ThemeProvider>
+          <LayoutWrapper />
+        </ThemeProvider>
+      </ResponsibleChildProvider>
     </AuthProvider>
   );
 }

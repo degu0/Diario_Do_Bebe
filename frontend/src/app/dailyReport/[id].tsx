@@ -1,24 +1,12 @@
 import { InfoRow } from '@/components/InfoRow';
 import { Section } from '@/components/Section';
+import { useResponsibleChild } from '@/context/ResponsibleChildContext';
 import { useThemeContext } from '@/context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-const report = {
-  presenca: 'presente',
-  humor: 'animado',
-  alimentacao: 'bem',
-  sonecaInicio: '13:00',
-  sonecaFim: '14:30',
-  fraldaTrocada: true,
-  quantidadeFraldas: 3,
-  atividades: ['Pintura', 'Musicalização', 'Parque'],
-  observacoes:
-    'Maria Clara teve um dia muito animado! Participou com entusiasmo na atividade de pintura e brincou bastante no parque com os colegas.',
-};
 
 const humorEmoji: Record<string, string> = {
   animado: '😄',
@@ -30,18 +18,27 @@ const humorEmoji: Record<string, string> = {
 const alimentacaoLabel: Record<string, { label: string; color: string; bg: string }> = {
   bem: { label: 'Comeu bem', color: '#27ae60', bg: '#EAF3DE' },
   pouco: { label: 'Comeu pouco', color: '#f39c12', bg: '#FEF3D6' },
-  nao: { label: 'Não comeu', color: '#e74c3c', bg: '#FCEBEB' },
+  nao: { label: 'Nao comeu', color: '#e74c3c', bg: '#FCEBEB' },
 };
 
 export default function DailyReportView() {
   const { theme, isDark } = useThemeContext();
+  const { selectedChild, getChildById } = useResponsibleChild();
   const router = useRouter();
+  const params = useLocalSearchParams<{ id?: string | string[] }>();
   const styles = useMemo(() => createStyles(theme, isDark), [theme, isDark]);
+
+  const childId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const child = (childId ? getChildById(childId) : null) ?? selectedChild;
+
+  if (!child) {
+    return null;
+  }
 
   const subtitleColor = `${theme.colors.text}99`;
   const borderColor = isDark ? '#2C2440' : '#EDE5F7';
   const cardBg = isDark ? '#191327' : '#FDFBFF';
-  const alimentacao = alimentacaoLabel[report.alimentacao];
+  const alimentacao = alimentacaoLabel[child.report.alimentacao];
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
@@ -69,10 +66,12 @@ export default function DailyReportView() {
               resizeMode="contain"
             />
             <View style={styles.headerText}>
-              <Text style={styles.name}>Maria Clara</Text>
-              <Text style={styles.subtitle}>Maternal I • Segunda, 14 de Agosto</Text>
+              <Text style={styles.name}>{child.name}</Text>
+              <Text style={styles.subtitle}>
+                {child.report.schoolClass} • {child.report.dateLabel}
+              </Text>
               <View style={styles.infoPill}>
-                <Text style={styles.infoPillText}>Relatório do dia</Text>
+                <Text style={styles.infoPillText}>Relatorio do dia</Text>
               </View>
             </View>
           </View>
@@ -82,35 +81,37 @@ export default function DailyReportView() {
             <Ionicons name="image-outline" size={32} color={subtitleColor} />
             <Text style={[styles.photoLabel, { color: subtitleColor }]}>Foto do dia</Text>
             <Text style={[styles.photoHint, { color: subtitleColor }]}>
-              A professora ainda não enviou uma foto
+              A professora ainda nao enviou uma foto
             </Text>
           </View>
           <View style={styles.statusRow}>
             <View
               style={[
                 styles.statusBadge,
-                { backgroundColor: report.presenca === 'presente' ? '#EAF3DE' : '#FCEBEB' },
+                { backgroundColor: child.report.presenca === 'presente' ? '#EAF3DE' : '#FCEBEB' },
               ]}
             >
               <Ionicons
-                name={report.presenca === 'presente' ? 'checkmark-circle' : 'close-circle'}
+                name={child.report.presenca === 'presente' ? 'checkmark-circle' : 'close-circle'}
                 size={14}
-                color={report.presenca === 'presente' ? '#27ae60' : '#e74c3c'}
+                color={child.report.presenca === 'presente' ? '#27ae60' : '#e74c3c'}
               />
               <Text
                 style={[
                   styles.statusBadgeText,
-                  { color: report.presenca === 'presente' ? '#27ae60' : '#e74c3c' },
+                  {
+                    color: child.report.presenca === 'presente' ? '#27ae60' : '#e74c3c',
+                  },
                 ]}
               >
-                {report.presenca === 'presente' ? 'Presente' : 'Ausente'}
+                {child.report.presenca === 'presente' ? 'Presente' : 'Ausente'}
               </Text>
             </View>
 
             <View style={styles.humorBadge}>
-              <Text style={styles.humorEmoji}>{humorEmoji[report.humor]}</Text>
+              <Text style={styles.humorEmoji}>{humorEmoji[child.report.humor]}</Text>
               <Text style={[styles.humorLabel, { color: theme.colors.text }]}>
-                {report.humor.charAt(0).toUpperCase() + report.humor.slice(1)}
+                {child.report.humor.charAt(0).toUpperCase() + child.report.humor.slice(1)}
               </Text>
             </View>
           </View>
@@ -122,7 +123,7 @@ export default function DailyReportView() {
             cardBg={cardBg}
           >
             <InfoRow
-              label="Alimentação"
+              label="Alimentacao"
               value={alimentacao.label}
               textColor={alimentacao.color}
               subtitleColor={subtitleColor}
@@ -130,15 +131,19 @@ export default function DailyReportView() {
             />
             <InfoRow
               label="Soneca"
-              value={`${report.sonecaInicio} – ${report.sonecaFim}`}
+              value={`${child.report.sonecaInicio} - ${child.report.sonecaFim}`}
               textColor={theme.colors.text}
               subtitleColor={subtitleColor}
               borderColor={borderColor}
             />
             <InfoRow
               label="Fralda"
-              value={report.fraldaTrocada ? `Trocou ${report.quantidadeFraldas}x` : 'Não trocou'}
-              textColor={report.fraldaTrocada ? '#27ae60' : '#e74c3c'}
+              value={
+                child.report.fraldaTrocada
+                  ? `Trocou ${child.report.quantidadeFraldas}x`
+                  : 'Nao trocou'
+              }
+              textColor={child.report.fraldaTrocada ? '#27ae60' : '#e74c3c'}
               subtitleColor={subtitleColor}
               borderColor="transparent"
             />
@@ -151,7 +156,7 @@ export default function DailyReportView() {
             cardBg={cardBg}
           >
             <View style={styles.tagsRow}>
-              {report.atividades.map((item) => (
+              {child.report.atividades.map((item) => (
                 <View key={item} style={[styles.tag, { borderColor }]}>
                   <Text style={[styles.tagText, { color: theme.colors.primary }]}>{item}</Text>
                 </View>
@@ -160,27 +165,29 @@ export default function DailyReportView() {
           </Section>
 
           <Section
-            title="Observações"
+            title="Observacoes"
             textColor={theme.colors.text}
             subtitleColor={subtitleColor}
             cardBg={cardBg}
           >
             <Text style={[styles.observacoesText, { color: theme.colors.text }]}>
-              {report.observacoes}
+              {child.report.observacoes}
             </Text>
           </Section>
           <View style={[styles.teacherRow, { borderTopColor: borderColor }]}>
             <View
               style={[styles.teacherAvatar, { backgroundColor: isDark ? '#2C2440' : '#EDE5F7' }]}
             >
-              <Text style={[styles.teacherInitials, { color: theme.colors.primary }]}>RA</Text>
+              <Text style={[styles.teacherInitials, { color: theme.colors.primary }]}>
+                {child.report.teacherInitials}
+              </Text>
             </View>
             <View>
               <Text style={[styles.teacherName, { color: theme.colors.text }]}>
-                Rafaela Azevedo
+                {child.report.teacherName}
               </Text>
               <Text style={[styles.teacherRole, { color: subtitleColor }]}>
-                Professora responsável
+                Professora responsavel
               </Text>
             </View>
           </View>

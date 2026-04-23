@@ -1,4 +1,5 @@
 import Banner from '@/components/Banner';
+import { useResponsibleChild } from '@/context/ResponsibleChildContext';
 import { useThemeContext } from '@/context/ThemeContext';
 import { getHomeBannerForUser } from '@/utils/notifications/catalog';
 import { router } from 'expo-router';
@@ -7,18 +8,17 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const profileIcon = require('@/assets/icon/profile.png');
 
-const kids = [
-  { id: 1, image: profileIcon, name: 'Maria Fernanda', age: '1 ano e 2 meses', initials: 'MF' },
-  { id: 2, image: profileIcon, name: 'Zeca Silva', age: '3 anos', initials: 'ZS' },
-];
-
 export default function Home() {
   const { theme, isDark } = useThemeContext();
+  const { children, selectedChild, selectChild } = useResponsibleChild();
   const styles = createStyles(theme, isDark);
 
   const name = 'Carlos';
-  const selectedKid = kids[0];
   const alert = getHomeBannerForUser('responsible');
+
+  if (!selectedChild) {
+    return null;
+  }
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -44,13 +44,15 @@ export default function Home() {
           ) : null}
 
           <View style={styles.kidsRow}>
-            {kids.map((kid) => {
-              const isSelected = kid.id === selectedKid.id;
+            {children.map((kid) => {
+              const isSelected = kid.id === selectedChild.id;
 
               return (
                 <TouchableOpacity
                   key={kid.id}
                   style={[styles.kidChip, isSelected && styles.kidChipSelected]}
+                  onPress={() => void selectChild(kid.id)}
+                  activeOpacity={0.85}
                 >
                   <View style={styles.kidInitials}>
                     <Text style={styles.kidInitialsText}>{kid.initials}</Text>
@@ -73,19 +75,23 @@ export default function Home() {
             <Text style={styles.titleCard}>Status de hoje</Text>
 
             <View style={styles.statusRow}>
-              <View style={styles.statusDot} />
-              <Text style={styles.statusText}>Presente na creche</Text>
+              <View
+                style={[styles.statusDot, { backgroundColor: selectedChild.home.attendanceColor }]}
+              />
+              <Text style={styles.statusText}>{selectedChild.home.attendanceLabel}</Text>
             </View>
           </View>
 
           <View style={styles.smallCardsRow}>
             <View style={styles.smallCard}>
-              <Text style={styles.smallCardNumber}>Bem</Text>
+              <Text style={[styles.smallCardNumber, { color: selectedChild.home.feedingColor }]}>
+                {selectedChild.home.feedingLabel}
+              </Text>
               <Text style={styles.smallCardLabel}>Alimentacao</Text>
             </View>
 
             <View style={[styles.smallCard, styles.smallCardDivider]}>
-              <Text style={styles.smallCardNumber}>1 h 20 min</Text>
+              <Text style={styles.smallCardNumber}>{selectedChild.home.napLabel}</Text>
               <Text style={styles.smallCardLabel}>Sono/Soneca</Text>
             </View>
           </View>
@@ -93,7 +99,7 @@ export default function Home() {
           <View>
             <TouchableOpacity
               style={styles.buttonDailyDetails}
-              onPress={() => router.push('/dailyReport/1')}
+              onPress={() => router.push(`/dailyReport/${selectedChild.id}`)}
             >
               <Text style={styles.textDailyDetails}>Ver detalhes do dia</Text>
             </TouchableOpacity>
@@ -245,7 +251,6 @@ const createStyles = (theme: any, isDark: boolean) =>
       width: 10,
       height: 10,
       borderRadius: 5,
-      backgroundColor: theme.colors.success,
     },
     statusText: {
       fontSize: 18,
