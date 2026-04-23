@@ -1,4 +1,5 @@
 import Banner from '@/components/Banner';
+import { useTeacherAttendance } from '@/context/TeacherAttendanceContext';
 import { useThemeContext } from '@/context/ThemeContext';
 import { getHomeBannerForUser } from '@/utils/notifications/catalog';
 import { useRouter } from 'expo-router';
@@ -8,23 +9,18 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const profileIcon = require('@/assets/icon/profile.png');
 
-const kids = [
-  { id: 1, image: profileIcon, name: 'Charles Junior', status: 'Preenchida' },
-  { id: 2, image: profileIcon, name: 'Maria Silva', status: 'Ausente' },
-  { id: 3, image: profileIcon, name: 'Joao Pedro', status: 'Pendente' },
-  { id: 4, image: profileIcon, name: 'Ana Beatriz', status: 'Preenchida' },
-];
-
 export default function Home() {
   const { theme, isDark } = useThemeContext();
+  const { children } = useTeacherAttendance();
   const router = useRouter();
 
   const styles = useMemo(() => createStyles(theme, isDark), [theme, isDark]);
 
   const name = 'Aline';
-  const filledCount = 5;
-  const totalCount = 8;
-  const progress = filledCount / totalCount;
+  const filledCount = children.filter((child) => child.reportStatus === 'Preenchida').length;
+  const totalCount = children.length;
+  const absentCount = children.filter((child) => child.attendance === 'absent').length;
+  const progress = totalCount > 0 ? filledCount / totalCount : 0;
   const alert = getHomeBannerForUser('teacher');
 
   const statusTheme: Record<string, { bg: string; text: string }> = {
@@ -83,7 +79,7 @@ export default function Home() {
 
           <View style={styles.smallCardsRow}>
             <View style={styles.smallCard}>
-              <Text style={styles.smallCardNumber}>2</Text>
+              <Text style={styles.smallCardNumber}>{absentCount}</Text>
               <Text style={styles.smallCardLabel}>Ausentes hoje</Text>
             </View>
 
@@ -102,8 +98,8 @@ export default function Home() {
             </View>
 
             <View style={styles.kidsList}>
-              {kids.map((item) => {
-                const statusStyle = statusTheme[item.status] ?? {
+              {children.map((item) => {
+                const statusStyle = statusTheme[item.reportStatus] ?? {
                   bg: theme.colors.surface,
                   text: theme.colors.text,
                 };
@@ -114,12 +110,12 @@ export default function Home() {
                     style={styles.kidRow}
                     onPress={() => router.push(`/register/${item.id}`)}
                   >
-                    <Image source={item.image} style={styles.kidAvatar} />
+                    <Image source={profileIcon} style={styles.kidAvatar} />
                     <Text style={styles.kidName}>{item.name}</Text>
 
                     <View style={[styles.statusBadge, { backgroundColor: statusStyle.bg }]}>
                       <Text style={[styles.statusText, { color: statusStyle.text }]}>
-                        {item.status}
+                        {item.reportStatus}
                       </Text>
                     </View>
 

@@ -1,6 +1,7 @@
-import { ReactNode, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { CustomRadioButton } from '@/components/CustomRadioButton';
 import MultiSelectTabs from '@/components/MultiSelectTabs';
+import { useTeacherAttendance } from '@/context/TeacherAttendanceContext';
 import { useThemeContext } from '@/context/ThemeContext';
 import {
   Image,
@@ -12,16 +13,20 @@ import {
   View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SectionCard } from '@/components/SectionCard';
 
 export default function Register() {
   const { theme, isDark } = useThemeContext();
+  const { getChildById } = useTeacherAttendance();
   const router = useRouter();
+  const params = useLocalSearchParams<{ id?: string | string[] }>();
   const styles = useMemo(() => createStyles(theme, isDark), [theme, isDark]);
 
-  const [presenca, setPresenca] = useState('presente');
+  const childId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const child = childId ? getChildById(childId) : null;
+
   const [humor, setHumor] = useState('animado');
   const [alimentacao, setAlimentacao] = useState('bem');
   const [atividades, setAtividades] = useState<string[]>([]);
@@ -32,6 +37,7 @@ export default function Register() {
   const [observacoes, setObservacoes] = useState('');
 
   const subtitleColor = `${theme.colors.text}AA`;
+  const presenca = child?.attendance === 'absent' ? 'ausente' : 'presente';
   const isAusente = presenca === 'ausente';
 
   const dailyReportPayload = useMemo(
@@ -96,8 +102,10 @@ export default function Register() {
             />
 
             <View style={styles.headerText}>
-              <Text style={styles.name}>Maria Clara</Text>
-              <Text style={styles.subtitle}>Maternal I • Segunda, 14 de Agosto</Text>
+              <Text style={styles.name}>{child?.name ?? 'Crianca'}</Text>
+              <Text style={styles.subtitle}>
+                Turma {child?.className ?? 'A1'} • Segunda, 14 de Agosto
+              </Text>
               <View style={styles.infoPill}>
                 <Text style={styles.infoPillText}>Relatorio diario</Text>
               </View>
@@ -107,48 +115,25 @@ export default function Register() {
 
         <View style={styles.formCard}>
           <SectionCard
-            title="Presenca e humor"
-            subtitle="Comece registrando como a crianca passou o dia."
+            title="Humor do dia"
+            subtitle="Registre como a crianca passou o dia."
             titleColor={theme.colors.text}
             subtitleColor={subtitleColor}
           >
-            <View style={styles.fieldGroup}>
-              <Text style={styles.fieldLabel}>Presenca</Text>
-              <View style={styles.rowBetween}>
+            <View
+              style={[styles.wrapRow, isAusente && styles.disabledSection]}
+              pointerEvents={isAusente ? 'none' : 'auto'}
+            >
+              {['animado', 'neutro', 'triste', 'agitado'].map((item) => (
                 <CustomRadioButton
-                  label="Presente"
-                  selected={presenca === 'presente'}
-                  onSelect={() => setPresenca('presente')}
-                  color={theme.colors.success}
-                  style={styles.flexButton}
+                  key={item}
+                  label={item.charAt(0).toUpperCase() + item.slice(1)}
+                  selected={humor === item}
+                  onSelect={() => setHumor(item)}
+                  size="md"
+                  style={styles.chipButton}
                 />
-                <CustomRadioButton
-                  label="Ausente"
-                  selected={presenca === 'ausente'}
-                  onSelect={() => setPresenca('ausente')}
-                  color={theme.colors.error}
-                  style={styles.flexButton}
-                />
-              </View>
-            </View>
-
-            <View style={styles.fieldGroup}>
-              <Text style={styles.fieldLabel}>Humor do dia</Text>
-              <View
-                style={[styles.wrapRow, isAusente && styles.disabledSection]}
-                pointerEvents={isAusente ? 'none' : 'auto'}
-              >
-                {['animado', 'neutro', 'triste', 'agitado'].map((item) => (
-                  <CustomRadioButton
-                    key={item}
-                    label={item.charAt(0).toUpperCase() + item.slice(1)}
-                    selected={humor === item}
-                    onSelect={() => setHumor(item)}
-                    size="md"
-                    style={styles.chipButton}
-                  />
-                ))}
-              </View>
+              ))}
             </View>
           </SectionCard>
 
@@ -286,8 +271,8 @@ export default function Register() {
             <View style={styles.absentNotice}>
               <Ionicons name="information-circle-outline" size={18} color={theme.colors.text} />
               <Text style={styles.absentNoticeText}>
-                Como a crianca esta ausente, os demais campos ficam bloqueados e serao enviados como
-                `null`.
+                A crianca foi marcada como ausente na lista da turma. Os demais campos ficam
+                bloqueados e serao enviados como `null`.
               </Text>
             </View>
           ) : null}
@@ -307,11 +292,9 @@ const createStyles = (theme: any, isDark: boolean) =>
       flex: 1,
       backgroundColor: isDark ? '#110E1B' : '#6C4ED9',
     },
-
     scrollContent: {
       paddingBottom: 40,
     },
-
     hero: {
       position: 'relative',
       paddingHorizontal: 16,
@@ -319,7 +302,6 @@ const createStyles = (theme: any, isDark: boolean) =>
       paddingBottom: 90,
       overflow: 'hidden',
     },
-
     heroGlowLarge: {
       position: 'absolute',
       width: 220,
@@ -329,7 +311,6 @@ const createStyles = (theme: any, isDark: boolean) =>
       top: -70,
       right: -40,
     },
-
     heroGlowSmall: {
       position: 'absolute',
       width: 120,
@@ -339,7 +320,6 @@ const createStyles = (theme: any, isDark: boolean) =>
       bottom: 18,
       left: -28,
     },
-
     backButton: {
       width: 42,
       height: 42,
@@ -351,13 +331,11 @@ const createStyles = (theme: any, isDark: boolean) =>
       borderColor: 'rgba(255,255,255,0.22)',
       marginBottom: 18,
     },
-
     childSummary: {
       flexDirection: 'row',
       gap: 14,
       alignItems: 'center',
     },
-
     avatar: {
       width: 64,
       height: 64,
@@ -366,23 +344,19 @@ const createStyles = (theme: any, isDark: boolean) =>
       borderWidth: 2,
       borderColor: 'rgba(255,255,255,0.22)',
     },
-
     headerText: {
       flex: 1,
       gap: 4,
     },
-
     name: {
       fontSize: 24,
       fontFamily: 'Nunito_700Bold',
       color: '#fff',
     },
-
     subtitle: {
       fontSize: 13,
       color: 'rgba(255,255,255,0.76)',
     },
-
     infoPill: {
       marginTop: 8,
       alignSelf: 'flex-start',
@@ -393,13 +367,11 @@ const createStyles = (theme: any, isDark: boolean) =>
       borderWidth: 1,
       borderColor: 'rgba(255,255,255,0.20)',
     },
-
     infoPillText: {
       color: '#fff',
       fontSize: 12,
       fontFamily: 'Nunito_600SemiBold',
     },
-
     formCard: {
       marginTop: -40,
       marginHorizontal: 12,
@@ -413,54 +385,43 @@ const createStyles = (theme: any, isDark: boolean) =>
       elevation: 8,
       gap: 18,
     },
-
     fieldGroup: {
       gap: 10,
     },
-
     fieldLabel: {
       fontSize: 14,
       fontFamily: 'Nunito_700Bold',
       color: theme.colors.text,
     },
-
     rowBetween: {
       flexDirection: 'row',
       gap: 10,
     },
-
     twoColumnRow: {
       flexDirection: 'row',
       gap: 14,
     },
-
     column: {
       flex: 1,
       gap: 10,
     },
-
     wrapRow: {
       flexDirection: 'row',
       flexWrap: 'wrap',
       gap: 8,
     },
-
     stack: {
       gap: 2,
     },
-
     flexButton: {
       flex: 1,
     },
-
     chipButton: {
       marginBottom: 0,
     },
-
     inputGroup: {
       gap: 8,
     },
-
     input: {
       borderWidth: 1,
       borderColor: isDark ? '#2C2440' : '#E7DDF7',
@@ -471,15 +432,12 @@ const createStyles = (theme: any, isDark: boolean) =>
       color: theme.colors.text,
       fontSize: 14,
     },
-
     inputDisabled: {
       opacity: 0.5,
     },
-
     disabledSection: {
       opacity: 0.45,
     },
-
     textArea: {
       borderWidth: 1,
       borderColor: isDark ? '#2C2440' : '#E7DDF7',
@@ -493,7 +451,6 @@ const createStyles = (theme: any, isDark: boolean) =>
       fontSize: 14,
       lineHeight: 20,
     },
-
     button: {
       backgroundColor: theme.colors.primary,
       paddingVertical: 16,
@@ -501,13 +458,11 @@ const createStyles = (theme: any, isDark: boolean) =>
       alignItems: 'center',
       marginTop: 6,
     },
-
     buttonText: {
       color: '#fff',
       fontFamily: 'Nunito_700Bold',
       fontSize: 16,
     },
-
     absentNotice: {
       flexDirection: 'row',
       gap: 8,
@@ -519,14 +474,12 @@ const createStyles = (theme: any, isDark: boolean) =>
       borderWidth: 1,
       borderColor: isDark ? '#2C2440' : '#E7DDF7',
     },
-
     absentNoticeText: {
       flex: 1,
       color: theme.colors.text,
       fontSize: 13,
       lineHeight: 18,
     },
-
     placeholder: {
       color: isDark ? '#8E8AA5' : '#94A3B8',
     },

@@ -1,5 +1,6 @@
 import { AuthProvider } from '@/context/AuthContext';
 import { ResponsibleChildProvider } from '@/context/ResponsibleChildContext';
+import { TeacherAttendanceProvider } from '@/context/TeacherAttendanceContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { applyGlobalTypography } from '@/utils/applyGlobalTypography';
 import {
@@ -12,6 +13,7 @@ import {
 import * as SplashScreen from 'expo-splash-screen';
 import { Stack } from 'expo-router';
 import { useEffect } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 void SplashScreen.preventAutoHideAsync();
@@ -40,9 +42,11 @@ function LayoutWrapper() {
   }
 
   return (
-    <SafeAreaProvider>
-      <Stack screenOptions={{ animation: 'none', headerShown: false }} />
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <Stack screenOptions={{ animation: 'none', headerShown: false }} />
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
 
@@ -50,9 +54,11 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <ResponsibleChildProvider>
-        <ThemeProvider>
-          <LayoutWrapper />
-        </ThemeProvider>
+        <TeacherAttendanceProvider>
+          <ThemeProvider>
+            <LayoutWrapper />
+          </ThemeProvider>
+        </TeacherAttendanceProvider>
       </ResponsibleChildProvider>
     </AuthProvider>
   );

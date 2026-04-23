@@ -1,6 +1,7 @@
 import { colors } from '@/constants/Colors';
+import { useTeacherAttendance } from '@/context/TeacherAttendanceContext';
 import { useThemeContext } from '@/context/ThemeContext';
-import { useRoute } from '@react-navigation/native';
+import { useLocalSearchParams } from 'expo-router';
 import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -10,9 +11,10 @@ import { SectionCard } from '@/components/SectionCard';
 import { AccordionSection } from '@/components/AccordionSection';
 
 export default function BabyProfile() {
-  const route = useRoute();
-  const { id } = route.params as { id: number };
-
+  const params = useLocalSearchParams<{ id?: string | string[] }>();
+  const childId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const { getChildById } = useTeacherAttendance();
+  const child = childId ? getChildById(childId) : null;
   const { theme, isDark } = useThemeContext();
   const styles = useMemo(() => createStyles(theme, isDark), [theme, isDark]);
 
@@ -56,11 +58,11 @@ export default function BabyProfile() {
             <Image source={require('@/assets/icon/profile.png')} style={styles.babyAvatar} />
 
             <View style={styles.babyTexts}>
-              <Text style={styles.babyName}>Maria Clara</Text>
+              <Text style={styles.babyName}>{child?.name ?? 'Crianca'}</Text>
               <Text style={styles.babyMeta}>Perfil da crianca</Text>
               <Text style={styles.babyBirthday}>Aniversario: 01/01/2025</Text>
               <View style={styles.infoPill}>
-                <Text style={styles.infoPillText}>Maternal I</Text>
+                <Text style={styles.infoPillText}>Turma {child?.className ?? 'A1'}</Text>
               </View>
             </View>
           </View>
@@ -68,13 +70,20 @@ export default function BabyProfile() {
 
         <View style={styles.contentCard}>
           <TouchableOpacity
-            onPress={() => router.push(`/register/${id}`)}
+            onPress={() => router.push(`/register/${childId ?? '1'}`)}
             style={styles.primaryButton}
             activeOpacity={0.85}
           >
             <Ionicons name="document-text-outline" size={18} color="#fff" />
             <Text style={styles.primaryButtonText}>Preencher relatorio diario</Text>
           </TouchableOpacity>
+
+          <View style={styles.helperCard}>
+            <Ionicons name="information-circle-outline" size={18} color={theme.colors.primary} />
+            <Text style={styles.helperText}>
+              A presenca do dia agora e marcada diretamente na lista da turma com gesto lateral.
+            </Text>
+          </View>
 
           <SectionCard
             title="Responsaveis"
@@ -190,11 +199,9 @@ const createStyles = (theme: any, isDark: boolean) =>
       flex: 1,
       backgroundColor: isDark ? '#110E1B' : '#6C4ED9',
     },
-
     scrollContent: {
       paddingBottom: 160,
     },
-
     hero: {
       position: 'relative',
       paddingHorizontal: 16,
@@ -202,7 +209,6 @@ const createStyles = (theme: any, isDark: boolean) =>
       paddingBottom: 94,
       overflow: 'hidden',
     },
-
     heroGlowLarge: {
       position: 'absolute',
       width: 220,
@@ -212,7 +218,6 @@ const createStyles = (theme: any, isDark: boolean) =>
       top: -70,
       right: -40,
     },
-
     heroGlowSmall: {
       position: 'absolute',
       width: 120,
@@ -222,7 +227,6 @@ const createStyles = (theme: any, isDark: boolean) =>
       bottom: 18,
       left: -28,
     },
-
     backButton: {
       width: 42,
       height: 42,
@@ -234,13 +238,11 @@ const createStyles = (theme: any, isDark: boolean) =>
       borderColor: 'rgba(255,255,255,0.22)',
       marginBottom: 18,
     },
-
     childSummary: {
       flexDirection: 'row',
       gap: 14,
       alignItems: 'center',
     },
-
     babyAvatar: {
       width: 72,
       height: 72,
@@ -249,28 +251,23 @@ const createStyles = (theme: any, isDark: boolean) =>
       borderWidth: 2,
       borderColor: 'rgba(255,255,255,0.22)',
     },
-
     babyTexts: {
       flex: 1,
       gap: 4,
     },
-
     babyName: {
       fontSize: 24,
       fontFamily: 'Nunito_700Bold',
       color: '#fff',
     },
-
     babyMeta: {
       fontSize: 13,
       color: 'rgba(255,255,255,0.82)',
     },
-
     babyBirthday: {
       fontSize: 13,
       color: 'rgba(255,255,255,0.72)',
     },
-
     infoPill: {
       marginTop: 8,
       alignSelf: 'flex-start',
@@ -281,13 +278,11 @@ const createStyles = (theme: any, isDark: boolean) =>
       borderWidth: 1,
       borderColor: 'rgba(255,255,255,0.20)',
     },
-
     infoPillText: {
       color: '#fff',
       fontSize: 12,
       fontFamily: 'Nunito_600SemiBold',
     },
-
     contentCard: {
       marginTop: -40,
       marginHorizontal: 12,
@@ -301,7 +296,6 @@ const createStyles = (theme: any, isDark: boolean) =>
       elevation: 8,
       gap: 18,
     },
-
     primaryButton: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -311,62 +305,69 @@ const createStyles = (theme: any, isDark: boolean) =>
       paddingVertical: 16,
       borderRadius: 16,
     },
-
     primaryButtonText: {
       color: '#fff',
       fontFamily: 'Nunito_700Bold',
       fontSize: 15,
     },
-
+    helperCard: {
+      flexDirection: 'row',
+      gap: 8,
+      alignItems: 'flex-start',
+      borderRadius: 16,
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+      backgroundColor: isDark ? '#191327' : '#F4EEFF',
+      borderWidth: 1,
+      borderColor: isDark ? '#2C2440' : '#E7DDF7',
+    },
+    helperText: {
+      flex: 1,
+      fontSize: 13,
+      lineHeight: 19,
+      color: theme.colors.text,
+      opacity: 0.82,
+    },
     responsibleGrid: {
       gap: 12,
     },
-
     responsibleCard: {
       borderRadius: 18,
       padding: 14,
       gap: 12,
     },
-
     cardInformation: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 10,
     },
-
     responsibleAvatar: {
       width: 42,
       height: 42,
       borderRadius: 12,
       backgroundColor: theme.colors.surface,
     },
-
     information: {
       gap: 2,
     },
-
     responsibleName: {
       fontSize: 14,
       fontFamily: 'Nunito_600SemiBold',
       color: '#fff',
     },
-
     responsibleRole: {
       fontSize: 12,
       color: '#fff',
       opacity: 0.72,
     },
-
     responsiblePhone: {
       fontSize: 13,
       fontFamily: 'Nunito_700Bold',
       color: '#fff',
     },
-
     contactList: {
       gap: 8,
     },
-
     contactRow: {
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -376,14 +377,12 @@ const createStyles = (theme: any, isDark: boolean) =>
       backgroundColor: theme.colors.surface,
       borderRadius: 16,
     },
-
     contactName: {
       fontSize: 13,
       fontFamily: 'Nunito_600SemiBold',
       color: theme.colors.text,
       marginBottom: 2,
     },
-
     contactLabel: {
       fontSize: 11,
       color: theme.colors.text,
@@ -391,19 +390,16 @@ const createStyles = (theme: any, isDark: boolean) =>
       textTransform: 'uppercase',
       letterSpacing: 0.5,
     },
-
     contactNumber: {
       fontSize: 12,
       fontFamily: 'Nunito_700Bold',
       color: colors.gray,
     },
-
     authorizedGrid: {
       flexDirection: 'row',
       flexWrap: 'wrap',
       gap: 10,
     },
-
     authorizedCard: {
       minWidth: '30%',
       backgroundColor: theme.colors.surface,
@@ -413,13 +409,11 @@ const createStyles = (theme: any, isDark: boolean) =>
       alignItems: 'center',
       gap: 4,
     },
-
     authorizedName: {
       fontSize: 13,
       fontFamily: 'Nunito_700Bold',
       color: theme.colors.text,
     },
-
     authorizedRole: {
       fontSize: 11,
       color: theme.colors.text,
