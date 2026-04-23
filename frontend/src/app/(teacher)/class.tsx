@@ -123,7 +123,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     title: {
       fontSize: 24,
       color: '#FFFFFF',
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
       marginBottom: 4,
     },
     subtitle: {
@@ -197,7 +197,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     kidName: {
       fontSize: 14,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
       color: theme.colors.text,
     },
     kidClass: {

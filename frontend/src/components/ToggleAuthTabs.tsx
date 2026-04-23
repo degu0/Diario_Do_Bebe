@@ -16,18 +16,14 @@ export default function ToggleAuthTabs({ active, onChange }: Props) {
         style={[styles.tab, active === 'signin' && styles.activeTab]}
         onPress={() => onChange('signin')}
       >
-        <Text style={[styles.text, active === 'signin' && styles.activeText]}>
-          Sign in
-        </Text>
+        <Text style={[styles.text, active === 'signin' && styles.activeText]}>Sign in</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={[styles.tab, active === 'signup' && styles.activeTab]}
         onPress={() => onChange('signup')}
       >
-        <Text style={[styles.text, active === 'signup' && styles.activeText]}>
-          Sign up
-        </Text>
+        <Text style={[styles.text, active === 'signup' && styles.activeText]}>Sign up</Text>
       </TouchableOpacity>
     </View>
   );
@@ -61,11 +57,11 @@ const createStyles = (theme: any) =>
     text: {
       fontSize: 14,
       color: theme.colors.gray,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
     },
 
     activeText: {
       color: theme.colors.text,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
     },
   });

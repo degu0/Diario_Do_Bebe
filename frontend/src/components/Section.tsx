@@ -25,7 +25,7 @@ const sectionStyles = StyleSheet.create({
   },
   title: {
     fontSize: 15,
-    fontWeight: '700',
+    fontFamily: 'Nunito_700Bold',
     marginBottom: 2,
   },
 });

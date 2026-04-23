@@ -38,7 +38,7 @@ const sharedStyles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '700',
+    fontFamily: 'Nunito_700Bold',
   },
   sectionSubtitle: {
     fontSize: 13,

@@ -189,7 +189,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     title: {
       fontSize: 24,
       color: '#FFFFFF',
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
       marginBottom: 4,
     },
     subtitle: {
@@ -222,7 +222,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     titleCard: {
       fontSize: 14,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
       color: theme.colors.text,
       marginBottom: 8,
     },
@@ -234,13 +234,13 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     numberBig: {
       fontSize: 42,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
       color: theme.colors.text,
       lineHeight: 48,
     },
     numberSmall: {
       fontSize: 20,
-      fontWeight: '500',
+      fontFamily: 'Nunito_500Medium',
       color: theme.colors.text,
       opacity: 0.5,
       marginBottom: 6,
@@ -274,14 +274,14 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     smallCardNumber: {
       fontSize: 36,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
       color: theme.colors.error,
     },
     smallCardLabel: {
       fontSize: 12,
       color: theme.colors.text,
       opacity: 0.6,
-      fontWeight: '500',
+      fontFamily: 'Nunito_500Medium',
     },
     kidsSection: {
       marginBottom: 12,
@@ -295,13 +295,13 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     kidsSectionTitle: {
       fontSize: 14,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
       color: theme.colors.text,
     },
     seeMore: {
       fontSize: 13,
       color: theme.colors.primary,
-      fontWeight: '500',
+      fontFamily: 'Nunito_500Medium',
     },
     kidsList: {
       backgroundColor: theme.colors.surface,
@@ -331,7 +331,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     kidName: {
       flex: 1,
       fontSize: 13,
-      fontWeight: '500',
+      fontFamily: 'Nunito_500Medium',
       color: theme.colors.text,
     },
     statusBadge: {
@@ -341,7 +341,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     statusText: {
       fontSize: 11,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
     },
     chevron: {
       fontSize: 20,

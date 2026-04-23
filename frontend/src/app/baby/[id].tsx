@@ -257,7 +257,7 @@ const createStyles = (theme: any, isDark: boolean) =>
 
     babyName: {
       fontSize: 24,
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
       color: '#fff',
     },
 
@@ -285,7 +285,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     infoPillText: {
       color: '#fff',
       fontSize: 12,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
     },
 
     contentCard: {
@@ -314,7 +314,7 @@ const createStyles = (theme: any, isDark: boolean) =>
 
     primaryButtonText: {
       color: '#fff',
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
       fontSize: 15,
     },
 
@@ -347,7 +347,7 @@ const createStyles = (theme: any, isDark: boolean) =>
 
     responsibleName: {
       fontSize: 14,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
       color: '#fff',
     },
 
@@ -359,7 +359,7 @@ const createStyles = (theme: any, isDark: boolean) =>
 
     responsiblePhone: {
       fontSize: 13,
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
       color: '#fff',
     },
 
@@ -379,7 +379,7 @@ const createStyles = (theme: any, isDark: boolean) =>
 
     contactName: {
       fontSize: 13,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
       color: theme.colors.text,
       marginBottom: 2,
     },
@@ -394,7 +394,7 @@ const createStyles = (theme: any, isDark: boolean) =>
 
     contactNumber: {
       fontSize: 12,
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
       color: colors.gray,
     },
 
@@ -416,7 +416,7 @@ const createStyles = (theme: any, isDark: boolean) =>
 
     authorizedName: {
       fontSize: 13,
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
       color: theme.colors.text,
     },
 

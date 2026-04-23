@@ -83,7 +83,7 @@ const accordionStyles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: 'Nunito_600SemiBold',
   },
   badge: {
     paddingHorizontal: 8,
@@ -92,7 +92,7 @@ const accordionStyles = StyleSheet.create({
   },
   badgeText: {
     fontSize: 11,
-    fontWeight: '700',
+    fontFamily: 'Nunito_700Bold',
   },
   chevron: {
     fontSize: 12,

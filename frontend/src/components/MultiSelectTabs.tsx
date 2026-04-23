@@ -1,11 +1,5 @@
 import { useState } from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 type Option = {
   label: string;
@@ -18,11 +12,7 @@ type Props = {
   onChange?: (values: string[]) => void;
 };
 
-export default function MultiSelectTabs({
-  options,
-  selectedValues = [],
-  onChange,
-}: Props) {
+export default function MultiSelectTabs({ options, selectedValues = [], onChange }: Props) {
   const [selected, setSelected] = useState<string[]>(selectedValues);
 
   function toggle(value: string) {
@@ -50,20 +40,10 @@ export default function MultiSelectTabs({
         return (
           <TouchableOpacity
             key={item.value}
-            style={[
-              styles.tab,
-              isActive && styles.activeTab,
-            ]}
+            style={[styles.tab, isActive && styles.activeTab]}
             onPress={() => toggle(item.value)}
           >
-            <Text
-              style={[
-                styles.text,
-                isActive && styles.activeText,
-              ]}
-            >
-              {item.label}
-            </Text>
+            <Text style={[styles.text, isActive && styles.activeText]}>{item.label}</Text>
           </TouchableOpacity>
         );
       })}
@@ -94,6 +74,6 @@ const styles = StyleSheet.create({
   },
   activeText: {
     color: '#5B3EFF',
-    fontWeight: '600',
+    fontFamily: 'Nunito_600SemiBold',
   },
 });

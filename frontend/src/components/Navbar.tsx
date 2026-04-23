@@ -103,6 +103,6 @@ const createStyles = (theme: any) =>
 
     activeText: {
       color: theme.colors.primary,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
     },
   });

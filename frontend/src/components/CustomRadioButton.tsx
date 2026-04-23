@@ -1,12 +1,6 @@
 import { useThemeContext } from '@/context/ThemeContext';
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  ViewStyle,
-  TextStyle,
-} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, ViewStyle, TextStyle } from 'react-native';
 
 type SizeType = 'sm' | 'md' | 'lg';
 
@@ -117,6 +111,6 @@ const createStyles = (theme: any) =>
     },
 
     text: {
-      fontWeight: '500',
+      fontFamily: 'Nunito_500Medium',
     },
   });

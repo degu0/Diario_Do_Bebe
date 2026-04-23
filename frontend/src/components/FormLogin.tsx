@@ -1,11 +1,6 @@
-import { useThemeContext } from "@/context/ThemeContext";
+import { useThemeContext } from '@/context/ThemeContext';
 import { Lock, Sms } from 'iconsax-react-native';
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 type FormLoginProps = {
   email: string;
@@ -28,7 +23,6 @@ export default function FormLogin({
 
   return (
     <View style={styles.container}>
-
       <View style={styles.inputWrapper}>
         <Text style={styles.inputLabel}>EMAIL</Text>
         <View style={styles.inputContainer}>
@@ -60,10 +54,7 @@ export default function FormLogin({
         </View>
       </View>
 
-      {erro ? (
-        <Text style={styles.erro}>{erro}</Text>
-      ) : null}
-
+      {erro ? <Text style={styles.erro}>{erro}</Text> : null}
     </View>
   );
 }
@@ -71,7 +62,7 @@ export default function FormLogin({
 const createStyles = (theme: any) =>
   StyleSheet.create({
     container: {
-      width: "100%",
+      width: '100%',
       gap: 16,
     },
     inputWrapper: {
@@ -79,13 +70,13 @@ const createStyles = (theme: any) =>
     },
     inputLabel: {
       fontSize: 11,
-      fontWeight: "600",
+      fontFamily: 'Nunito_600SemiBold',
       color: theme.colors.secondary,
       letterSpacing: 0.8,
     },
     inputContainer: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       backgroundColor: theme.colors.surface,
       borderRadius: 10,
       borderWidth: 1,
@@ -109,7 +100,7 @@ const createStyles = (theme: any) =>
     },
     erro: {
       color: theme.colors.error,
-      textAlign: "center",
+      textAlign: 'center',
       fontSize: 13,
     },
   });

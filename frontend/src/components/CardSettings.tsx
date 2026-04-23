@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 14,
-    fontWeight: '500',
+    fontFamily: 'Nunito_500Medium',
   },
   divider: {
     height: 1,

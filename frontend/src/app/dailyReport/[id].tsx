@@ -4,14 +4,7 @@ import { useThemeContext } from '@/context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const report = {
@@ -35,11 +28,10 @@ const humorEmoji: Record<string, string> = {
 };
 
 const alimentacaoLabel: Record<string, { label: string; color: string; bg: string }> = {
-  bem:   { label: 'Comeu bem',   color: '#27ae60', bg: '#EAF3DE' },
+  bem: { label: 'Comeu bem', color: '#27ae60', bg: '#EAF3DE' },
   pouco: { label: 'Comeu pouco', color: '#f39c12', bg: '#FEF3D6' },
-  nao:   { label: 'Não comeu',   color: '#e74c3c', bg: '#FCEBEB' },
+  nao: { label: 'Não comeu', color: '#e74c3c', bg: '#FCEBEB' },
 };
-
 
 export default function DailyReportView() {
   const { theme, isDark } = useThemeContext();
@@ -94,19 +86,23 @@ export default function DailyReportView() {
             </Text>
           </View>
           <View style={styles.statusRow}>
-            <View style={[
-              styles.statusBadge,
-              { backgroundColor: report.presenca === 'presente' ? '#EAF3DE' : '#FCEBEB' },
-            ]}>
+            <View
+              style={[
+                styles.statusBadge,
+                { backgroundColor: report.presenca === 'presente' ? '#EAF3DE' : '#FCEBEB' },
+              ]}
+            >
               <Ionicons
                 name={report.presenca === 'presente' ? 'checkmark-circle' : 'close-circle'}
                 size={14}
                 color={report.presenca === 'presente' ? '#27ae60' : '#e74c3c'}
               />
-              <Text style={[
-                styles.statusBadgeText,
-                { color: report.presenca === 'presente' ? '#27ae60' : '#e74c3c' },
-              ]}>
+              <Text
+                style={[
+                  styles.statusBadgeText,
+                  { color: report.presenca === 'presente' ? '#27ae60' : '#e74c3c' },
+                ]}
+              >
                 {report.presenca === 'presente' ? 'Presente' : 'Ausente'}
               </Text>
             </View>
@@ -119,9 +115,26 @@ export default function DailyReportView() {
             </View>
           </View>
 
-          <Section title="Cuidados" textColor={theme.colors.text} subtitleColor={subtitleColor} cardBg={cardBg}>
-            <InfoRow label="Alimentação" value={alimentacao.label} textColor={alimentacao.color} subtitleColor={subtitleColor} borderColor={borderColor} />
-            <InfoRow label="Soneca" value={`${report.sonecaInicio} – ${report.sonecaFim}`} textColor={theme.colors.text} subtitleColor={subtitleColor} borderColor={borderColor} />
+          <Section
+            title="Cuidados"
+            textColor={theme.colors.text}
+            subtitleColor={subtitleColor}
+            cardBg={cardBg}
+          >
+            <InfoRow
+              label="Alimentação"
+              value={alimentacao.label}
+              textColor={alimentacao.color}
+              subtitleColor={subtitleColor}
+              borderColor={borderColor}
+            />
+            <InfoRow
+              label="Soneca"
+              value={`${report.sonecaInicio} – ${report.sonecaFim}`}
+              textColor={theme.colors.text}
+              subtitleColor={subtitleColor}
+              borderColor={borderColor}
+            />
             <InfoRow
               label="Fralda"
               value={report.fraldaTrocada ? `Trocou ${report.quantidadeFraldas}x` : 'Não trocou'}
@@ -131,7 +144,12 @@ export default function DailyReportView() {
             />
           </Section>
 
-          <Section title="Atividades do dia" textColor={theme.colors.text} subtitleColor={subtitleColor} cardBg={cardBg}>
+          <Section
+            title="Atividades do dia"
+            textColor={theme.colors.text}
+            subtitleColor={subtitleColor}
+            cardBg={cardBg}
+          >
             <View style={styles.tagsRow}>
               {report.atividades.map((item) => (
                 <View key={item} style={[styles.tag, { borderColor }]}>
@@ -141,21 +159,31 @@ export default function DailyReportView() {
             </View>
           </Section>
 
-          <Section title="Observações" textColor={theme.colors.text} subtitleColor={subtitleColor} cardBg={cardBg}>
+          <Section
+            title="Observações"
+            textColor={theme.colors.text}
+            subtitleColor={subtitleColor}
+            cardBg={cardBg}
+          >
             <Text style={[styles.observacoesText, { color: theme.colors.text }]}>
               {report.observacoes}
             </Text>
           </Section>
           <View style={[styles.teacherRow, { borderTopColor: borderColor }]}>
-            <View style={[styles.teacherAvatar, { backgroundColor: isDark ? '#2C2440' : '#EDE5F7' }]}>
+            <View
+              style={[styles.teacherAvatar, { backgroundColor: isDark ? '#2C2440' : '#EDE5F7' }]}
+            >
               <Text style={[styles.teacherInitials, { color: theme.colors.primary }]}>RA</Text>
             </View>
             <View>
-              <Text style={[styles.teacherName, { color: theme.colors.text }]}>Rafaela Azevedo</Text>
-              <Text style={[styles.teacherRole, { color: subtitleColor }]}>Professora responsável</Text>
+              <Text style={[styles.teacherName, { color: theme.colors.text }]}>
+                Rafaela Azevedo
+              </Text>
+              <Text style={[styles.teacherRole, { color: subtitleColor }]}>
+                Professora responsável
+              </Text>
             </View>
           </View>
-
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -226,7 +254,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     name: {
       fontSize: 24,
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
       color: '#fff',
     },
     subtitle: {
@@ -246,7 +274,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     infoPillText: {
       color: '#fff',
       fontSize: 12,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
     },
     formCard: {
       marginTop: -40,
@@ -272,7 +300,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     photoLabel: {
       fontSize: 14,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
     },
     photoHint: {
       fontSize: 12,
@@ -292,7 +320,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     statusBadgeText: {
       fontSize: 13,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
     },
     humorBadge: {
       flexDirection: 'row',
@@ -308,7 +336,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     humorLabel: {
       fontSize: 13,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
     },
     tagsRow: {
       flexDirection: 'row',
@@ -323,7 +351,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     tagText: {
       fontSize: 13,
-      fontWeight: '500',
+      fontFamily: 'Nunito_500Medium',
     },
     observacoesText: {
       fontSize: 14,
@@ -345,11 +373,11 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     teacherInitials: {
       fontSize: 14,
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
     },
     teacherName: {
       fontSize: 14,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
     },
     teacherRole: {
       fontSize: 12,

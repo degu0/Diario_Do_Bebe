@@ -70,7 +70,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     reportCardTitle: {
       fontSize: 14,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
     },
     reportCardSubtitle: {
       fontSize: 12,
@@ -83,6 +83,6 @@ const createStyles = (theme: any, isDark: boolean) =>
     newBadgeText: {
       color: '#fff',
       fontSize: 10,
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
     },
   });

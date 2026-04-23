@@ -301,7 +301,6 @@ export default function Register() {
   );
 }
 
-
 const createStyles = (theme: any, isDark: boolean) =>
   StyleSheet.create({
     screen: {
@@ -375,7 +374,7 @@ const createStyles = (theme: any, isDark: boolean) =>
 
     name: {
       fontSize: 24,
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
       color: '#fff',
     },
 
@@ -398,7 +397,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     infoPillText: {
       color: '#fff',
       fontSize: 12,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
     },
 
     formCard: {
@@ -421,7 +420,7 @@ const createStyles = (theme: any, isDark: boolean) =>
 
     fieldLabel: {
       fontSize: 14,
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
       color: theme.colors.text,
     },
 
@@ -505,7 +504,7 @@ const createStyles = (theme: any, isDark: boolean) =>
 
     buttonText: {
       color: '#fff',
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
       fontSize: 16,
     },
 

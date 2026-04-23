@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   },
   bannerTitle: {
     fontSize: 26,
-    fontWeight: '800',
+    fontFamily: 'Nunito_700Bold',
     color: '#fff',
     letterSpacing: 0.5,
   },
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
   },
   welcomeTitle: {
     fontSize: 28,
-    fontWeight: '800',
+    fontFamily: 'Nunito_700Bold',
     letterSpacing: 0.3,
   },
   welcomeSubtitle: {
@@ -320,13 +320,13 @@ const styles = StyleSheet.create({
   },
   enterButtonText: {
     color: '#fff',
-    fontWeight: '700',
+    fontFamily: 'Nunito_700Bold',
     fontSize: 16,
     letterSpacing: 0.5,
   },
   cardTitle: {
     fontSize: 26,
-    fontWeight: '800',
+    fontFamily: 'Nunito_700Bold',
     letterSpacing: 0.3,
     marginBottom: 4,
   },
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontWeight: '700',
+    fontFamily: 'Nunito_700Bold',
     fontSize: 16,
     letterSpacing: 0.5,
   },

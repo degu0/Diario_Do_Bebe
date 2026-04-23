@@ -1,8 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 type InfoRowProps = {
   label: string;
@@ -31,10 +27,10 @@ const infoRowStyles = StyleSheet.create({
   },
   label: {
     fontSize: 13,
-    fontWeight: '500',
+    fontFamily: 'Nunito_500Medium',
   },
   value: {
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: 'Nunito_600SemiBold',
   },
 });

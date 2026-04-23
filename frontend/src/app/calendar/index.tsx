@@ -264,7 +264,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     title: {
       fontSize: 24,
       color: '#FFFFFF',
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
       marginBottom: 4,
     },
     subtitle: {
@@ -322,16 +322,16 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     dayText: {
       fontSize: 14,
-      fontWeight: '500',
+      fontFamily: 'Nunito_500Medium',
       color: theme.colors.text,
     },
     dayTextSelected: {
       fontSize: 14,
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
       color: theme.colors.surface,
     },
     disabled: { opacity: 0.3 },
-    today: { color: theme.colors.primary, fontWeight: '700' },
+    today: { color: theme.colors.primary, fontFamily: 'Nunito_700Bold' },
 
     dotsRow: {
       flexDirection: 'row',

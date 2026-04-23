@@ -33,10 +33,7 @@ export default function Profile() {
 
             <View style={styles.childSummary}>
               <View style={styles.avatarWrapper}>
-                <Image
-                  source={require('../../../assets/icon/profile.png')}
-                  style={styles.avatar}
-                />
+                <Image source={require('../../../assets/icon/profile.png')} style={styles.avatar} />
                 <View style={styles.avatarBadge} />
               </View>
 
@@ -174,7 +171,7 @@ const createStyles = (theme: any, isDark: boolean) =>
 
     profileName: {
       fontSize: 22,
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
       color: '#fff',
     },
 
@@ -192,11 +189,10 @@ const createStyles = (theme: any, isDark: boolean) =>
 
     phoneText: {
       fontSize: 13,
-      fontWeight: '500',
+      fontFamily: 'Nunito_500Medium',
       color: '#fff',
     },
 
-    /* CARD */
     formCard: {
       marginTop: -40,
       marginHorizontal: 12,
@@ -230,7 +226,7 @@ const createStyles = (theme: any, isDark: boolean) =>
 
     cardLabel: {
       fontSize: 10,
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
       textTransform: 'uppercase',
       letterSpacing: 0.8,
       color: theme.colors.secondary,
@@ -239,7 +235,7 @@ const createStyles = (theme: any, isDark: boolean) =>
 
     cardValue: {
       fontSize: 13,
-      fontWeight: '500',
+      fontFamily: 'Nunito_500Medium',
       color: theme.colors.text,
       lineHeight: 19,
     },
@@ -255,7 +251,7 @@ const createStyles = (theme: any, isDark: boolean) =>
 
     hoursText: {
       fontSize: 11,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
       color: theme.colors.primary,
     },
 
@@ -286,7 +282,7 @@ const createStyles = (theme: any, isDark: boolean) =>
 
     sectionTitle: {
       fontSize: 15,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
       color: theme.colors.text,
     },
 
@@ -310,7 +306,7 @@ const createStyles = (theme: any, isDark: boolean) =>
 
     infoKey: {
       fontSize: 12,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
       textTransform: 'uppercase',
       letterSpacing: 0.5,
       color: theme.colors.secondary,
@@ -318,7 +314,7 @@ const createStyles = (theme: any, isDark: boolean) =>
 
     infoVal: {
       fontSize: 13,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
       color: theme.colors.text,
     },
   });

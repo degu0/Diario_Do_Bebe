@@ -88,7 +88,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     bannerText: {
       fontSize: 13,
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
     },
     bannerSubtitle: {
       fontSize: 12,

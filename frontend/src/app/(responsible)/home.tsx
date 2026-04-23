@@ -158,7 +158,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     title: {
       fontSize: 26,
       color: '#ffffff',
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
       marginBottom: 4,
     },
     subtitle: {
@@ -195,12 +195,12 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     kidInitialsText: {
       fontSize: 11,
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
       color: '#FFFFFF',
     },
     kidChipName: {
       fontSize: 12,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
       color: '#FFFFFF',
     },
     kidChipAge: {
@@ -249,7 +249,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     statusText: {
       fontSize: 18,
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
       color: theme.colors.text,
     },
     smallCardsRow: {
@@ -274,14 +274,14 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     smallCardNumber: {
       fontSize: 28,
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
       color: theme.colors.info,
     },
     smallCardLabel: {
       fontSize: 12,
       color: theme.colors.text,
       opacity: 0.6,
-      fontWeight: '500',
+      fontFamily: 'Nunito_500Medium',
     },
     buttonDailyDetails: {
       backgroundColor: theme.colors.background,
@@ -300,6 +300,6 @@ const createStyles = (theme: any, isDark: boolean) =>
     textDailyDetails: {
       fontSize: 14,
       color: theme.colors.text,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
     },
   });

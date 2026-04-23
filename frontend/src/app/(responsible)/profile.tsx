@@ -170,7 +170,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     profileName: {
       fontSize: 22,
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
       color: '#fff',
     },
     phonePill: {
@@ -188,7 +188,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     phoneIcon: { fontSize: 13 },
     phoneText: {
       fontSize: 13,
-      fontWeight: '500',
+      fontFamily: 'Nunito_500Medium',
       color: '#fff',
     },
     formCard: {
@@ -205,7 +205,6 @@ const createStyles = (theme: any, isDark: boolean) =>
       gap: 12,
     },
 
-    // Cards duplos
     cardRow: {
       flexDirection: 'row',
     },
@@ -223,7 +222,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     cardLabel: {
       fontSize: 10,
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
       textTransform: 'uppercase',
       letterSpacing: 0.8,
       color: theme.colors.secondary,
@@ -231,7 +230,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     cardValue: {
       fontSize: 13,
-      fontWeight: '500',
+      fontFamily: 'Nunito_500Medium',
       color: theme.colors.text,
       lineHeight: 19,
     },
@@ -245,11 +244,10 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     hoursText: {
       fontSize: 11,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
       color: theme.colors.primary,
     },
 
-    // Card email
     card: {
       backgroundColor: isDark ? '#191327' : '#FDFBFF',
       borderRadius: 18,
@@ -295,7 +293,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     sectionTitle: {
       fontSize: 15,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
       color: theme.colors.text,
     },
     sectionLine: {
@@ -315,14 +313,14 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     infoKey: {
       fontSize: 12,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
       textTransform: 'uppercase',
       letterSpacing: 0.5,
       color: theme.colors.secondary,
     },
     infoVal: {
       fontSize: 13,
-      fontWeight: '600',
+      fontFamily: 'Nunito_600SemiBold',
       color: theme.colors.text,
     },
     parentescoBadge: {
@@ -333,7 +331,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     parentescoText: {
       fontSize: 12,
-      fontWeight: '700',
+      fontFamily: 'Nunito_700Bold',
       color: '#fff',
       letterSpacing: 0.3,
     },
