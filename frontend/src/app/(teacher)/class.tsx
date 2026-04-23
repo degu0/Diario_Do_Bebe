@@ -41,9 +41,6 @@ export default function Claass() {
         <View style={styles.hero}>
           <View style={styles.heroGlowLarge} />
           <View style={styles.heroGlowSmall} />
-
-          <Text style={styles.title}>Turma</Text>
-          <Text style={styles.subtitle}>Pesquise e acesse o perfil de cada crianca.</Text>
         </View>
 
         <View style={styles.contentCard}>

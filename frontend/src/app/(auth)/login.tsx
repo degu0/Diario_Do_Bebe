@@ -119,7 +119,7 @@ export default function Login() {
       return;
     }
 
-    if (email !== 'responsible@example.com') {
+    if (email !== 'pais@example.com') {
       await login({ email, type: 'teacher' });
       return;
     }

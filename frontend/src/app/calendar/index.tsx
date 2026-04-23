@@ -89,8 +89,6 @@ export default function CalendarScreen() {
         <View style={styles.hero}>
           <View style={styles.heroGlowLarge} />
           <View style={styles.heroGlowSmall} />
-          <Text style={styles.title}>Calendário</Text>
-          <Text style={styles.subtitle}>Veja eventos, feriados e datas importantes.</Text>
         </View>
 
         <View style={styles.contentCard}>
