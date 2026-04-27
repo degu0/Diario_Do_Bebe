@@ -92,7 +92,7 @@ export default function Home() {
           <View style={styles.kidsSection}>
             <View style={styles.kidsSectionHeader}>
               <Text style={styles.kidsSectionTitle}>Criancas da turma</Text>
-              <TouchableOpacity onPress={() => router.push('/(teacher)/class')}>
+              <TouchableOpacity onPress={() => router.replace('/(teacher)/class')}>
                 <Text style={styles.seeMore}>Ver mais</Text>
               </TouchableOpacity>
             </View>
