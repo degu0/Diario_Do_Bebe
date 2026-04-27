@@ -34,7 +34,6 @@ export default function Navbar() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.containerNav}>
         {links.map((link) => {
           const routeName = link.href.split('/').pop();
           const isActive = pathname.endsWith(routeName ?? '');
@@ -57,7 +56,6 @@ export default function Navbar() {
             </TouchableOpacity>
           );
         })}
-      </View>
     </View>
   );
 }
@@ -65,21 +63,15 @@ export default function Navbar() {
 const createStyles = (theme: any) =>
   StyleSheet.create({
     container: {
-      backgroundColor: theme.colors.surface + '4D',
+      backgroundColor: theme.colors.surface,
       borderColor: theme.colors.surface,
-      borderRadius: 120,
       width: 350,
       height: 100,
       padding: 12,
-    },
-
-    containerNav: {
-      flexDirection: 'row',
-      backgroundColor: theme.colors.surface,
+            flexDirection: 'row',
       borderRadius: 120,
       justifyContent: 'space-around',
       alignItems: 'center',
-      height: '100%',
     },
 
     link: {
@@ -87,7 +79,7 @@ const createStyles = (theme: any) =>
       alignItems: 'center',
       justifyContent: 'center',
       paddingHorizontal: 4,
-      paddingVertical: 17,
+      paddingVertical: 27,
     },
 
     activeLink: {

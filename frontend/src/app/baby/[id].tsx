@@ -15,6 +15,7 @@ export default function BabyProfile() {
   const childId = Array.isArray(params.id) ? params.id[0] : params.id;
   const { getChildById } = useTeacherAttendance();
   const child = childId ? getChildById(childId) : null;
+  const isAbsent = child?.attendance === 'absent';
   const { theme, isDark } = useThemeContext();
   const styles = useMemo(() => createStyles(theme, isDark), [theme, isDark]);
 
@@ -69,19 +70,27 @@ export default function BabyProfile() {
         </View>
 
         <View style={styles.contentCard}>
-          <TouchableOpacity
-            onPress={() => router.push(`/register/${childId ?? '1'}`)}
-            style={styles.primaryButton}
-            activeOpacity={0.85}
-          >
-            <Ionicons name="document-text-outline" size={18} color="#fff" />
-            <Text style={styles.primaryButtonText}>Preencher relatorio diario</Text>
-          </TouchableOpacity>
+          {!isAbsent ? (
+            <TouchableOpacity
+              onPress={() => router.push(`/register/${childId ?? '1'}`)}
+              style={styles.primaryButton}
+              activeOpacity={0.85}
+            >
+              <Ionicons name="document-text-outline" size={18} color="#fff" />
+              <Text style={styles.primaryButtonText}>Preencher relatorio diario</Text>
+            </TouchableOpacity>
+          ) : null}
 
           <View style={styles.helperCard}>
-            <Ionicons name="information-circle-outline" size={18} color={theme.colors.primary} />
+            <Ionicons
+              name="information-circle-outline"
+              size={18}
+              color={isAbsent ? theme.colors.error : theme.colors.primary}
+            />
             <Text style={styles.helperText}>
-              A presenca do dia agora e marcada diretamente na lista da turma com gesto lateral.
+              {isAbsent
+                ? 'Esta crianca foi marcada como ausente na lista da turma, por isso o formulario diario nao aparece.'
+                : 'A ausencia do dia e marcada diretamente na lista da turma com gesto lateral.'}
             </Text>
           </View>
 
