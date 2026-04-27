@@ -1,9 +1,10 @@
 import Banner from '@/components/Banner';
+import DataUser from '@/components/DataUser';
 import { useResponsibleChild } from '@/context/ResponsibleChildContext';
 import { useThemeContext } from '@/context/ThemeContext';
 import { getHomeBannerForUser } from '@/utils/notifications/catalog';
 import { router } from 'expo-router';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const profileIcon = require('@/assets/icon/profile.png');
@@ -31,13 +32,7 @@ export default function Home() {
           <View style={styles.heroGlowLarge} />
           <View style={styles.heroGlowSmall} />
 
-          <View style={styles.dateUser}>
-            <Image source={profileIcon} style={styles.imageUser} />
-            <View style={{ flexDirection: 'column' }}>
-              <Text style={styles.title}>Ola, {name}</Text>
-              <Text style={styles.subtitle}>Sexta-feira, 13 de marco</Text>
-            </View>
-          </View>
+          <DataUser name={name} />
 
           {alert ? (
             <Banner title={alert.title} subtitle={alert.subtitle} type={alert.type} />

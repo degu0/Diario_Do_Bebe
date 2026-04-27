@@ -1,4 +1,5 @@
 import Banner from '@/components/Banner';
+import DataUser from '@/components/DataUser';
 import { useTeacherAttendance } from '@/context/TeacherAttendanceContext';
 import { useThemeContext } from '@/context/ThemeContext';
 import { getHomeBannerForUser } from '@/utils/notifications/catalog';
@@ -49,14 +50,7 @@ export default function Home() {
           <View style={styles.heroGlowLarge} />
           <View style={styles.heroGlowSmall} />
 
-          <View style={styles.dateUser}>
-            <Image source={profileIcon} style={styles.imageUser} />
-            <View>
-              <Text style={styles.title}>Bom dia, {name}</Text>
-              <Text style={styles.subtitle}>Sexta-feira, 13 de marco</Text>
-              <Text style={styles.subtitle}>Escola | Turma A1</Text>
-            </View>
-          </View>
+          <DataUser name={name} />
 
           {alert ? (
             <Banner title={alert.title} subtitle={alert.subtitle} type={alert.type} />
@@ -167,31 +161,6 @@ const createStyles = (theme: any, isDark: boolean) =>
       backgroundColor: 'rgba(255,255,255,0.08)',
       bottom: 20,
       left: -40,
-    },
-    dateUser: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 14,
-      marginBottom: 22,
-    },
-    imageUser: {
-      width: 56,
-      height: 56,
-      borderRadius: 28,
-      backgroundColor: 'rgba(255,255,255,0.18)',
-      borderWidth: 2,
-      borderColor: 'rgba(255,255,255,0.22)',
-    },
-    title: {
-      fontSize: 24,
-      color: '#FFFFFF',
-      fontFamily: 'Nunito_700Bold',
-      marginBottom: 4,
-    },
-    subtitle: {
-      color: 'rgba(255, 255, 255, 0.76)',
-      fontSize: 13,
-      marginTop: 2,
     },
     contentCard: {
       marginTop: -44,
