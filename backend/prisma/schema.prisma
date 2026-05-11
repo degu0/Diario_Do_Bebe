@@ -11,7 +11,7 @@ model Escola {
   nome     String
   endereco String?
   telefone String?
-  adis     ADI[]
+  adis     Adi[]
   avisos   AvisoGeral[]
   turmas   Turma[]
 }
@@ -24,7 +24,7 @@ model Turma {
   bebes     Bebe[]
   escola    Escola          @relation(fields: [escolaId], references: [id])
   vivencias VivenciaGeral[]
-  adis      ADI[]           @relation("ADITurma")
+  adis      Adi[]           @relation("ADITurma")
 }
 
 model Bebe {
@@ -55,7 +55,7 @@ model Responsavel {
   bebes     Bebe[]  @relation("BebeResponsavel")
 }
 
-model ADI {
+model Adi {
   id          Int                @id @default(autoincrement())
   nome        String
   matricula   String             @unique
@@ -67,6 +67,7 @@ model ADI {
   ocorrencias Ocorrencia[]
   vivencias   VivenciaGeral[]
   turmas      Turma[]            @relation("ADITurma")
+  @@map("ADI")
 }
 
 model DiarioIndividual {
@@ -81,7 +82,7 @@ model DiarioIndividual {
   enviadoEm                 DateTime?
   bebeId                    Int
   adiId                     Int
-  adi                       ADI       @relation(fields: [adiId], references: [id])
+  adi                       Adi       @relation(fields: [adiId], references: [id])
   bebe                      Bebe      @relation(fields: [bebeId], references: [id])
 }
 
@@ -93,7 +94,7 @@ model Ocorrencia {
   prioridade String   @default("BAIXA")
   bebeId     Int
   adiId      Int
-  adi        ADI      @relation(fields: [adiId], references: [id])
+  adi        Adi      @relation(fields: [adiId], references: [id])
   bebe       Bebe     @relation(fields: [bebeId], references: [id])
 }
 
@@ -105,7 +106,7 @@ model VivenciaGeral {
   fotosJson Json?
   turmaId   Int
   adiId     Int
-  adi       ADI      @relation(fields: [adiId], references: [id])
+  adi       Adi      @relation(fields: [adiId], references: [id])
   turma     Turma    @relation(fields: [turmaId], references: [id])
 }
 
