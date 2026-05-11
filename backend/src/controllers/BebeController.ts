@@ -40,4 +40,42 @@ export class BebeController {
       return res.status(500).json({ error: 'Erro ao buscar bebês.' });
     }
   }
+
+  async delete(req: Request, res: Response) {
+    try {
+      const { id } = req.params; // Pega o ID da URL
+
+      await prisma.bebe.delete({
+        where: { id: Number(id) } // Manda o Prisma apagar no banco
+      });
+
+      return res.status(204).send(); // Responde que deu certo e está vazio
+
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao buscar bebês.' });
+    }
+}
+
+  async update(req: Request, res: Response) {
+  try {
+    const { id } = req.params; // Pega o ID que vem na URL (ex: /bebes/1)
+    const dadosParaAtualizar = req.body; // Pega os campos enviados (ex: { alergias: "Glúten" })
+
+    const bebeAtualizado = await prisma.bebe.update({
+      where: { id: Number(id) }, // Localiza o bebê pelo ID
+      data: {
+        ...dadosParaAtualizar,
+        // Se a data de nascimento vier, precisamos garantir que vire um objeto Date
+        ...(dadosParaAtualizar.dataNascimento && {
+          dataNascimento: new Date(dadosParaAtualizar.dataNascimento)
+        }),
+      },
+    });
+
+    return res.json(bebeAtualizado); // Retorna o bebê já com as alterações
+  } catch (error) {
+    return res.status(500).json({ error: 'Erro ao atualizar dados do bebê.' });
+  }
+}
+
 }
