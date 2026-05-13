@@ -4,6 +4,10 @@ import { diarioRoutes } from './routes/diario.routes';
 import { responsavelRoutes } from './routes/responsavel.routes';
 import { adiRoutes } from './routes/adi.routes';
 import { escolaRoutes } from './routes/escola.routes';
+import { dashboardRoutes } from './routes/dashboard.routes';
+import { turmaRoutes } from './routes/turma.routes';
+import { eventoRoutes } from './routes/evento.routes';
+
 
 const app = express();
 
@@ -15,6 +19,9 @@ app.use('/diarios', diarioRoutes);
 app.use('/responsaveis', responsavelRoutes);
 app.use('/adis', adiRoutes);
 app.use('/escolas', escolaRoutes);
+app.use('/dashboard', dashboardRoutes);
+app.use('/turmas', turmaRoutes);
+app.use('/eventos', eventoRoutes);
 
 const PORT = 3000;
 app.listen(PORT, () => {

@@ -31,7 +31,7 @@ async function main() {
     },
   });
 
-  await prisma.aDI.create({
+  await prisma.adi.create({
     data: {
       nome: 'Ana Souza',
       matricula: 'ADI-2026-001',
