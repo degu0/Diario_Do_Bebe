@@ -7,6 +7,7 @@ import { escolaRoutes } from './routes/escola.routes';
 import { dashboardRoutes } from './routes/dashboard.routes';
 import { turmaRoutes } from './routes/turma.routes';
 import { eventoRoutes } from './routes/evento.routes';
+import { ocorrenciaRoutes } from './routes/ocorrencia.routes';
 
 
 const app = express();
@@ -22,6 +23,7 @@ app.use('/escolas', escolaRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/turmas', turmaRoutes);
 app.use('/eventos', eventoRoutes);
+app.use('/ocorrencias', ocorrenciaRoutes);
 
 const PORT = 3000;
 app.listen(PORT, () => {
