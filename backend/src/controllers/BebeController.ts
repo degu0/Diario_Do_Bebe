@@ -41,6 +41,19 @@ export class BebeController {
     }
   }
 
+  // Rota para LISTAR bebês (GET)
+  async class(req: Request, res: Response) {
+    try {
+      const { TURMAid } = req.params; // Pega o ID que vem na URL (ex: /bebes/1)
+      const bebes = await prisma.bebe.findMany({
+        where: { turmaId: Number(TURMAid)} // Traz os dados da turma junto
+      });
+      return res.json(bebes);
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao buscar bebês.' });
+    }
+  }
+
   async delete(req: Request, res: Response) {
     try {
       const { id } = req.params; // Pega o ID da URL

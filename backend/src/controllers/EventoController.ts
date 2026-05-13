@@ -42,6 +42,18 @@ export class EventoController {
     }
   }
 
+  async calendar(req: Request, res: Response) {
+    try {
+      const {TURMAid} = req.params;
+      const eventos = await prisma.evento.findMany({
+        where: {turmaId: Number(TURMAid)}
+      });
+      return res.json(eventos);
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao buscar eventos.' });
+    }
+  }
+
   async delete(req: Request, res: Response) {
     try {
       const { id } = req.params; // Pega o ID da URL
