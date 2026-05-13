@@ -62,6 +62,7 @@ model Adi {
   nome        String
   matricula   String             @unique
   email       String             @unique
+  telefone    String
   senhaHash   String
   escolaId    Int
   escola      Escola             @relation(fields: [escolaId], references: [id])

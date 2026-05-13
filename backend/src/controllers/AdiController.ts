@@ -5,7 +5,7 @@ export class AdiController {
   // Rota para CRIAR um bebê (POST)
   async store(req: Request, res: Response) {
     try {
-      const { nome, matricula, email, senhaHash, escolaId, escola, diarios, ocorrencias, vivencias} = req.body;
+      const { nome, matricula, email, telefone, senhaHash, escolaId } = req.body;
 
       // Validação básica: verifica se os campos obrigatórios vieram
       if (!nome || !matricula || !email) {
@@ -17,6 +17,7 @@ export class AdiController {
           nome,
           matricula,
           email,
+          telefone,
           senhaHash,
           escolaId,
         },
