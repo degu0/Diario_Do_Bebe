@@ -9,5 +9,7 @@ bebeRoutes.post('/', bebeController.store);
 bebeRoutes.get('/', bebeController.index);
 bebeRoutes.delete('/:id', bebeController.delete);
 bebeRoutes.patch('/:id', bebeController.update);
+bebeRoutes.get('/:TURMAid', bebeController.class);
+bebeRoutes.get('/:BEBEid', bebeController.profile);
 
 export { bebeRoutes };

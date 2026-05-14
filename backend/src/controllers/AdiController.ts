@@ -40,6 +40,26 @@ export class AdiController {
     }
   }
 
+  async profile(req: Request, res: Response) {
+  try {
+    const { ADIid } = req.params;
+
+    const adiMe = await prisma.adi.findUnique({
+      where: { id: Number(ADIid) },
+      include: {
+        escola: true, // Traz os dados da escola (nome, etc)
+        turmas: true  // Traz a LISTA de turmas vinculadas
+      }
+    });
+
+    if (!adiMe) return res.status(404).json({ error: 'ADI não encontrada' });
+
+    return res.json(adiMe);
+  } catch (error) {
+    return res.status(500).json({ error: 'Erro ao buscar perfil.' });
+  }
+}
+
   async delete(req: Request, res: Response) {
     try {
       const { id } = req.params; // Pega o ID da URL

@@ -11,6 +11,7 @@ model Escola {
   nome     String
   endereco String?
   telefone String?
+  bebes    Bebe[]
   adis     Adi[]
   avisos   AvisoGeral[]
   turmas   Turma[]
@@ -39,6 +40,8 @@ model Bebe {
   observacoesSaude String?
   autorizadosBusca String?
   fotoUrl          String?
+  escolaId         Int
+  escola           Escola             @relation(fields: [escolaId], references: [id])
   turmaId          Int
   turma            Turma              @relation(fields: [turmaId], references: [id])
   diarios          DiarioIndividual[]
@@ -62,7 +65,7 @@ model Adi {
   nome        String
   matricula   String             @unique
   email       String             @unique
-  telefone    String
+  telefone    String?
   senhaHash   String
   escolaId    Int
   escola      Escola             @relation(fields: [escolaId], references: [id])
@@ -82,6 +85,9 @@ model DiarioIndividual {
   banho                     Boolean   @default(false)
   sono                      String?
   desenvolvimentoPedagogico String?
+  observacoesFinais         String?
+  atividades                String?
+  fralda                    String?
   enviadoEm                 DateTime?
   bebeId                    Int
   adiId                     Int
@@ -93,6 +99,7 @@ model Ocorrencia {
   id         Int      @id @default(autoincrement())
   titulo     String
   descricao  String
+  dia        DateTime  @default(now())
   horario    DateTime @default(now())
   prioridade String   @default("BAIXA")
   bebeId     Int

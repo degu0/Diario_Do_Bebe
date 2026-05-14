@@ -5,7 +5,7 @@ export class BebeController {
   // Rota para CRIAR um bebê (POST)
   async store(req: Request, res: Response) {
     try {
-      const { nome, dataNascimento, genero, alergias, turmaId } = req.body;
+      const { nome, dataNascimento, genero, alergias, turmaId, escolaId } = req.body;
 
       // Validação básica: verifica se os campos obrigatórios vieram
       if (!nome || !dataNascimento || !turmaId) {
@@ -19,6 +19,7 @@ export class BebeController {
           genero,
           alergias,
           turmaId: Number(turmaId), // Garante que é um número
+          escolaId: Number(turmaId)
         },
       });
 
@@ -49,6 +50,20 @@ export class BebeController {
         where: { turmaId: Number(TURMAid)} // Traz os dados da turma junto
       });
       return res.json(bebes);
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao buscar bebês.' });
+    }
+  }
+
+  // Rota para LISTAR bebês (GET)
+  async profile(req: Request, res: Response) {
+    try {
+      const { BEBEid } = req.params; // Pega o ID que vem na URL (ex: /bebes/1)
+      const bebeME = await prisma.bebe.findUnique({
+        where: { id: Number(BEBEid)}, // Traz os dados da turma junto
+        include: {responsaveis: true}
+      });
+      return res.json(bebeME);
     } catch (error) {
       return res.status(500).json({ error: 'Erro ao buscar bebês.' });
     }

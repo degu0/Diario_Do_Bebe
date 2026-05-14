@@ -7,6 +7,7 @@ const adiController = new AdiController();
 // Define as rotas específicas para Bebê
 adiRoutes.post('/', adiController.store);
 adiRoutes.get('/', adiController.index);
+adiRoutes.get('/:id', adiController.profile);
 adiRoutes.delete('/:id', adiController.delete);
 adiRoutes.patch('/:id', adiController.update);
 

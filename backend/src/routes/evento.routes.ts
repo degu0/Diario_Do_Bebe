@@ -7,6 +7,7 @@ const eventoController = new EventoController();
 // Define as rotas específicas para Bebê
 eventoRoutes.post('/', eventoController.store);
 eventoRoutes.get('/', eventoController.index);
+eventoRoutes.get('/:TURMAid', eventoController.calendar);
 eventoRoutes.delete('/:id', eventoController.delete);
 eventoRoutes.patch('/:id', eventoController.update);
 
