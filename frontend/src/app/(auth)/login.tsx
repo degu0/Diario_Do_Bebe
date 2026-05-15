@@ -2,6 +2,7 @@ import FormLogin from '@/components/FormLogin';
 import { useAuth } from '@/context/AuthContext';
 import { useThemeContext } from '@/context/ThemeContext';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
@@ -24,6 +25,7 @@ export default function Login() {
 
   const { theme, isDark } = useThemeContext();
   const { login } = useAuth();
+  const router = useRouter();
   const c = theme.colors;
   const insets = useSafeAreaInsets();
 
@@ -233,6 +235,16 @@ export default function Login() {
             >
               <Text style={styles.buttonText}>Entrar</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.forgotButton}
+              onPress={() => router.navigate('/(auth)/forgot-password')}
+              activeOpacity={0.75}
+            >
+              <Text style={[styles.forgotButtonText, { color: c.primary }]}>
+                Esqueci minha senha
+              </Text>
+            </TouchableOpacity>
           </Animated.View>
         )}
       </Animated.View>
@@ -349,5 +361,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_700Bold',
     fontSize: 16,
     letterSpacing: 0.5,
+  },
+  forgotButton: {
+    alignItems: 'center',
+    marginTop: 16,
+    paddingVertical: 8,
+  },
+  forgotButtonText: {
+    fontSize: 14,
+    fontFamily: 'Nunito_700Bold',
   },
 });

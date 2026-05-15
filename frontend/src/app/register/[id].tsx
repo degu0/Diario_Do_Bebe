@@ -3,8 +3,10 @@ import { CustomRadioButton } from '@/components/CustomRadioButton';
 import MultiSelectTabs from '@/components/MultiSelectTabs';
 import { useTeacherAttendance } from '@/context/TeacherAttendanceContext';
 import { useThemeContext } from '@/context/ThemeContext';
+import { StarRating } from '@/components/StarRating';
 import {
   Image,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -16,6 +18,50 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SectionCard } from '@/components/SectionCard';
+
+type IoniconName = keyof typeof Ionicons.glyphMap;
+
+const emotionOptions: {
+  value: string;
+  label: string;
+  icon: IoniconName;
+  backgroundColor: string;
+  borderColor: string;
+  color: string;
+}[] = [
+  {
+    value: 'animado',
+    label: 'Animado',
+    icon: 'happy-outline',
+    backgroundColor: '#FFF0B8',
+    borderColor: '#F4C542',
+    color: '#9A6500',
+  },
+  {
+    value: 'neutro',
+    label: 'Tranquilo',
+    icon: 'leaf-outline',
+    backgroundColor: '#DDF7EF',
+    borderColor: '#64CDB3',
+    color: '#167861',
+  },
+  {
+    value: 'triste',
+    label: 'Sensivel',
+    icon: 'rainy-outline',
+    backgroundColor: '#DDEBFF',
+    borderColor: '#7AA7F7',
+    color: '#315FA8',
+  },
+  {
+    value: 'agitado',
+    label: 'Agitado',
+    icon: 'flash-outline',
+    backgroundColor: '#FFE1D6',
+    borderColor: '#FF9B7A',
+    color: '#A84628',
+  },
+];
 
 export default function Register() {
   const { theme, isDark } = useThemeContext();
@@ -35,6 +81,9 @@ export default function Register() {
   const [inicioSoneca, setInicioSoneca] = useState('');
   const [fimSoneca, setFimSoneca] = useState('');
   const [observacoes, setObservacoes] = useState('');
+  const [banho, setBanho] = useState('nao');
+  const [vivenciasGerais, setVivenciasGerais] = useState('');
+  const [desenvolvimentoPedagogico, setDesenvolvimentoPedagogico] = useState(2);
 
   const subtitleColor = `${theme.colors.text}AA`;
   const presenca = child?.attendance === 'absent' ? 'ausente' : 'presente';
@@ -53,7 +102,10 @@ export default function Register() {
         : fraldaTrocada === 'sim'
           ? Number(quantidadeFraldas || 0)
           : 0,
+      banho: isAusente ? null : banho === 'sim',
       atividades: isAusente ? null : atividades,
+      vivenciasGerais: isAusente ? null : vivenciasGerais || null,
+      desenvolvimentoPedagogico: isAusente ? null : desenvolvimentoPedagogico,
       observacoes: isAusente ? null : observacoes || null,
     }),
     [
@@ -65,7 +117,10 @@ export default function Register() {
       fimSoneca,
       fraldaTrocada,
       quantidadeFraldas,
+      banho,
       atividades,
+      vivenciasGerais,
+      desenvolvimentoPedagogico,
       observacoes,
     ],
   );
@@ -121,19 +176,50 @@ export default function Register() {
             subtitleColor={subtitleColor}
           >
             <View
-              style={[styles.wrapRow, isAusente && styles.disabledSection]}
+              style={[styles.emotionGrid, isAusente && styles.disabledSection]}
               pointerEvents={isAusente ? 'none' : 'auto'}
             >
-              {['animado', 'neutro', 'triste', 'agitado'].map((item) => (
-                <CustomRadioButton
-                  key={item}
-                  label={item.charAt(0).toUpperCase() + item.slice(1)}
-                  selected={humor === item}
-                  onSelect={() => setHumor(item)}
-                  size="md"
-                  style={styles.chipButton}
-                />
-              ))}
+              {emotionOptions.map((item) => {
+                const selected = humor === item.value;
+
+                return (
+                  <Pressable
+                    key={item.value}
+                    onPress={() => setHumor(item.value)}
+                    style={({ hovered, pressed }) => [
+                      styles.emotionCard,
+                      {
+                        backgroundColor: selected ? item.backgroundColor : theme.colors.surface,
+                        borderColor:
+                          selected || hovered ? item.borderColor : isDark ? '#2C2440' : '#E7DDF7',
+                      },
+                      hovered && styles.emotionCardHover,
+                      pressed && styles.emotionCardPressed,
+                    ]}
+                  >
+                    <View
+                      style={[
+                        styles.emotionIconBubble,
+                        {
+                          backgroundColor: selected ? '#FFFFFFAA' : item.backgroundColor,
+                        },
+                      ]}
+                    >
+                      <Ionicons name={item.icon} size={22} color={item.color} />
+                    </View>
+                    <Text
+                      style={[
+                        styles.emotionLabel,
+                        {
+                          color: selected ? item.color : theme.colors.text,
+                        },
+                      ]}
+                    >
+                      {item.label}
+                    </Text>
+                  </Pressable>
+                );
+              })}
             </View>
           </SectionCard>
 
@@ -224,6 +310,26 @@ export default function Register() {
                   />
                 </View>
               </View>
+
+              <View style={styles.fieldGroup}>
+                <Text style={styles.fieldLabel}>Banho</Text>
+                <View style={styles.segmentedRow}>
+                  <CustomRadioButton
+                    label="Sim"
+                    selected={banho === 'sim'}
+                    onSelect={() => setBanho('sim')}
+                    color={theme.colors.primary}
+                    style={styles.flexButton}
+                  />
+                  <CustomRadioButton
+                    label="Nao"
+                    selected={banho === 'nao'}
+                    onSelect={() => setBanho('nao')}
+                    color={theme.colors.secondary}
+                    style={styles.flexButton}
+                  />
+                </View>
+              </View>
             </View>
           </SectionCard>
 
@@ -246,6 +352,45 @@ export default function Register() {
                   { label: 'Psicomotora', value: 'psicomotora' },
                 ]}
                 onChange={setAtividades}
+              />
+            </View>
+          </SectionCard>
+
+          <SectionCard
+            title="Vivências Gerais"
+            subtitle="Registre comportamentos, descobertas e experiencias do dia."
+            titleColor={theme.colors.text}
+            subtitleColor={subtitleColor}
+          >
+            <TextInput
+              placeholder="Conte vivencias, interacoes, preferencias, desafios ou observacoes gerais..."
+              placeholderTextColor={styles.placeholder.color}
+              multiline
+              value={vivenciasGerais}
+              onChangeText={setVivenciasGerais}
+              style={[styles.textArea, styles.shortTextArea, isAusente && styles.disabledSection]}
+              editable={!isAusente}
+            />
+            <View style={styles.futureHint}>
+              <Ionicons name="time-outline" size={16} color={theme.colors.text} />
+              <Text style={styles.futureHintText}>Preparado para historico de vivencias.</Text>
+            </View>
+          </SectionCard>
+
+          <SectionCard
+            title="Desenvolvimento Pedagogico"
+            subtitle="Marque o nivel observado hoje."
+            titleColor={theme.colors.text}
+            subtitleColor={subtitleColor}
+          >
+            <View
+              style={isAusente && styles.disabledSection}
+              pointerEvents={isAusente ? 'none' : 'auto'}
+            >
+              <StarRating
+                value={desenvolvimentoPedagogico}
+                onChange={setDesenvolvimentoPedagogico}
+                disabled={isAusente}
               />
             </View>
           </SectionCard>
@@ -397,6 +542,11 @@ const createStyles = (theme: any, isDark: boolean) =>
       flexDirection: 'row',
       gap: 10,
     },
+    segmentedRow: {
+      flexDirection: 'row',
+      gap: 10,
+      alignItems: 'center',
+    },
     twoColumnRow: {
       flexDirection: 'row',
       gap: 14,
@@ -418,6 +568,42 @@ const createStyles = (theme: any, isDark: boolean) =>
     },
     chipButton: {
       marginBottom: 0,
+    },
+    emotionGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 10,
+    },
+    emotionCard: {
+      flexGrow: 1,
+      flexBasis: '45%',
+      minHeight: 88,
+      borderWidth: 1.5,
+      borderRadius: 18,
+      padding: 12,
+      gap: 10,
+      justifyContent: 'center',
+    },
+    emotionCardHover: {
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 5 },
+      shadowOpacity: 0.08,
+      shadowRadius: 10,
+      elevation: 2,
+    },
+    emotionCardPressed: {
+      transform: [{ scale: 0.98 }],
+    },
+    emotionIconBubble: {
+      width: 38,
+      height: 38,
+      borderRadius: 14,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    emotionLabel: {
+      fontSize: 14,
+      fontFamily: 'Nunito_700Bold',
     },
     inputGroup: {
       gap: 8,
@@ -450,6 +636,28 @@ const createStyles = (theme: any, isDark: boolean) =>
       color: theme.colors.text,
       fontSize: 14,
       lineHeight: 20,
+    },
+    shortTextArea: {
+      minHeight: 110,
+    },
+    futureHint: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      borderRadius: 14,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      backgroundColor: isDark ? '#1B162A' : '#F4EEFF',
+      borderWidth: 1,
+      borderColor: isDark ? '#2C2440' : '#E7DDF7',
+    },
+    futureHintText: {
+      flex: 1,
+      color: theme.colors.text,
+      opacity: 0.76,
+      fontSize: 12,
+      lineHeight: 16,
+      fontFamily: 'Nunito_600SemiBold',
     },
     button: {
       backgroundColor: theme.colors.primary,

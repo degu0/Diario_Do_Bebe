@@ -2,9 +2,8 @@ import { useTeacherAttendance } from '@/context/TeacherAttendanceContext';
 import { useThemeContext } from '@/context/ThemeContext';
 import type { TeacherChild } from '@/types/teacherChild';
 import { router } from 'expo-router';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
-  Alert,
   Image,
   ScrollView,
   StyleSheet,
@@ -13,7 +12,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Swipeable } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const profileIcon = require('@/assets/icon/profile.png');
@@ -23,65 +21,78 @@ export default function Claass() {
   const { children, markAttendance } = useTeacherAttendance();
   const styles = useMemo(() => createStyles(theme, isDark), [theme, isDark]);
   const [search, setSearch] = useState('');
-  const swipeableRefs = useRef<Record<string, Swipeable | null>>({});
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedAbsentIds, setSelectedAbsentIds] = useState<string[]>([]);
+  const [attendanceConfirmed, setAttendanceConfirmed] = useState(false);
 
   const filteredKids = useMemo(
     () => children.filter((item) => item.name.toLowerCase().includes(search.toLowerCase())),
     [children, search],
   );
 
-  const handleAttendanceConfirm = (
-    child: TeacherChild,
-    attendance: 'present' | 'absent',
-    direction: 'left' | 'right',
-  ) => {
-    const swipeableRef = swipeableRefs.current[child.id];
-    const attendanceLabel = attendance === 'present' ? 'presente' : 'ausente';
+  const selectedAbsentIdSet = useMemo(() => new Set(selectedAbsentIds), [selectedAbsentIds]);
 
-    Alert.alert('Confirmar presenca', `Deseja marcar ${child.name} como ${attendanceLabel}?`, [
-      {
-        text: 'Cancelar',
-        style: 'cancel',
-        onPress: () => swipeableRef?.close(),
-      },
-      {
-        text: 'Confirmar',
-        onPress: async () => {
-          await markAttendance(child.id, attendance);
-          swipeableRef?.close();
-        },
-      },
-    ]);
+  const toggleAbsentSelection = (childId: string) => {
+    setSelectedAbsentIds((currentIds) => {
+      const nextIds = currentIds.includes(childId)
+        ? currentIds.filter((selectedId) => selectedId !== childId)
+        : [...currentIds, childId];
+
+      if (nextIds.length === 0) {
+        setSelectionMode(false);
+      }
+
+      return nextIds;
+    });
   };
 
-  const handleSwipeOpen = (child: TeacherChild, direction: 'left' | 'right') => {
-    const attendance = direction === 'right' ? 'present' : 'absent';
-    handleAttendanceConfirm(child, attendance, direction);
+  const handleChildLongPress = (childId: string) => {
+    setAttendanceConfirmed(false);
+    setSelectionMode(true);
+    setSelectedAbsentIds((currentIds) =>
+      currentIds.includes(childId) ? currentIds : [...currentIds, childId],
+    );
   };
 
-  const renderAttendanceAction = (
-    label: string,
-    description: string,
-    backgroundColor: string,
-    alignment: 'left' | 'right',
-  ) => (
-    <View
-      style={[
-        styles.swipeAction,
-        {
-          backgroundColor,
-          justifyContent: alignment === 'left' ? 'flex-start' : 'flex-end',
-        },
-      ]}
-    >
-      <View style={styles.swipeActionContent}>
-        <Text style={styles.swipeActionLabel}>{label}</Text>
-        <Text style={styles.swipeActionDescription}>{description}</Text>
-      </View>
-    </View>
-  );
+  const handleChildPress = (childId: string) => {
+    if (selectionMode) {
+      setAttendanceConfirmed(false);
+      toggleAbsentSelection(childId);
+      return;
+    }
+
+    router.navigate(`/baby/${childId}`);
+  };
+
+  const handleConfirmAttendance = async () => {
+    await Promise.all(
+      children.map((child) =>
+        markAttendance(child.id, selectedAbsentIdSet.has(child.id) ? 'absent' : 'present'),
+      ),
+    );
+
+    setAttendanceConfirmed(true);
+    setSelectionMode(false);
+    setSelectedAbsentIds([]);
+  };
 
   const getAttendanceBadge = (child: TeacherChild) => {
+    if (!attendanceConfirmed) {
+      if (selectedAbsentIdSet.has(child.id)) {
+        return {
+          label: 'Ausente',
+          backgroundColor: isDark ? '#442222' : '#FBE7E4',
+          color: theme.colors.error,
+        };
+      }
+
+      return {
+        label: 'Standby',
+        backgroundColor: theme.colors.infoBackground,
+        color: theme.colors.info,
+      };
+    }
+
     if (child.attendance === 'present') {
       return {
         label: 'Presente',
@@ -121,7 +132,8 @@ export default function Claass() {
           <View style={styles.tipCard}>
             <Text style={styles.tipTitle}>Check-in rapido</Text>
             <Text style={styles.tipText}>
-              Arraste para a esquerda para marcar presente e para a direita para marcar ausente.
+              Segure uma crianca por 3 segundos para marcar ausencia. Depois, toque nos demais nomes
+              para ajustar a selecao antes de confirmar.
             </Text>
           </View>
 
@@ -142,61 +154,57 @@ export default function Claass() {
           <View style={styles.listCard}>
             {filteredKids.map((item) => {
               const attendanceBadge = getAttendanceBadge(item);
+              const isAbsentSelected = !attendanceConfirmed && selectedAbsentIdSet.has(item.id);
+              const isStandby = !attendanceConfirmed && !isAbsentSelected;
 
               return (
-                <Swipeable
+                <TouchableOpacity
                   key={item.id}
-                  ref={(ref) => {
-                    swipeableRefs.current[item.id] = ref;
-                  }}
-                  overshootLeft={false}
-                  overshootRight={false}
-                  leftThreshold={70}
-                  rightThreshold={70}
-                  onSwipeableOpen={(direction) => handleSwipeOpen(item, direction)}
-                  renderLeftActions={() =>
-                    renderAttendanceAction(
-                      'Ausente',
-                      'Deslize para marcar ausencia',
-                      theme.colors.error,
-                      'left',
-                    )
-                  }
-                  renderRightActions={() =>
-                    renderAttendanceAction(
-                      'Presente',
-                      'Deslize para confirmar presenca',
-                      theme.colors.success,
-                      'right',
-                    )
-                  }
+                  style={[
+                    styles.card,
+                    isStandby && styles.standbyCard,
+                    isAbsentSelected && styles.absentSelectedCard,
+                  ]}
+                  onPress={() => handleChildPress(item.id)}
+                  onLongPress={() => handleChildLongPress(item.id)}
+                  delayLongPress={1000}
+                  activeOpacity={0.9}
                 >
-                  <TouchableOpacity
-                    style={styles.card}
-                    onPress={() => router.navigate(`/baby/${item.id}`)}
-                    activeOpacity={0.9}
+                  <Image source={profileIcon} style={styles.imageKid} />
+                  <View style={styles.informationContainer}>
+                    <Text style={styles.kidName}>{item.name}</Text>
+                    <Text style={styles.kidClass}>Turma {item.className}</Text>
+                  </View>
+                  <View
+                    style={[
+                      styles.attendanceBadge,
+                      { backgroundColor: attendanceBadge.backgroundColor },
+                    ]}
                   >
-                    <Image source={profileIcon} style={styles.imageKid} />
-                    <View style={styles.informationContainer}>
-                      <Text style={styles.kidName}>{item.name}</Text>
-                      <Text style={styles.kidClass}>Turma {item.className}</Text>
+                    <Text style={[styles.attendanceBadgeText, { color: attendanceBadge.color }]}>
+                      {attendanceBadge.label}
+                    </Text>
+                  </View>
+                  {isAbsentSelected ? (
+                    <View style={styles.selectedIcon}>
+                      <Text style={styles.selectedIconText}>✓</Text>
                     </View>
-                    <View
-                      style={[
-                        styles.attendanceBadge,
-                        { backgroundColor: attendanceBadge.backgroundColor },
-                      ]}
-                    >
-                      <Text style={[styles.attendanceBadgeText, { color: attendanceBadge.color }]}>
-                        {attendanceBadge.label}
-                      </Text>
-                    </View>
-                    <Text style={styles.chevron}>›</Text>
-                  </TouchableOpacity>
-                </Swipeable>
+                  ) : null}
+                  <Text style={styles.chevron}>›</Text>
+                </TouchableOpacity>
               );
             })}
           </View>
+
+          {selectionMode && selectedAbsentIds.length > 0 ? (
+            <TouchableOpacity
+              style={styles.confirmButton}
+              onPress={handleConfirmAttendance}
+              activeOpacity={0.9}
+            >
+              <Text style={styles.confirmButtonText}>Confirmar Presencas</Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -313,6 +321,15 @@ const createStyles = (theme: any, isDark: boolean) =>
       borderBottomWidth: 1,
       borderBottomColor: isDark ? '#222' : '#F1ECFB',
       backgroundColor: theme.colors.surface,
+      borderLeftWidth: 4,
+      borderLeftColor: 'transparent',
+    },
+    standbyCard: {
+      opacity: 0.42,
+    },
+    absentSelectedCard: {
+      backgroundColor: isDark ? '#241721' : '#FFF7F5',
+      borderLeftColor: theme.colors.error,
     },
     imageKid: {
       width: 48,
@@ -349,23 +366,31 @@ const createStyles = (theme: any, isDark: boolean) =>
       color: theme.colors.text,
       opacity: 0.3,
     },
-    swipeAction: {
-      flex: 1,
-      paddingHorizontal: 20,
-    },
-    swipeActionContent: {
+    selectedIcon: {
+      width: 24,
+      height: 24,
+      borderRadius: 12,
+      backgroundColor: theme.colors.error,
+      alignItems: 'center',
       justifyContent: 'center',
-      height: '100%',
     },
-    swipeActionLabel: {
+    selectedIconText: {
+      color: '#FFFFFF',
+      fontSize: 14,
+      fontFamily: 'Nunito_700Bold',
+    },
+    confirmButton: {
+      minHeight: 48,
+      borderRadius: 16,
+      backgroundColor: theme.colors.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: 16,
+    },
+    confirmButtonText: {
       fontSize: 14,
       fontFamily: 'Nunito_700Bold',
       color: '#FFFFFF',
-    },
-    swipeActionDescription: {
-      fontSize: 11,
-      color: 'rgba(255,255,255,0.88)',
-      marginTop: 2,
     },
     placeholder: {
       color: isDark ? '#8E8AA5' : '#94A3B8',
