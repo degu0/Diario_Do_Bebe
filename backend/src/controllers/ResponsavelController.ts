@@ -2,16 +2,17 @@ import { Request, Response } from 'express';
 import { prisma } from '../lib/prisma';
 
 export class ResponsavelController {
-  // Rota para CRIAR um responsável (POST)
   async store(req: Request, res: Response) {
     try {
-      const { nome, cpf, telefone, email, senhaHash, endereco, } = req.body;
+      // Recebemos os dados do responsável E os dados para o vínculo opcional com um filho
+      const { nome, cpf, telefone, email, senhaHash, endereco, bebeId, parentesco } = req.body;
 
-      // Validação básica: verifica se os campos obrigatórios vieram
-      if (!cpf || !email ) {
-        return res.status(400).json({ error: 'Nome, data de nascimento e turma são obrigatórios.' });
+      // Validação básica de campos obrigatórios do responsável
+      if (!nome || !cpf || !email || !senhaHash) {
+        return res.status(400).json({ error: 'Nome, CPF, Email e Senha são obrigatórios.' });
       }
 
+      // Criamos o responsável usando o poder de escrita aninhada do Prisma
       const responsavel = await prisma.responsavel.create({
         data: {
           nome,
@@ -20,7 +21,22 @@ export class ResponsavelController {
           email,
           senhaHash,
           endereco,
+          // Se o front-end enviou um bebeId e um parentesco, criamos o vínculo na mesma tacada
+          bebes: bebeId && parentesco ? {
+            create: {
+              bebeId: Number(bebeId),
+              parentesco: parentesco // "Mãe", "Pai", "Avô", "Tio", etc.
+            }
+          } : undefined // Se não vier, ele apenas ignora e cria o responsável sem filhos por enquanto
         },
+        // Esse include serve para o Postman já te devolver o responsável com a lista de filhos vinculados
+        include: {
+          bebes: {
+            include: {
+              bebe: true
+            }
+          }
+        }
       });
 
       return res.status(201).json(responsavel);
@@ -29,6 +45,32 @@ export class ResponsavelController {
       return res.status(500).json({ error: 'Erro ao cadastrar responsável.' });
     }
   }
+
+  async profile(req: Request, res: Response) {
+  try {
+    const { responsavelId } = req.params; // Ex: /responsavel/6/perfil
+
+    const responsavelME = await prisma.responsavel.findUnique({
+      where: { id: Number(responsavelId) },
+      include: {
+        bebes: {
+          include: {
+            bebe: true // 👈 A MÁGICA AQUI: Traz os dados reais do filho (id, nome, fotoUrl...)
+          }
+        }
+      }
+    });
+
+    if (!responsavelME) {
+      return res.status(404).json({ error: 'Responsável não encontrado.' });
+    }
+
+    return res.json(responsavelME);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Erro ao buscar perfil do responsável.' });
+  }
+}
 
   // Rota para LISTAR responsáveis (GET)
   async index(req: Request, res: Response) {

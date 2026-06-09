@@ -6,6 +6,6 @@ const dashboardController = new DashboardController();
 
 // Define as rotas específicas para Bebê
 dashboardRoutes.get('/:ADIid/:TURMAid', dashboardController.getDashboard);
-dashboardRoutes.get('/:ParentID/:BabyID', dashboardController.getDashboardParents);
+dashboardRoutes.get('/parents/:ParentID/:BabyID', dashboardController.getDashboardParents);
 
 export { dashboardRoutes };

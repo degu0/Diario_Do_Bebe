@@ -61,7 +61,13 @@ export class BebeController {
       const { BEBEid } = req.params; // Pega o ID que vem na URL (ex: /bebes/1)
       const bebeME = await prisma.bebe.findUnique({
         where: { id: Number(BEBEid)}, // Traz os dados da turma junto
-        include: {responsaveis: true}
+        include: {
+          responsaveis: {
+            include: {
+              responsavel: true // Traz os dados puros do responsável (nome, telefone)
+            }
+          }
+        }
       });
       return res.json(bebeME);
     } catch (error) {
