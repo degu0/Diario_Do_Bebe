@@ -5,16 +5,17 @@ export class EventoController {
   // Rota para CRIAR um escola (POST)
   async store(req: Request, res: Response) {
     try {
-      const { titulo, descricao, dataEvento, horario_inicio, horario_fim, escolaId, turmaId } = req.body;
+      const { titulo, local, descricao, dataEvento, horario_inicio, horario_fim, escolaId, turmaId } = req.body;
 
       // Validação básica: verifica se os campos obrigatórios vieram
       if (!titulo || !dataEvento ) {
-        return res.status(400).json({ error: 'É obrigatório informar o nome e a data!' });
+        return res.status(400).json({ error: 'É obrigatório informar o titulo e a data!' });
       }
 
       const evento2 = await prisma.evento.create({
         data: {
           titulo,
+          local,
           descricao,
           dataEvento,
           horario_inicio,

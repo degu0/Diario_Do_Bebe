@@ -50,13 +50,14 @@ model Bebe {
 }
 
 model Responsavel {
-  id        Int               @id @default(autoincrement())
-  nome      String
-  cpf       String            @unique
-  telefone  String?
-  email     String            @unique
-  senhaHash String
-  endereco  String?
+  id              Int               @id @default(autoincrement())
+  nome            String
+  cpf             String            @unique
+  telefone        String?
+  email           String            @unique
+  senhaHash       String
+  local_trabalho  String?
+  endereco        String?
 
   // Mudança aqui: O responsável se relaciona com a tabela de vínculo
   bebes     VinculoFamiliar[]

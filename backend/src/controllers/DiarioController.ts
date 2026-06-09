@@ -42,6 +42,24 @@ export class DiarioController {
     }
   }
 
+  async diary(req: Request, res: Response) {
+  try {
+    const { id } = req.params; // Ex: /responsavel/6/perfil
+
+    const diarioatual = await prisma.diarioIndividual.findUnique({
+      where: { id: Number(id) },
+    });
+
+    if (!diarioatual) {
+      return res.status(404).json({ error: 'diário não encontrado.' });
+    }
+
+    return res.json(diarioatual);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Erro ao buscar diário.' });
+  }
+}
   async delete(req: Request, res: Response) {
     try {
       const { id } = req.params; // Pega o ID da URL
