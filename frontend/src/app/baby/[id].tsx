@@ -1,9 +1,12 @@
 import { colors } from '@/constants/Colors';
 import { useTeacherAttendance } from '@/context/TeacherAttendanceContext';
 import { useThemeContext } from '@/context/ThemeContext';
-import { useLocalSearchParams } from 'expo-router';
+import { getBebeProfile } from '@/services/bebeService';
+import { listDiariosByBebe } from '@/services/diarioService';
+import type { Bebe } from '@/services/types';
+import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { router } from 'expo-router';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -15,26 +18,57 @@ export default function BabyProfile() {
   const childId = Array.isArray(params.id) ? params.id[0] : params.id;
   const { getChildById } = useTeacherAttendance();
   const child = childId ? getChildById(childId) : null;
+  const [profile, setProfile] = useState<Bebe | null>(null);
+  const [hasReportToday, setHasReportToday] = useState(false);
   const isAbsent = child?.attendance === 'absent';
   const { theme, isDark } = useThemeContext();
   const styles = useMemo(() => createStyles(theme, isDark), [theme, isDark]);
 
   const subtitleColor = `${theme.colors.text}AA`;
 
-  const contacts = [
-    { id: 1, name: 'Heloisa Santos', number: '(81) 99111-1111' },
-    { id: 2, name: 'Joao Santos', number: '(81) 99222-2222' },
-    { id: 3, name: 'Joelma Souza', number: '(81) 99333-3333' },
-  ];
+  useEffect(() => {
+    if (!childId) return;
 
-  const authorized = [
-    { name: 'Heloisa', role: 'Mae' },
-    { name: 'Joao', role: 'Pai' },
-    { name: 'Joelma', role: 'Avo' },
-  ];
+    getBebeProfile(Number(childId))
+      .then(setProfile)
+      .catch(() => setProfile(null));
+  }, [childId]);
 
-  const allergies = ['Amendoim', 'Soja', 'Ovo'];
-  const medications = ['Dipirona', 'Amoxicilina', 'Loratadina'];
+  // Reconsulta ao voltar da tela de preenchimento, para o botão sumir na hora
+  useFocusEffect(
+    useCallback(() => {
+      if (!childId) return;
+
+      const hoje = new Date().toISOString().split('T')[0];
+
+      listDiariosByBebe(Number(childId), hoje)
+        .then((diarios) =>
+          setHasReportToday(
+            diarios.some(
+              (diario) =>
+                diario.frequencia && (diario.chegadaHumor || diario.desenvolvimentoPedagogico),
+            ),
+          ),
+        )
+        .catch(() => setHasReportToday(false));
+    }, [childId]),
+  );
+
+  const responsaveis =
+    profile?.responsaveis?.map((vinculo) => ({
+      id: vinculo.id,
+      name: vinculo.responsavel?.nome || 'Responsavel',
+      number: vinculo.responsavel?.telefone || '-',
+      role: vinculo.parentesco,
+    })) ?? [];
+
+  const contacts = responsaveis.length ? responsaveis : [{ id: 0, name: 'Sem contato', number: '-' }];
+  const authorized = responsaveis.length
+    ? responsaveis.map((item) => ({ name: item.name.split(' ')[0], role: item.role }))
+    : [{ name: 'Nao informado', role: '-' }];
+  const allergies = profile?.alergias?.split(',').map((item) => item.trim()).filter(Boolean) ?? [];
+  const medications =
+    profile?.medicamentos?.split(',').map((item) => item.trim()).filter(Boolean) ?? [];
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
@@ -59,18 +93,25 @@ export default function BabyProfile() {
             <Image source={require('@/assets/icon/profile.png')} style={styles.babyAvatar} />
 
             <View style={styles.babyTexts}>
-              <Text style={styles.babyName}>{child?.name ?? 'Crianca'}</Text>
+              <Text style={styles.babyName}>{profile?.nome ?? child?.name ?? 'Crianca'}</Text>
               <Text style={styles.babyMeta}>Perfil da crianca</Text>
-              <Text style={styles.babyBirthday}>Aniversario: 01/01/2025</Text>
+              <Text style={styles.babyBirthday}>
+                Aniversario:{' '}
+                {profile?.dataNascimento
+                  ? new Date(profile.dataNascimento).toLocaleDateString('pt-BR')
+                  : 'Nao informado'}
+              </Text>
               <View style={styles.infoPill}>
-                <Text style={styles.infoPillText}>Turma {child?.className ?? 'A1'}</Text>
+                <Text style={styles.infoPillText}>
+                  Turma {profile?.turma?.nome ?? child?.className ?? 'A1'}
+                </Text>
               </View>
             </View>
           </View>
         </View>
 
         <View style={styles.contentCard}>
-          {!isAbsent ? (
+          {!isAbsent && !hasReportToday ? (
             <TouchableOpacity
               onPress={() => router.push(`/register/${childId ?? '1'}`)}
               style={styles.primaryButton}
@@ -83,14 +124,16 @@ export default function BabyProfile() {
 
           <View style={styles.helperCard}>
             <Ionicons
-              name="information-circle-outline"
+              name={hasReportToday && !isAbsent ? 'checkmark-circle-outline' : 'information-circle-outline'}
               size={18}
               color={isAbsent ? theme.colors.error : theme.colors.primary}
             />
             <Text style={styles.helperText}>
               {isAbsent
                 ? 'Esta crianca foi marcada como ausente na lista da turma, por isso o formulario diario nao aparece.'
-                : 'A ausencia do dia e marcada diretamente na lista da turma com gesto lateral.'}
+                : hasReportToday
+                  ? 'O relatorio diario de hoje ja foi preenchido para esta crianca.'
+                  : 'A ausencia do dia e marcada diretamente na lista da turma com gesto lateral.'}
             </Text>
           </View>
 
@@ -101,33 +144,27 @@ export default function BabyProfile() {
             subtitleColor={subtitleColor}
           >
             <View style={styles.responsibleGrid}>
-              <View style={[styles.responsibleCard, { backgroundColor: theme.colors.secondary }]}>
-                <View style={styles.cardInformation}>
-                  <Image
-                    source={require('@/assets/icon/profile.png')}
-                    style={styles.responsibleAvatar}
-                  />
-                  <View style={styles.information}>
-                    <Text style={styles.responsibleName}>Heloisa Santos</Text>
-                    <Text style={styles.responsibleRole}>Mae</Text>
+              {responsaveis.slice(0, 2).map((responsavel, index) => (
+                <View
+                  key={responsavel.id}
+                  style={[
+                    styles.responsibleCard,
+                    { backgroundColor: index === 0 ? theme.colors.secondary : colors.info },
+                  ]}
+                >
+                  <View style={styles.cardInformation}>
+                    <Image
+                      source={require('@/assets/icon/profile.png')}
+                      style={styles.responsibleAvatar}
+                    />
+                    <View style={styles.information}>
+                      <Text style={styles.responsibleName}>{responsavel.name}</Text>
+                      <Text style={styles.responsibleRole}>{responsavel.role}</Text>
+                    </View>
                   </View>
+                  <Text style={styles.responsiblePhone}>{responsavel.number}</Text>
                 </View>
-                <Text style={styles.responsiblePhone}>(81) 99111-1111</Text>
-              </View>
-
-              <View style={[styles.responsibleCard, { backgroundColor: colors.info }]}>
-                <View style={styles.cardInformation}>
-                  <Image
-                    source={require('@/assets/icon/profile.png')}
-                    style={styles.responsibleAvatar}
-                  />
-                  <View style={styles.information}>
-                    <Text style={styles.responsibleName}>Joao Santos</Text>
-                    <Text style={styles.responsibleRole}>Pai</Text>
-                  </View>
-                </View>
-                <Text style={styles.responsiblePhone}>(81) 99222-2222</Text>
-              </View>
+              ))}
             </View>
           </SectionCard>
 
@@ -175,7 +212,7 @@ export default function BabyProfile() {
             <AccordionSection
               icon="⚠️"
               title="Alergias"
-              items={allergies}
+              items={allergies.length ? allergies : ['Nao informado']}
               itemIcon="•"
               titleColor={theme.colors.text}
               subtitleColor={subtitleColor}
@@ -187,7 +224,7 @@ export default function BabyProfile() {
             <AccordionSection
               icon="💊"
               title="Medicacoes"
-              items={medications}
+              items={medications.length ? medications : ['Nao informado']}
               itemIcon="•"
               titleColor={theme.colors.text}
               subtitleColor={subtitleColor}

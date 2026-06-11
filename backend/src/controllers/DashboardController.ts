@@ -88,7 +88,13 @@ async getDashboardParents(req: Request, res: Response) {
       // 1. Busca o Responsável e a lista de todos os seus filhos (para os ícones)
       prisma.responsavel.findUnique({
         where: { id: Number(ParentID) },
-        include: { bebes: true }
+        include: {
+          bebes: {
+            include: {
+              bebe: true
+            }
+          }
+        }
       }),
 
       // 2. Busca o diário de hoje do bebê específico clicado

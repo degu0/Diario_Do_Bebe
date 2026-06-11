@@ -1,10 +1,10 @@
-import Banner from '@/components/Banner';
 import DataUser from '@/components/DataUser';
+import { useAuth } from '@/context/AuthContext';
 import { useTeacherAttendance } from '@/context/TeacherAttendanceContext';
 import { useThemeContext } from '@/context/ThemeContext';
-import { getHomeBannerForUser } from '@/utils/notifications/catalog';
+import { listOcorrencias } from '@/services/ocorrenciaService';
 import { useRouter } from 'expo-router';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -12,18 +12,31 @@ const profileIcon = require('@/assets/icon/profile.png');
 
 export default function Home() {
   const { theme, isDark } = useThemeContext();
+  const { user } = useAuth();
   const { children } = useTeacherAttendance();
   const router = useRouter();
 
   const styles = useMemo(() => createStyles(theme, isDark), [theme, isDark]);
+  const [ocorrenciasCount, setOcorrenciasCount] = useState(0);
 
-  const name = 'Aline';
+  useEffect(() => {
+    if (user?.type !== 'teacher') return;
+
+    listOcorrencias()
+      .then((ocorrencias) => {
+        const hoje = new Date().toDateString();
+        setOcorrenciasCount(
+          ocorrencias.filter((item) => new Date(item.dia).toDateString() === hoje).length,
+        );
+      })
+      .catch(() => setOcorrenciasCount(0));
+  }, [user]);
+
+  const name = user?.nome?.split(' ')[0] || 'Professora';
   const filledCount = children.filter((child) => child.reportStatus === 'Preenchida').length;
   const totalCount = children.length;
   const absentCount = children.filter((child) => child.attendance === 'absent').length;
   const progress = totalCount > 0 ? filledCount / totalCount : 0;
-  const alert = getHomeBannerForUser('teacher');
-
   const statusTheme: Record<string, { bg: string; text: string }> = {
     Preenchida: {
       bg: theme.colors.successBackground,
@@ -52,9 +65,6 @@ export default function Home() {
 
           <DataUser name={name} />
 
-          {alert ? (
-            <Banner title={alert.title} subtitle={alert.subtitle} type={alert.type} />
-          ) : null}
         </View>
 
         <View style={styles.contentCard}>
@@ -78,8 +88,10 @@ export default function Home() {
             </View>
 
             <View style={styles.smallCard}>
-              <Text style={[styles.smallCardNumber, { color: theme.colors.primary }]}>1</Text>
-              <Text style={styles.smallCardLabel}>Ocorrencia</Text>
+              <Text style={[styles.smallCardNumber, { color: theme.colors.primary }]}>
+                {ocorrenciasCount}
+              </Text>
+              <Text style={styles.smallCardLabel}>Ocorrencias hoje</Text>
             </View>
           </View>
 

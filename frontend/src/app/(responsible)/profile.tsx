@@ -1,13 +1,28 @@
 import CardSettings from '@/components/CardSettings';
+import { useAuth } from '@/context/AuthContext';
 import { useThemeContext } from '@/context/ThemeContext';
-import { useMemo } from 'react';
+import { getResponsavelProfile } from '@/services/responsavelService';
+import type { Responsavel } from '@/services/types';
+import { useEffect, useMemo, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Call, Sms } from 'iconsax-react-native';
 
 export default function Profile() {
   const { theme, isDark } = useThemeContext();
+  const { user } = useAuth();
   const styles = useMemo(() => createStyles(theme, isDark), [theme, isDark]);
+  const [profile, setProfile] = useState<Responsavel | null>(null);
+
+  useEffect(() => {
+    if (!user || user.type !== 'responsible') return;
+
+    getResponsavelProfile(user.id)
+      .then(setProfile)
+      .catch(() => setProfile(null));
+  }, [user]);
+
+  const parentesco = profile?.bebes?.[0]?.parentesco || 'Responsavel';
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
@@ -30,10 +45,10 @@ export default function Profile() {
               <View style={styles.avatarBadge} />
             </View>
             <View style={styles.headerInfo}>
-              <Text style={styles.profileName}>Rafaela Bezerra</Text>
+              <Text style={styles.profileName}>{user?.nome || 'Responsavel'}</Text>
               <View style={styles.phonePill}>
                 <Call size={16} color="#EDE5F7" variant="Outline" />
-                <Text style={styles.phoneText}>(81) 99111-1111</Text>
+                <Text style={styles.phoneText}>{profile?.telefone || 'Telefone nao cadastrado'}</Text>
               </View>
             </View>
           </View>
@@ -42,16 +57,11 @@ export default function Profile() {
           <View style={styles.cardRow}>
             <View style={[styles.cardSmall, { marginRight: 6 }]}>
               <Text style={styles.cardLabel}>Endereço</Text>
-              <Text style={styles.cardValue}>Nº100, Rua aqui do lado</Text>
-              <Text style={styles.cardValue}>Indianopolis</Text>
+              <Text style={styles.cardValue}>{profile?.endereco || 'Nao informado'}</Text>
             </View>
             <View style={[styles.cardSmall, { marginLeft: 6 }]}>
               <Text style={styles.cardLabel}>Local de Trabalho</Text>
-              <Text style={styles.cardValue}>Nº129, Avenida aqui perto</Text>
-              <Text style={styles.cardValue}>Nova Caruaru</Text>
-              <View style={styles.hoursBadge}>
-                <Text style={styles.hoursText}>8 às 18h</Text>
-              </View>
+              <Text style={styles.cardValue}>{profile?.local_trabalho || 'Nao informado'}</Text>
             </View>
           </View>
           <View style={styles.card}>
@@ -60,7 +70,7 @@ export default function Profile() {
             </View>
             <View>
               <Text style={styles.cardLabel}>Email</Text>
-              <Text style={styles.cardValue}>contatomeu@gmail.com</Text>
+              <Text style={styles.cardValue}>{user?.email || '-'}</Text>
             </View>
           </View>
           <View style={styles.cardSection}>
@@ -72,26 +82,26 @@ export default function Profile() {
 
             <View style={styles.infoRow}>
               <Text style={styles.infoKey}>Nome</Text>
-              <Text style={styles.infoVal}>Rafaela Bezerra</Text>
+              <Text style={styles.infoVal}>{user?.nome || '-'}</Text>
             </View>
             <View style={styles.divider} />
 
             <View style={styles.infoRow}>
               <Text style={styles.infoKey}>CPF</Text>
-              <Text style={styles.infoVal}>000.000.000-00</Text>
+              <Text style={styles.infoVal}>{profile?.cpf || 'Nao informado'}</Text>
             </View>
             <View style={styles.divider} />
 
             <View style={styles.infoRow}>
-              <Text style={styles.infoKey}>RG</Text>
-              <Text style={styles.infoVal}>00.000.00</Text>
+              <Text style={styles.infoKey}>Telefone</Text>
+              <Text style={styles.infoVal}>{profile?.telefone || 'Nao informado'}</Text>
             </View>
             <View style={styles.divider} />
 
             <View style={styles.infoRow}>
               <Text style={styles.infoKey}>Parentesco</Text>
               <View style={styles.parentescoBadge}>
-                <Text style={styles.parentescoText}>Mãe</Text>
+                <Text style={styles.parentescoText}>{parentesco}</Text>
               </View>
             </View>
           </View>

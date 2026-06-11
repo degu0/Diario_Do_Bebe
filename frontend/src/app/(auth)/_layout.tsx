@@ -11,6 +11,10 @@ export default function PublicLayout() {
     }
   }, [user]);
 
+  if (loading) {
+    return null;
+  }
+
   if (user) {
     if (user.type === "responsible") {
       return <Redirect href="/(responsible)/home" />;

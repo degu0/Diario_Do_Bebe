@@ -34,28 +34,28 @@ export default function Navbar() {
 
   return (
     <View style={styles.container}>
-        {links.map((link) => {
-          const routeName = link.href.split('/').pop();
-          const isActive = pathname.endsWith(routeName ?? '');
+      {links.map((link) => {
+        const routeName = link.href.split('/').pop();
+        const isActive = pathname.endsWith(routeName ?? '');
 
-          const Icon = link.icon;
+        const Icon = link.icon;
 
-          return (
-            <TouchableOpacity
-              key={link.href}
-              style={[styles.link, isActive && styles.activeLink]}
-              onPress={() => router.replace(link.href as any)}
-            >
-              <Icon
-                size={25}
-                color={isActive ? theme.colors.primary : theme.colors.text}
-                variant={isActive ? 'Bold' : 'Outline'}
-              />
+        return (
+          <TouchableOpacity
+            key={link.href}
+            style={styles.link}
+            onPress={() => router.replace(link.href as any)}
+          >
+            <Icon
+              size={25}
+              color={isActive ? theme.colors.primary : theme.colors.text}
+              variant={isActive ? 'Bold' : 'Outline'}
+            />
 
-              <Text style={[styles.text, isActive && styles.activeText]}>{link.label}</Text>
-            </TouchableOpacity>
-          );
-        })}
+            <Text style={[styles.text, isActive && styles.activeText]}>{link.label}</Text>
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
 }
@@ -66,9 +66,8 @@ const createStyles = (theme: any) =>
       backgroundColor: theme.colors.surface,
       borderColor: theme.colors.surface,
       width: 350,
-      height: 100,
-      padding: 12,
-            flexDirection: 'row',
+      height: 80,
+      flexDirection: 'row',
       borderRadius: 120,
       justifyContent: 'space-around',
       alignItems: 'center',
@@ -79,14 +78,8 @@ const createStyles = (theme: any) =>
       alignItems: 'center',
       justifyContent: 'center',
       paddingHorizontal: 4,
-      paddingVertical: 27,
-    },
 
-    activeLink: {
-      borderTopWidth: 2,
-      borderTopColor: theme.colors.primary,
     },
-
     text: {
       marginTop: 4,
       fontSize: 10,

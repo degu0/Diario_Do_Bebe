@@ -1,15 +1,20 @@
 import { useRouter } from "expo-router";
 import { createContext, useContext, useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getAuthenticatedUser, loginRequest } from "@/services/authService";
+import { removeStoredToken, storeToken } from "@/services/secureStorage";
+import type { AuthUser, UserType } from "@/services/types";
 
-type User = {
+type User = AuthUser;
+
+type LoginData = {
   email: string;
-  type: "responsible" | "teacher";
+  password: string;
+  type?: UserType;
 };
 
 type AuthContextType = {
   user: User | null;
-  login: (userData: User) => Promise<void>;
+  login: (userData: LoginData) => Promise<void>;
   logout: () => Promise<void>;
   loading: boolean;
 };
@@ -22,23 +27,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    AsyncStorage.getItem("user").then((res) => {
-      if (res) setUser(JSON.parse(res));
-    });
+    let isMounted = true;
+
+    const restoreSession = async () => {
+      try {
+        const restoredUser = await getAuthenticatedUser();
+
+        if (isMounted) {
+          setUser(restoredUser);
+        }
+      } catch {
+        await removeStoredToken();
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    restoreSession();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  const login = async (userData: User) => {
-    await AsyncStorage.setItem("user", JSON.stringify(userData));
-    setUser(userData);
-    if (userData.type === "responsible") {
+  const login = async (userData: LoginData) => {
+    const response = await loginRequest(userData);
+    await storeToken(response.token);
+
+    // O /auth/login retorna o usuário sem bebes/turmas; o /auth/me traz completo.
+    const fullUser = await getAuthenticatedUser().catch(() => response.user);
+    setUser(fullUser);
+
+    if (response.user.type === "responsible") {
       router.replace("/(responsible)/home");
-    } else if (userData.type === "teacher") {
+    } else if (response.user.type === "teacher") {
       router.replace("/(teacher)/home");
     }
   };
 
   const logout = async () => {
-    await AsyncStorage.removeItem("user");
+    await removeStoredToken();
     setUser(null);
     router.replace("/(auth)/login");
   };

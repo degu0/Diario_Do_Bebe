@@ -1,4 +1,5 @@
 import CardSettings from '@/components/CardSettings';
+import { useAuth } from '@/context/AuthContext';
 import { useThemeContext } from '@/context/ThemeContext';
 import { useMemo } from 'react';
 import {
@@ -14,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Profile() {
   const { theme, isDark } = useThemeContext();
+  const { user } = useAuth();
   const styles = useMemo(() => createStyles(theme, isDark), [theme, isDark]);
 
   return (
@@ -38,7 +40,7 @@ export default function Profile() {
               </View>
 
               <View style={styles.headerInfo}>
-                <Text style={styles.profileName}>Rafaela Bezerra</Text>
+                <Text style={styles.profileName}>{user?.nome || 'Professora'}</Text>
 
                 <View style={styles.phonePill}>
                   <Text style={styles.phoneText}>Professora</Text>
@@ -52,7 +54,7 @@ export default function Profile() {
             <View style={styles.cardRow}>
               <View style={[styles.cardSmall, { marginRight: 6 }]}>
                 <Text style={styles.cardLabel}>Creche que atua</Text>
-                <Text style={styles.cardValue}>Creche Sol Lindo</Text>
+                <Text style={styles.cardValue}>{user?.escola?.nome || 'Escola'}</Text>
 
                 <View style={styles.hoursBadge}>
                   <Text style={styles.hoursText}>8 às 18h</Text>
@@ -61,7 +63,7 @@ export default function Profile() {
 
               <View style={[styles.cardSmall, { marginLeft: 6 }]}>
                 <Text style={styles.cardLabel}>Turma</Text>
-                <Text style={styles.cardValue}>Maternal I</Text>
+                <Text style={styles.cardValue}>{user?.turmas?.[0]?.nome || 'Turma'}</Text>
               </View>
             </View>
 
@@ -74,7 +76,7 @@ export default function Profile() {
 
               <View style={styles.infoRow}>
                 <Text style={styles.infoKey}>Email</Text>
-                <Text style={styles.infoVal}>contatomeu@gmail.com</Text>
+                <Text style={styles.infoVal}>{user?.email || '-'}</Text>
               </View>
               <View style={styles.divider} />
 

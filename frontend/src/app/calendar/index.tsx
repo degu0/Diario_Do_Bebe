@@ -2,7 +2,10 @@ import { CardDateSpecial } from '@/components/CardDateSpecial';
 import { useAuth } from '@/context/AuthContext';
 import { useResponsibleChild } from '@/context/ResponsibleChildContext';
 import { useThemeContext } from '@/context/ThemeContext';
-import { getMockSpecialDateEvents } from '@/utils/notifications/catalog';
+import { listDiariosByBebe } from '@/services/diarioService';
+import { listEventos, listEventosByTurma } from '@/services/eventoService';
+import type { Evento } from '@/services/types';
+import type { SpecialDateEvent } from '@/types/notification';
 import { typeConfig } from '@/utils/typeConfig';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,10 +21,34 @@ import { CardHasReport } from '@/components/CardHasReport';
 LocaleConfig.locales['pt-br'] = ptBR;
 LocaleConfig.defaultLocale = 'pt-br';
 
-const daySpecial = getMockSpecialDateEvents();
-
-const DAILY_REPORT_DATES = ['2026-04-14', '2026-04-15', '2026-04-16'];
 const STORAGE_KEY = 'viewed_reports';
+
+function toDateOnly(value?: string | null) {
+  if (!value) return '';
+  return new Date(value).toISOString().split('T')[0];
+}
+
+function toTime(value?: string | null) {
+  if (!value) return '00:00';
+  return new Intl.DateTimeFormat('pt-BR', {
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(value));
+}
+
+function mapEvento(evento: Evento): SpecialDateEvent {
+  return {
+    id: String(evento.id),
+    title: evento.titulo,
+    description: evento.descricao || undefined,
+    date: toDateOnly(evento.dataEvento),
+    type: 'reunion',
+    location: evento.local || 'Escola',
+    timeStart: toTime(evento.horario_inicio),
+    timeEnd: toTime(evento.horario_fim),
+    audience: 'all',
+  };
+}
 
 export default function CalendarScreen() {
   const { theme, isDark } = useThemeContext();
@@ -30,6 +57,8 @@ export default function CalendarScreen() {
   const router = useRouter();
   const [day, setDay] = useState<DateData>();
   const [viewedReports, setViewedReports] = useState<string[]>([]);
+  const [daySpecial, setDaySpecial] = useState<SpecialDateEvent[]>([]);
+  const [dailyReportDates, setDailyReportDates] = useState<string[]>([]);
 
   const isResponsible = user?.type === 'responsible';
   const styles = useMemo(() => createStyles(theme, isDark), [theme, isDark]);
@@ -42,6 +71,29 @@ export default function CalendarScreen() {
     load();
   }, []);
 
+  useEffect(() => {
+    const loadCalendarData = async () => {
+      const turmaId =
+        user?.type === 'teacher'
+          ? user.turmas?.[0]?.id
+          : selectedChild
+            ? Number(selectedChild.report.schoolClass)
+            : undefined;
+
+      const eventos = turmaId ? await listEventosByTurma(turmaId).catch(() => []) : await listEventos().catch(() => []);
+      setDaySpecial(eventos.map(mapEvento).filter((evento) => evento.date));
+
+      if (isResponsible && selectedChild) {
+        const diarios = await listDiariosByBebe(Number(selectedChild.id)).catch(() => []);
+        setDailyReportDates(diarios.map((diario) => toDateOnly(diario.data)).filter(Boolean));
+      } else {
+        setDailyReportDates([]);
+      }
+    };
+
+    loadCalendarData();
+  }, [isResponsible, selectedChild, user]);
+
   const markAsViewed = async (date: string) => {
     if (viewedReports.includes(date)) return;
     const updated = [...viewedReports, date];
@@ -50,7 +102,7 @@ export default function CalendarScreen() {
   };
 
   const selectedDaySpecial = daySpecial.find((item) => item.date === day?.dateString);
-  const selectedHasReport = isResponsible && DAILY_REPORT_DATES.includes(day?.dateString ?? '');
+  const selectedHasReport = isResponsible && dailyReportDates.includes(day?.dateString ?? '');
   const selectedReportViewed = viewedReports.includes(day?.dateString ?? '');
 
   const markedDates = useMemo(() => {
@@ -61,7 +113,7 @@ export default function CalendarScreen() {
     });
 
     if (isResponsible) {
-      DAILY_REPORT_DATES.forEach((date) => {
+      dailyReportDates.forEach((date) => {
         const alreadyViewed = viewedReports.includes(date);
         acc[date] = {
           ...(acc[date] ?? {}),
@@ -72,7 +124,7 @@ export default function CalendarScreen() {
     }
 
     return acc;
-  }, [theme, isDark, isResponsible, viewedReports]);
+  }, [theme, isDark, isResponsible, viewedReports, dailyReportDates, daySpecial]);
 
   const handleOpenReport = () => {
     if (day?.dateString && selectedChild) {
@@ -128,7 +180,7 @@ export default function CalendarScreen() {
 
               const specialInfo = daySpecial.find((item) => item.date === date.dateString);
               const hasSpecial = !!specialInfo;
-              const hasReport = isResponsible && DAILY_REPORT_DATES.includes(date.dateString);
+              const hasReport = isResponsible && dailyReportDates.includes(date.dateString);
               const reportViewed = viewedReports.includes(date.dateString);
               const isSelected = date.dateString === day?.dateString;
 
