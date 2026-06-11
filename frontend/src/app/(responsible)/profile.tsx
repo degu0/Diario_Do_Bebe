@@ -1,4 +1,5 @@
 import CardSettings from '@/components/CardSettings';
+import { useAuth } from '@/context/AuthContext';
 import { useThemeContext } from '@/context/ThemeContext';
 import { useMemo } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -7,6 +8,7 @@ import { Call, Sms } from 'iconsax-react-native';
 
 export default function Profile() {
   const { theme, isDark } = useThemeContext();
+  const { user } = useAuth();
   const styles = useMemo(() => createStyles(theme, isDark), [theme, isDark]);
 
   return (
@@ -30,10 +32,10 @@ export default function Profile() {
               <View style={styles.avatarBadge} />
             </View>
             <View style={styles.headerInfo}>
-              <Text style={styles.profileName}>Rafaela Bezerra</Text>
+              <Text style={styles.profileName}>{user?.nome || 'Responsavel'}</Text>
               <View style={styles.phonePill}>
                 <Call size={16} color="#EDE5F7" variant="Outline" />
-                <Text style={styles.phoneText}>(81) 99111-1111</Text>
+                <Text style={styles.phoneText}>Telefone cadastrado</Text>
               </View>
             </View>
           </View>
@@ -60,7 +62,7 @@ export default function Profile() {
             </View>
             <View>
               <Text style={styles.cardLabel}>Email</Text>
-              <Text style={styles.cardValue}>contatomeu@gmail.com</Text>
+              <Text style={styles.cardValue}>{user?.email || '-'}</Text>
             </View>
           </View>
           <View style={styles.cardSection}>
@@ -72,7 +74,7 @@ export default function Profile() {
 
             <View style={styles.infoRow}>
               <Text style={styles.infoKey}>Nome</Text>
-              <Text style={styles.infoVal}>Rafaela Bezerra</Text>
+              <Text style={styles.infoVal}>{user?.nome || '-'}</Text>
             </View>
             <View style={styles.divider} />
 

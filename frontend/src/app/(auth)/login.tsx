@@ -121,13 +121,15 @@ export default function Login() {
       return;
     }
 
-    if (email !== 'pais@example.com') {
-      await login({ email, type: 'teacher' });
-      return;
+    try {
+      await login({ email, password });
+    } catch (error) {
+      const message =
+        error && typeof error === 'object' && 'message' in error
+          ? String(error.message)
+          : 'Nao foi possivel fazer login';
+      setErro(message);
     }
-
-    await login({ email, type: 'responsible' });
-    return;
   };
 
   const gradientColors: [string, string] = isDark

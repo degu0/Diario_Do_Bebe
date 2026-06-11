@@ -1,8 +1,7 @@
-import Banner from '@/components/Banner';
 import DataUser from '@/components/DataUser';
+import { useAuth } from '@/context/AuthContext';
 import { useResponsibleChild } from '@/context/ResponsibleChildContext';
 import { useThemeContext } from '@/context/ThemeContext';
-import { getHomeBannerForUser } from '@/utils/notifications/catalog';
 import { router } from 'expo-router';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,12 +10,11 @@ const profileIcon = require('@/assets/icon/profile.png');
 
 export default function Home() {
   const { theme, isDark } = useThemeContext();
+  const { user } = useAuth();
   const { children, selectedChild, selectChild } = useResponsibleChild();
   const styles = createStyles(theme, isDark);
 
-  const name = 'Carlos';
-  const alert = getHomeBannerForUser('responsible');
-
+  const name = user?.nome?.split(' ')[0] || 'Responsavel';
   if (!selectedChild) {
     return null;
   }
@@ -33,10 +31,6 @@ export default function Home() {
           <View style={styles.heroGlowSmall} />
 
           <DataUser name={name} />
-
-          {alert ? (
-            <Banner title={alert.title} subtitle={alert.subtitle} type={alert.type} />
-          ) : null}
 
           <View style={styles.kidsRow}>
             {children.map((kid) => {

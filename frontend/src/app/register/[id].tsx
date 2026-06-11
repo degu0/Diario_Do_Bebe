@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useAuth } from '@/context/AuthContext';
 import { CustomRadioButton } from '@/components/CustomRadioButton';
 import MultiSelectTabs from '@/components/MultiSelectTabs';
 import { useTeacherAttendance } from '@/context/TeacherAttendanceContext';
@@ -65,6 +66,7 @@ const emotionOptions: {
 
 export default function Register() {
   const { theme, isDark } = useThemeContext();
+  const { user } = useAuth();
   const { getChildById } = useTeacherAttendance();
   const router = useRouter();
   const params = useLocalSearchParams<{ id?: string | string[] }>();
@@ -86,7 +88,8 @@ export default function Register() {
   const [desenvolvimentoPedagogico, setDesenvolvimentoPedagogico] = useState(2);
 
   const subtitleColor = `${theme.colors.text}AA`;
-  const presenca = child?.attendance === 'absent' ? 'ausente' : 'presente';
+  const presenca: 'presente' | 'ausente' =
+    child?.attendance === 'absent' ? 'ausente' : 'presente';
   const isAusente = presenca === 'ausente';
 
   const dailyReportPayload = useMemo(
@@ -125,9 +128,18 @@ export default function Register() {
     ],
   );
 
-  const handleSave = () => {
-    const payload = dailyReportPayload;
-    void payload;
+  const handleSave = async () => {
+    if (!childId || !user || user.type !== 'teacher') return;
+
+    const { createDiario } = await import('@/services/diarioService');
+
+    await createDiario({
+      ...dailyReportPayload,
+      bebeId: Number(childId),
+      adiId: user.id,
+    });
+
+    router.back();
   };
 
   return (

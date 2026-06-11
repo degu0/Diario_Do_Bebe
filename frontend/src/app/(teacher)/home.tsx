@@ -1,8 +1,7 @@
-import Banner from '@/components/Banner';
 import DataUser from '@/components/DataUser';
+import { useAuth } from '@/context/AuthContext';
 import { useTeacherAttendance } from '@/context/TeacherAttendanceContext';
 import { useThemeContext } from '@/context/ThemeContext';
-import { getHomeBannerForUser } from '@/utils/notifications/catalog';
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -12,18 +11,17 @@ const profileIcon = require('@/assets/icon/profile.png');
 
 export default function Home() {
   const { theme, isDark } = useThemeContext();
+  const { user } = useAuth();
   const { children } = useTeacherAttendance();
   const router = useRouter();
 
   const styles = useMemo(() => createStyles(theme, isDark), [theme, isDark]);
 
-  const name = 'Aline';
+  const name = user?.nome?.split(' ')[0] || 'Professora';
   const filledCount = children.filter((child) => child.reportStatus === 'Preenchida').length;
   const totalCount = children.length;
   const absentCount = children.filter((child) => child.attendance === 'absent').length;
   const progress = totalCount > 0 ? filledCount / totalCount : 0;
-  const alert = getHomeBannerForUser('teacher');
-
   const statusTheme: Record<string, { bg: string; text: string }> = {
     Preenchida: {
       bg: theme.colors.successBackground,
@@ -52,9 +50,6 @@ export default function Home() {
 
           <DataUser name={name} />
 
-          {alert ? (
-            <Banner title={alert.title} subtitle={alert.subtitle} type={alert.type} />
-          ) : null}
         </View>
 
         <View style={styles.contentCard}>
