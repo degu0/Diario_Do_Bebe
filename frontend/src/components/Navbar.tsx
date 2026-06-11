@@ -43,7 +43,7 @@ export default function Navbar() {
         return (
           <TouchableOpacity
             key={link.href}
-            style={[styles.link, isActive && styles.activeLink]}
+            style={styles.link}
             onPress={() => router.replace(link.href as any)}
           >
             <Icon

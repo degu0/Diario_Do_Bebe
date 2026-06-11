@@ -2,10 +2,11 @@ import { colors } from '@/constants/Colors';
 import { useTeacherAttendance } from '@/context/TeacherAttendanceContext';
 import { useThemeContext } from '@/context/ThemeContext';
 import { getBebeProfile } from '@/services/bebeService';
+import { listDiariosByBebe } from '@/services/diarioService';
 import type { Bebe } from '@/services/types';
-import { useLocalSearchParams } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { router } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -18,6 +19,7 @@ export default function BabyProfile() {
   const { getChildById } = useTeacherAttendance();
   const child = childId ? getChildById(childId) : null;
   const [profile, setProfile] = useState<Bebe | null>(null);
+  const [hasReportToday, setHasReportToday] = useState(false);
   const isAbsent = child?.attendance === 'absent';
   const { theme, isDark } = useThemeContext();
   const styles = useMemo(() => createStyles(theme, isDark), [theme, isDark]);
@@ -31,6 +33,26 @@ export default function BabyProfile() {
       .then(setProfile)
       .catch(() => setProfile(null));
   }, [childId]);
+
+  // Reconsulta ao voltar da tela de preenchimento, para o botão sumir na hora
+  useFocusEffect(
+    useCallback(() => {
+      if (!childId) return;
+
+      const hoje = new Date().toISOString().split('T')[0];
+
+      listDiariosByBebe(Number(childId), hoje)
+        .then((diarios) =>
+          setHasReportToday(
+            diarios.some(
+              (diario) =>
+                diario.frequencia && (diario.chegadaHumor || diario.desenvolvimentoPedagogico),
+            ),
+          ),
+        )
+        .catch(() => setHasReportToday(false));
+    }, [childId]),
+  );
 
   const responsaveis =
     profile?.responsaveis?.map((vinculo) => ({
@@ -89,7 +111,7 @@ export default function BabyProfile() {
         </View>
 
         <View style={styles.contentCard}>
-          {!isAbsent ? (
+          {!isAbsent && !hasReportToday ? (
             <TouchableOpacity
               onPress={() => router.push(`/register/${childId ?? '1'}`)}
               style={styles.primaryButton}
@@ -102,14 +124,16 @@ export default function BabyProfile() {
 
           <View style={styles.helperCard}>
             <Ionicons
-              name="information-circle-outline"
+              name={hasReportToday && !isAbsent ? 'checkmark-circle-outline' : 'information-circle-outline'}
               size={18}
               color={isAbsent ? theme.colors.error : theme.colors.primary}
             />
             <Text style={styles.helperText}>
               {isAbsent
                 ? 'Esta crianca foi marcada como ausente na lista da turma, por isso o formulario diario nao aparece.'
-                : 'A ausencia do dia e marcada diretamente na lista da turma com gesto lateral.'}
+                : hasReportToday
+                  ? 'O relatorio diario de hoje ja foi preenchido para esta crianca.'
+                  : 'A ausencia do dia e marcada diretamente na lista da turma com gesto lateral.'}
             </Text>
           </View>
 
