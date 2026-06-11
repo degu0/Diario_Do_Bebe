@@ -34,6 +34,8 @@ api.interceptors.request.use(async (config) => {
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError<{ error?: string; message?: string }>) => {
+    console.log("ERRO REAL DA API:", error.message, error.code);
+
     const status = error.response?.status;
     const apiMessage = error.response?.data?.error || error.response?.data?.message;
 
