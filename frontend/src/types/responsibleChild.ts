@@ -16,6 +16,8 @@ export type ResponsibleChildDailyReport = {
   sonecaFim: string;
   fraldaTrocada: boolean;
   quantidadeFraldas: number;
+  banho: boolean;
+  desenvolvimentoPedagogico: string | null;
   atividades: string[];
   observacoes: string;
   teacherName: string;

@@ -1,6 +1,7 @@
 import { useTeacherAttendance } from '@/context/TeacherAttendanceContext';
 import { useThemeContext } from '@/context/ThemeContext';
 import type { TeacherChild } from '@/types/teacherChild';
+import { DIARY_STATUS } from '@/types/teacherChild';
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import {
@@ -77,12 +78,47 @@ export default function Claass() {
   };
 
   const getAttendanceBadge = (child: TeacherChild) => {
-    if (!attendanceConfirmed) {
+    // Durante seleção pendente de confirmação
+    if (selectionMode || !attendanceConfirmed) {
       if (selectedAbsentIdSet.has(child.id)) {
         return {
-          label: 'Ausente',
+          label: DIARY_STATUS.AUSENTE,
           backgroundColor: isDark ? '#442222' : '#FBE7E4',
           color: theme.colors.error,
+        };
+      }
+
+      // Se já tem attendance salvo no contexto, mostra o status real
+      if (child.attendance === 'absent') {
+        return {
+          label: DIARY_STATUS.AUSENTE,
+          backgroundColor: isDark ? '#442222' : '#FBE7E4',
+          color: theme.colors.error,
+        };
+      }
+
+      if (child.attendance === 'present') {
+        const statusMap: Record<string, { label: string; backgroundColor: string; color: string }> = {
+          [DIARY_STATUS.PREENCHIDA]: {
+            label: DIARY_STATUS.PREENCHIDA,
+            backgroundColor: theme.colors.successBackground,
+            color: theme.colors.success,
+          },
+          [DIARY_STATUS.AUSENTE]: {
+            label: DIARY_STATUS.AUSENTE,
+            backgroundColor: isDark ? '#442222' : '#FBE7E4',
+            color: theme.colors.error,
+          },
+          [DIARY_STATUS.PENDENTE]: {
+            label: DIARY_STATUS.PENDENTE,
+            backgroundColor: theme.colors.infoBackground,
+            color: theme.colors.info,
+          },
+        };
+        return statusMap[child.reportStatus] ?? {
+          label: DIARY_STATUS.PENDENTE,
+          backgroundColor: theme.colors.infoBackground,
+          color: theme.colors.info,
         };
       }
 
@@ -93,24 +129,42 @@ export default function Claass() {
       };
     }
 
-    if (child.attendance === 'present') {
-      return {
-        label: 'Presente',
-        backgroundColor: theme.colors.successBackground,
-        color: theme.colors.success,
-      };
-    }
-
+    // Após confirmação
     if (child.attendance === 'absent') {
       return {
-        label: 'Ausente',
+        label: DIARY_STATUS.AUSENTE,
         backgroundColor: isDark ? '#442222' : '#FBE7E4',
         color: theme.colors.error,
       };
     }
 
+    if (child.attendance === 'present') {
+      const statusMap: Record<string, { label: string; backgroundColor: string; color: string }> = {
+        [DIARY_STATUS.PREENCHIDA]: {
+          label: DIARY_STATUS.PREENCHIDA,
+          backgroundColor: theme.colors.successBackground,
+          color: theme.colors.success,
+        },
+        [DIARY_STATUS.AUSENTE]: {
+          label: DIARY_STATUS.AUSENTE,
+          backgroundColor: isDark ? '#442222' : '#FBE7E4',
+          color: theme.colors.error,
+        },
+        [DIARY_STATUS.PENDENTE]: {
+          label: DIARY_STATUS.PENDENTE,
+          backgroundColor: theme.colors.infoBackground,
+          color: theme.colors.info,
+        },
+      };
+      return statusMap[child.reportStatus] ?? {
+        label: DIARY_STATUS.PENDENTE,
+        backgroundColor: theme.colors.infoBackground,
+        color: theme.colors.info,
+      };
+    }
+
     return {
-      label: 'Sem check-in',
+      label: 'Standby',
       backgroundColor: theme.colors.infoBackground,
       color: theme.colors.info,
     };

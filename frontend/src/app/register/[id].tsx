@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { CustomRadioButton } from '@/components/CustomRadioButton';
 import MultiSelectTabs from '@/components/MultiSelectTabs';
@@ -67,7 +67,7 @@ const emotionOptions: {
 export default function Register() {
   const { theme, isDark } = useThemeContext();
   const { user } = useAuth();
-  const { getChildById } = useTeacherAttendance();
+  const { getChildById, refreshChildren } = useTeacherAttendance();
   const router = useRouter();
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const styles = useMemo(() => createStyles(theme, isDark), [theme, isDark]);
@@ -88,6 +88,53 @@ export default function Register() {
   const [desenvolvimentoPedagogico, setDesenvolvimentoPedagogico] = useState(2);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
+  const [existingDiarioId, setExistingDiarioId] = useState<number | null>(null);
+
+  // Carrega diário existente de hoje para pré-preencher o formulário
+  useEffect(() => {
+    if (!childId) return;
+
+    const hoje = new Date().toISOString().split('T')[0];
+    import('@/services/diarioService').then(({ listDiariosByBebe }) => {
+      listDiariosByBebe(Number(childId), hoje)
+        .then((diarios) => {
+          const diario = diarios[0];
+          if (!diario) return;
+
+          setExistingDiarioId(diario.id);
+          if (diario.chegadaHumor) setHumor(diario.chegadaHumor);
+          if (diario.alimentacao) setAlimentacao(diario.alimentacao);
+          if (diario.banho !== undefined) setBanho(diario.banho ? 'sim' : 'nao');
+          if (diario.observacoesFinais) setObservacoes(diario.observacoesFinais);
+          if (diario.desenvolvimentoPedagogico) {
+            setDesenvolvimentoPedagogico(Number(diario.desenvolvimentoPedagogico) || 2);
+          }
+
+          if (diario.sono) {
+            const parts = diario.sono.split(' - ');
+            if (parts[0] && parts[0] !== '--:--') setInicioSoneca(parts[0]);
+            if (parts[1] && parts[1] !== '--:--') setFimSoneca(parts[1]);
+          }
+
+          if (diario.fralda) {
+            const naoBateu = diario.fralda.toLowerCase().includes('não') || diario.fralda.toLowerCase().includes('nao');
+            setFraldaTrocada(naoBateu ? 'nao' : 'sim');
+            const qtd = diario.fralda.match(/\d+/)?.[0];
+            if (qtd) setQuantidadeFraldas(qtd);
+          }
+
+          if (diario.atividades) {
+            try {
+              const parsed = JSON.parse(diario.atividades);
+              if (Array.isArray(parsed)) setAtividades(parsed);
+            } catch {
+              /* ignore */
+            }
+          }
+        })
+        .catch(() => {/* sem diário existente */});
+    });
+  }, [childId]);
 
   const todayLabel = useMemo(
     () =>
@@ -147,14 +194,23 @@ export default function Register() {
     setSaving(true);
 
     try {
-      const { createDiario } = await import('@/services/diarioService');
+      const { createDiario, updateDiario } = await import('@/services/diarioService');
 
-      await createDiario({
-        ...dailyReportPayload,
-        bebeId: Number(childId),
-        adiId: user.id,
-      });
+      if (existingDiarioId) {
+        await updateDiario(existingDiarioId, {
+          ...dailyReportPayload,
+          bebeId: Number(childId),
+          adiId: user.id,
+        });
+      } else {
+        await createDiario({
+          ...dailyReportPayload,
+          bebeId: Number(childId),
+          adiId: user.id,
+        });
+      }
 
+      await refreshChildren();
       router.back();
     } catch (error) {
       const message =

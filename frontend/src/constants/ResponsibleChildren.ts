@@ -23,6 +23,8 @@ export const responsibleChildren: ResponsibleChild[] = [
       sonecaFim: '14:30',
       fraldaTrocada: true,
       quantidadeFraldas: 3,
+      banho: true,
+      desenvolvimentoPedagogico: '3',
       atividades: ['Pintura', 'Musicalizacao', 'Parque'],
       observacoes:
         'Maria Fernanda teve um dia muito animado. Participou com entusiasmo das atividades e brincou bastante com os colegas.',
@@ -52,6 +54,8 @@ export const responsibleChildren: ResponsibleChild[] = [
       sonecaFim: '--:--',
       fraldaTrocada: false,
       quantidadeFraldas: 0,
+      banho: false,
+      desenvolvimentoPedagogico: null,
       atividades: ['Leitura', 'Musica'],
       observacoes:
         'Zeca nao compareceu em periodo integral. A familia sinalizou ausencia parcial e acompanhamento em casa.',

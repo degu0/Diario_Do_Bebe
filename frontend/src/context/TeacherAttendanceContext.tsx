@@ -3,7 +3,7 @@ import { listBebesByTurma } from '@/services/bebeService';
 import { listDiariosByBebe, registerPresence } from '@/services/diarioService';
 import { mapTeacherChild } from '@/services/mappers';
 import type { TeacherAttendanceStatus, TeacherChild } from '@/types/teacherChild';
-import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 type TeacherAttendanceContextValue = {
   children: TeacherChild[];
@@ -12,6 +12,7 @@ type TeacherAttendanceContextValue = {
     attendance: Exclude<TeacherAttendanceStatus, 'unmarked'>,
   ) => Promise<void>;
   getChildById: (childId: string) => TeacherChild | null;
+  refreshChildren: () => Promise<void>;
 };
 
 const TeacherAttendanceContext = createContext<TeacherAttendanceContextValue | undefined>(
@@ -33,10 +34,34 @@ export function TeacherAttendanceProvider({ children }: { children: ReactNode })
   const { user } = useAuth();
   const [classChildren, setClassChildren] = useState<TeacherChild[]>([]);
 
+  const refreshChildren = useCallback(async () => {
+    if (user?.type !== 'teacher') {
+      setClassChildren([]);
+      return;
+    }
+
+    const turmaId = user.turmas?.[0]?.id;
+    if (!turmaId) {
+      setClassChildren([]);
+      return;
+    }
+
+    const hoje = new Date().toISOString().split('T')[0];
+    const bebes = await listBebesByTurma(turmaId).catch(() => []);
+    const mappedChildren = await Promise.all(
+      bebes.map(async (bebe) => {
+        const diarios = await listDiariosByBebe(bebe.id, hoje).catch(() => []);
+        return mapTeacherChild(bebe, diarios[0] ?? null);
+      }),
+    );
+
+    setClassChildren(mappedChildren);
+  }, [user]);
+
   useEffect(() => {
     let isMounted = true;
 
-    const loadClassChildren = async () => {
+    const load = async () => {
       if (user?.type !== 'teacher') {
         if (isMounted) setClassChildren([]);
         return;
@@ -48,10 +73,11 @@ export function TeacherAttendanceProvider({ children }: { children: ReactNode })
         return;
       }
 
+      const hoje = new Date().toISOString().split('T')[0];
       const bebes = await listBebesByTurma(turmaId).catch(() => []);
       const mappedChildren = await Promise.all(
         bebes.map(async (bebe) => {
-          const diarios = await listDiariosByBebe(bebe.id).catch(() => []);
+          const diarios = await listDiariosByBebe(bebe.id, hoje).catch(() => []);
           return mapTeacherChild(bebe, diarios[0] ?? null);
         }),
       );
@@ -61,7 +87,7 @@ export function TeacherAttendanceProvider({ children }: { children: ReactNode })
       }
     };
 
-    loadClassChildren();
+    load();
 
     return () => {
       isMounted = false;
@@ -99,8 +125,9 @@ export function TeacherAttendanceProvider({ children }: { children: ReactNode })
       markAttendance,
       getChildById: (childId: string) =>
         classChildren.find((child) => child.id === childId) ?? null,
+      refreshChildren,
     }),
-    [classChildren],
+    [classChildren, refreshChildren],
   );
 
   return (

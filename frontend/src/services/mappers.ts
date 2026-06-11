@@ -58,6 +58,12 @@ function parseAtividades(value?: string | null) {
   }
 }
 
+const feedingLabels: Record<string, string> = {
+  bem: 'Comeu bem',
+  pouco: 'Comeu pouco',
+  nao: 'Nao comeu',
+};
+
 export function mapResponsibleChild(vinculo: VinculoFamiliar, diario?: DiarioIndividual | null): ResponsibleChild {
   const bebe = vinculo.bebe;
   const name = bebe?.nome || 'Crianca';
@@ -65,6 +71,7 @@ export function mapResponsibleChild(vinculo: VinculoFamiliar, diario?: DiarioInd
   const fralda = parseFralda(diario?.fralda);
   const presente = diario?.frequencia ?? false;
   const alimentacao = (diario?.alimentacao || 'nao') as ResponsibleChild['report']['alimentacao'];
+  const feedingLabel = feedingLabels[diario?.alimentacao ?? ''] || 'Aguardando';
 
   return {
     id: String(vinculo.bebeId),
@@ -74,7 +81,7 @@ export function mapResponsibleChild(vinculo: VinculoFamiliar, diario?: DiarioInd
     home: {
       attendanceLabel: presente ? 'Presente na creche' : 'Aguardando registro',
       attendanceColor: presente ? '#22C55E' : '#EF4444',
-      feedingLabel: diario?.alimentacao || 'Aguardando',
+      feedingLabel,
       feedingColor: diario?.alimentacao === 'bem' ? '#3B82F6' : '#F59E0B',
       napLabel: diario?.sono || 'Aguardando',
     },
@@ -88,6 +95,8 @@ export function mapResponsibleChild(vinculo: VinculoFamiliar, diario?: DiarioInd
       sonecaFim: sono.fim,
       fraldaTrocada: fralda.fraldaTrocada,
       quantidadeFraldas: fralda.quantidadeFraldas,
+      banho: diario?.banho ?? false,
+      desenvolvimentoPedagogico: diario?.desenvolvimentoPedagogico ?? null,
       atividades: parseAtividades(diario?.atividades),
       observacoes: diario?.observacoesFinais || 'Ainda nao ha observacoes para este dia.',
       teacherName: 'Professora',
