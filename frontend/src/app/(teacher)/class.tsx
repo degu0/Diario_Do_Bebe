@@ -24,7 +24,6 @@ export default function Claass() {
   const [search, setSearch] = useState('');
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedAbsentIds, setSelectedAbsentIds] = useState<string[]>([]);
-  const [attendanceConfirmed, setAttendanceConfirmed] = useState(false);
 
   const filteredKids = useMemo(
     () => children.filter((item) => item.name.toLowerCase().includes(search.toLowerCase())),
@@ -48,7 +47,6 @@ export default function Claass() {
   };
 
   const handleChildLongPress = (childId: string) => {
-    setAttendanceConfirmed(false);
     setSelectionMode(true);
     setSelectedAbsentIds((currentIds) =>
       currentIds.includes(childId) ? currentIds : [...currentIds, childId],
@@ -57,7 +55,6 @@ export default function Claass() {
 
   const handleChildPress = (childId: string) => {
     if (selectionMode) {
-      setAttendanceConfirmed(false);
       toggleAbsentSelection(childId);
       return;
     }
@@ -72,102 +69,37 @@ export default function Claass() {
       ),
     );
 
-    setAttendanceConfirmed(true);
     setSelectionMode(false);
     setSelectedAbsentIds([]);
   };
 
+  const reportStatusBadge = (reportStatus: TeacherChild['reportStatus']) => {
+    if (reportStatus === DIARY_STATUS.PREENCHIDA) {
+      return { label: DIARY_STATUS.PREENCHIDA, backgroundColor: theme.colors.successBackground, color: theme.colors.success };
+    }
+    if (reportStatus === DIARY_STATUS.AUSENTE) {
+      return { label: DIARY_STATUS.AUSENTE, backgroundColor: isDark ? '#442222' : '#FBE7E4', color: theme.colors.error };
+    }
+    return { label: DIARY_STATUS.PENDENTE, backgroundColor: theme.colors.infoBackground, color: theme.colors.info };
+  };
+
   const getAttendanceBadge = (child: TeacherChild) => {
-    // Durante seleção pendente de confirmação
-    if (selectionMode || !attendanceConfirmed) {
-      if (selectedAbsentIdSet.has(child.id)) {
-        return {
-          label: DIARY_STATUS.AUSENTE,
-          backgroundColor: isDark ? '#442222' : '#FBE7E4',
-          color: theme.colors.error,
-        };
-      }
-
-      // Se já tem attendance salvo no contexto, mostra o status real
-      if (child.attendance === 'absent') {
-        return {
-          label: DIARY_STATUS.AUSENTE,
-          backgroundColor: isDark ? '#442222' : '#FBE7E4',
-          color: theme.colors.error,
-        };
-      }
-
-      if (child.attendance === 'present') {
-        const statusMap: Record<string, { label: string; backgroundColor: string; color: string }> = {
-          [DIARY_STATUS.PREENCHIDA]: {
-            label: DIARY_STATUS.PREENCHIDA,
-            backgroundColor: theme.colors.successBackground,
-            color: theme.colors.success,
-          },
-          [DIARY_STATUS.AUSENTE]: {
-            label: DIARY_STATUS.AUSENTE,
-            backgroundColor: isDark ? '#442222' : '#FBE7E4',
-            color: theme.colors.error,
-          },
-          [DIARY_STATUS.PENDENTE]: {
-            label: DIARY_STATUS.PENDENTE,
-            backgroundColor: theme.colors.infoBackground,
-            color: theme.colors.info,
-          },
-        };
-        return statusMap[child.reportStatus] ?? {
-          label: DIARY_STATUS.PENDENTE,
-          backgroundColor: theme.colors.infoBackground,
-          color: theme.colors.info,
-        };
-      }
-
-      return {
-        label: 'Standby',
-        backgroundColor: theme.colors.infoBackground,
-        color: theme.colors.info,
-      };
+    // Selecionado manualmente como ausente (ainda não confirmado)
+    if (selectedAbsentIdSet.has(child.id)) {
+      return { label: DIARY_STATUS.AUSENTE, backgroundColor: isDark ? '#442222' : '#FBE7E4', color: theme.colors.error };
     }
 
-    // Após confirmação
+    // Usa o estado real do contexto — persiste ao sair e voltar da tela
     if (child.attendance === 'absent') {
-      return {
-        label: DIARY_STATUS.AUSENTE,
-        backgroundColor: isDark ? '#442222' : '#FBE7E4',
-        color: theme.colors.error,
-      };
+      return { label: DIARY_STATUS.AUSENTE, backgroundColor: isDark ? '#442222' : '#FBE7E4', color: theme.colors.error };
     }
 
     if (child.attendance === 'present') {
-      const statusMap: Record<string, { label: string; backgroundColor: string; color: string }> = {
-        [DIARY_STATUS.PREENCHIDA]: {
-          label: DIARY_STATUS.PREENCHIDA,
-          backgroundColor: theme.colors.successBackground,
-          color: theme.colors.success,
-        },
-        [DIARY_STATUS.AUSENTE]: {
-          label: DIARY_STATUS.AUSENTE,
-          backgroundColor: isDark ? '#442222' : '#FBE7E4',
-          color: theme.colors.error,
-        },
-        [DIARY_STATUS.PENDENTE]: {
-          label: DIARY_STATUS.PENDENTE,
-          backgroundColor: theme.colors.infoBackground,
-          color: theme.colors.info,
-        },
-      };
-      return statusMap[child.reportStatus] ?? {
-        label: DIARY_STATUS.PENDENTE,
-        backgroundColor: theme.colors.infoBackground,
-        color: theme.colors.info,
-      };
+      return reportStatusBadge(child.reportStatus);
     }
 
-    return {
-      label: 'Standby',
-      backgroundColor: theme.colors.infoBackground,
-      color: theme.colors.info,
-    };
+    // 'unmarked': ainda sem check-in
+    return { label: 'Standby', backgroundColor: theme.colors.infoBackground, color: theme.colors.info };
   };
 
   return (
@@ -208,8 +140,8 @@ export default function Claass() {
           <View style={styles.listCard}>
             {filteredKids.map((item) => {
               const attendanceBadge = getAttendanceBadge(item);
-              const isAbsentSelected = !attendanceConfirmed && selectedAbsentIdSet.has(item.id);
-              const isStandby = !attendanceConfirmed && !isAbsentSelected;
+              const isAbsentSelected = selectedAbsentIdSet.has(item.id);
+              const isStandby = item.attendance === 'unmarked' && !isAbsentSelected;
 
               return (
                 <TouchableOpacity

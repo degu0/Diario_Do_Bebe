@@ -78,7 +78,6 @@ export default function Home() {
         adiId: user.id,
       });
       closeModal();
-      // Atualiza contagem
       listOcorrencias()
         .then((ocorrencias) => {
           const hoje = new Date().toDateString();
@@ -224,7 +223,6 @@ export default function Home() {
         </View>
       </ScrollView>
 
-      {/* Modal criar ocorrência */}
       <Modal transparent animationType="none" visible={modalVisible} onRequestClose={closeModal}>
         <Pressable style={styles.modalOverlay} onPress={closeModal}>
           <Animated.View

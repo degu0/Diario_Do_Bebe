@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '@/context/AuthContext';
 import { listBebesByTurma } from '@/services/bebeService';
 import { listDiariosByBebe, registerPresence } from '@/services/diarioService';
@@ -19,14 +20,36 @@ const TeacherAttendanceContext = createContext<TeacherAttendanceContextValue | u
   undefined,
 );
 
+// Chave do AsyncStorage varia por dia — ontem não interfere
+function attendanceStorageKey() {
+  const hoje = new Date().toISOString().split('T')[0];
+  return `@diario_bebe:attendance:${hoje}`;
+}
+
+async function loadLocalAttendance(): Promise<Record<string, Exclude<TeacherAttendanceStatus, 'unmarked'>>> {
+  try {
+    const raw = await AsyncStorage.getItem(attendanceStorageKey());
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+async function saveLocalAttendance(
+  record: Record<string, Exclude<TeacherAttendanceStatus, 'unmarked'>>,
+) {
+  try {
+    await AsyncStorage.setItem(attendanceStorageKey(), JSON.stringify(record));
+  } catch {
+    /* silencia — o estado em memória ainda funciona */
+  }
+}
+
 function getReportStatusForAttendance(
   previousReportStatus: TeacherChild['reportStatus'],
   attendance: Exclude<TeacherAttendanceStatus, 'unmarked'>,
 ): TeacherChild['reportStatus'] {
-  if (attendance === 'absent') {
-    return 'Ausente';
-  }
-
+  if (attendance === 'absent') return 'Ausente';
   return previousReportStatus === 'Ausente' ? 'Pendente' : previousReportStatus;
 }
 
@@ -34,7 +57,7 @@ export function TeacherAttendanceProvider({ children }: { children: ReactNode })
   const { user } = useAuth();
   const [classChildren, setClassChildren] = useState<TeacherChild[]>([]);
 
-  const refreshChildren = useCallback(async () => {
+  const buildChildren = useCallback(async () => {
     if (user?.type !== 'teacher') {
       setClassChildren([]);
       return;
@@ -47,11 +70,29 @@ export function TeacherAttendanceProvider({ children }: { children: ReactNode })
     }
 
     const hoje = new Date().toISOString().split('T')[0];
-    const bebes = await listBebesByTurma(turmaId).catch(() => []);
+
+    // Busca diários da API (para reportStatus) e attendance local em paralelo
+    const [bebes, localAttendance] = await Promise.all([
+      listBebesByTurma(turmaId).catch(() => []),
+      loadLocalAttendance(),
+    ]);
+
     const mappedChildren = await Promise.all(
       bebes.map(async (bebe) => {
         const diarios = await listDiariosByBebe(bebe.id, hoje).catch(() => []);
-        return mapTeacherChild(bebe, diarios[0] ?? null);
+        const child = mapTeacherChild(bebe, diarios[0] ?? null);
+
+        // Attendance local tem prioridade sobre o que veio da API
+        const savedAttendance = localAttendance[String(bebe.id)];
+        if (savedAttendance) {
+          return {
+            ...child,
+            attendance: savedAttendance,
+            reportStatus: getReportStatusForAttendance(child.reportStatus, savedAttendance),
+          };
+        }
+
+        return child;
       }),
     );
 
@@ -61,38 +102,18 @@ export function TeacherAttendanceProvider({ children }: { children: ReactNode })
   useEffect(() => {
     let isMounted = true;
 
-    const load = async () => {
-      if (user?.type !== 'teacher') {
-        if (isMounted) setClassChildren([]);
-        return;
-      }
-
-      const turmaId = user.turmas?.[0]?.id;
-      if (!turmaId) {
-        if (isMounted) setClassChildren([]);
-        return;
-      }
-
-      const hoje = new Date().toISOString().split('T')[0];
-      const bebes = await listBebesByTurma(turmaId).catch(() => []);
-      const mappedChildren = await Promise.all(
-        bebes.map(async (bebe) => {
-          const diarios = await listDiariosByBebe(bebe.id, hoje).catch(() => []);
-          return mapTeacherChild(bebe, diarios[0] ?? null);
-        }),
-      );
-
-      if (isMounted) {
-        setClassChildren(mappedChildren);
-      }
-    };
-
-    load();
+    buildChildren().then(() => {
+      if (!isMounted) return;
+    });
 
     return () => {
       isMounted = false;
     };
   }, [user]);
+
+  const refreshChildren = useCallback(async () => {
+    await buildChildren();
+  }, [buildChildren]);
 
   const markAttendance = async (
     childId: string,
@@ -100,12 +121,19 @@ export function TeacherAttendanceProvider({ children }: { children: ReactNode })
   ) => {
     if (!user || user.type !== 'teacher') return;
 
+    // 1. Salva no backend
     await registerPresence({
       bebeId: Number(childId),
       adiId: user.id,
       presenca: attendance === 'absent' ? 'ausente' : 'presente',
     });
 
+    // 2. Persiste localmente no AsyncStorage
+    const current = await loadLocalAttendance();
+    current[childId] = attendance;
+    await saveLocalAttendance(current);
+
+    // 3. Atualiza estado em memória imediatamente
     setClassChildren((currentChildren) =>
       currentChildren.map((child) =>
         child.id === childId
