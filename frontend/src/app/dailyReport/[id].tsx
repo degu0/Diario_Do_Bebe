@@ -137,6 +137,13 @@ export default function DailyReportView() {
               borderColor={borderColor}
             />
             <InfoRow
+              label="Banho"
+              value={child.report.banho ? 'Tomou banho' : 'Nao tomou banho'}
+              textColor={child.report.banho ? '#27ae60' : '#e74c3c'}
+              subtitleColor={subtitleColor}
+              borderColor={borderColor}
+            />
+            <InfoRow
               label="Fralda"
               value={
                 child.report.fraldaTrocada
@@ -148,6 +155,19 @@ export default function DailyReportView() {
               borderColor="transparent"
             />
           </Section>
+
+          {child.report.desenvolvimentoPedagogico !== null ? (
+            <Section
+              title="Desenvolvimento Pedagogico"
+              textColor={theme.colors.text}
+              subtitleColor={subtitleColor}
+              cardBg={cardBg}
+            >
+              <Text style={[styles.observacoesText, { color: theme.colors.text }]}>
+                Nivel: {child.report.desenvolvimentoPedagogico}
+              </Text>
+            </Section>
+          ) : null}
 
           <Section
             title="Atividades do dia"
@@ -174,20 +194,19 @@ export default function DailyReportView() {
               {child.report.observacoes}
             </Text>
           </Section>
+          {/* [STANDBY - sem endpoint] Nome da professora: /diarios/bebe/:id não inclui relação adi — exibir quando endpoint retornar o campo */}
           <View style={[styles.teacherRow, { borderTopColor: borderColor }]}>
             <View
               style={[styles.teacherAvatar, { backgroundColor: isDark ? '#2C2440' : '#EDE5F7' }]}
             >
-              <Text style={[styles.teacherInitials, { color: theme.colors.primary }]}>
-                {child.report.teacherInitials}
-              </Text>
+              <Text style={[styles.teacherInitials, { color: theme.colors.primary }]}>PR</Text>
             </View>
             <View>
               <Text style={[styles.teacherName, { color: theme.colors.text }]}>
-                {child.report.teacherName}
+                Professora responsavel
               </Text>
               <Text style={[styles.teacherRole, { color: subtitleColor }]}>
-                Professora responsavel
+                Nome disponivel em breve
               </Text>
             </View>
           </View>

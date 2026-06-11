@@ -2,24 +2,99 @@ import DataUser from '@/components/DataUser';
 import { useAuth } from '@/context/AuthContext';
 import { useTeacherAttendance } from '@/context/TeacherAttendanceContext';
 import { useThemeContext } from '@/context/ThemeContext';
+import { createOcorrencia } from '@/services/ocorrenciaService';
 import { listOcorrencias } from '@/services/ocorrenciaService';
-import { useRouter } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import {
+  Animated,
+  Image,
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const profileIcon = require('@/assets/icon/profile.png');
 
+const PRIORIDADE_OPTIONS = [
+  { label: 'Baixa', value: 'BAIXA' },
+  { label: 'Media', value: 'MEDIA' },
+  { label: 'Alta', value: 'ALTA' },
+];
+
 export default function Home() {
   const { theme, isDark } = useThemeContext();
   const { user } = useAuth();
-  const { children } = useTeacherAttendance();
+  const { children, refreshChildren } = useTeacherAttendance();
   const router = useRouter();
 
   const styles = useMemo(() => createStyles(theme, isDark), [theme, isDark]);
-  const [ocorrenciasCount, setOcorrenciasCount] = useState(0);
+  const [ocorrenciasCount, setOcorrenciasCount] = useState<number | null>(null);
 
-  useEffect(() => {
+  // Modal de nova ocorrência
+  const [modalVisible, setModalVisible] = useState(false);
+  const [ocTitulo, setOcTitulo] = useState('');
+  const [ocPrioridade, setOcPrioridade] = useState('BAIXA');
+  const [ocDescricao, setOcDescricao] = useState('');
+  const [ocSaving, setOcSaving] = useState(false);
+  const [ocError, setOcError] = useState('');
+  const modalAnim = useRef(new Animated.Value(0)).current;
+
+  const openModal = () => {
+    setOcTitulo('');
+    setOcPrioridade('BAIXA');
+    setOcDescricao('');
+    setOcError('');
+    setModalVisible(true);
+    Animated.spring(modalAnim, { toValue: 1, useNativeDriver: true, bounciness: 4 }).start();
+  };
+
+  const closeModal = () => {
+    Animated.timing(modalAnim, { toValue: 0, duration: 200, useNativeDriver: true }).start(() =>
+      setModalVisible(false),
+    );
+  };
+
+  const handleSaveOcorrencia = async () => {
+    if (!ocTitulo.trim()) {
+      setOcError('O titulo e obrigatorio.');
+      return;
+    }
+    if (!user || user.type !== 'teacher') return;
+
+    setOcSaving(true);
+    setOcError('');
+    try {
+      await createOcorrencia({
+        titulo: ocTitulo.trim(),
+        prioridade: ocPrioridade,
+        descricao: ocDescricao.trim() || undefined,
+        adiId: user.id,
+      });
+      closeModal();
+      // Atualiza contagem
+      listOcorrencias()
+        .then((ocorrencias) => {
+          const hoje = new Date().toDateString();
+          setOcorrenciasCount(
+            ocorrencias.filter((item) => new Date(item.dia).toDateString() === hoje).length,
+          );
+        })
+        .catch(() => {});
+    } catch {
+      setOcError('Nao foi possivel salvar. Tente novamente.');
+    } finally {
+      setOcSaving(false);
+    }
+  };
+
+  const fetchOcorrencias = useCallback(() => {
     if (user?.type !== 'teacher') return;
 
     listOcorrencias()
@@ -31,6 +106,13 @@ export default function Home() {
       })
       .catch(() => setOcorrenciasCount(0));
   }, [user]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchOcorrencias();
+      refreshChildren();
+    }, [fetchOcorrencias, refreshChildren]),
+  );
 
   const name = user?.nome?.split(' ')[0] || 'Professora';
   const filledCount = children.filter((child) => child.reportStatus === 'Preenchida').length;
@@ -51,6 +133,9 @@ export default function Home() {
       text: theme.colors.info,
     },
   };
+
+  const modalScale = modalAnim.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] });
+  const modalOpacity = modalAnim;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -87,12 +172,17 @@ export default function Home() {
               <Text style={styles.smallCardLabel}>Ausentes hoje</Text>
             </View>
 
-            <View style={styles.smallCard}>
-              <Text style={[styles.smallCardNumber, { color: theme.colors.primary }]}>
-                {ocorrenciasCount}
-              </Text>
+            <TouchableOpacity style={styles.smallCard} onPress={openModal} activeOpacity={0.8}>
+              <View style={styles.ocorrenciasHeader}>
+                <Text style={[styles.smallCardNumber, { color: theme.colors.primary }]}>
+                  {ocorrenciasCount === null ? '—' : ocorrenciasCount}
+                </Text>
+                <View style={styles.addBadge}>
+                  <Text style={[styles.addBadgeText, { color: theme.colors.primary }]}>+</Text>
+                </View>
+              </View>
               <Text style={styles.smallCardLabel}>Ocorrencias hoje</Text>
-            </View>
+            </TouchableOpacity>
           </View>
 
           <View style={styles.kidsSection}>
@@ -133,6 +223,107 @@ export default function Home() {
           </View>
         </View>
       </ScrollView>
+
+      {/* Modal criar ocorrência */}
+      <Modal transparent animationType="none" visible={modalVisible} onRequestClose={closeModal}>
+        <Pressable style={styles.modalOverlay} onPress={closeModal}>
+          <Animated.View
+            style={[
+              styles.modalCard,
+              { opacity: modalOpacity, transform: [{ scale: modalScale }] },
+            ]}
+          >
+            <Pressable>
+              <Text style={[styles.modalTitle, { color: theme.colors.text }]}>
+                Nova Ocorrencia
+              </Text>
+
+              <Text style={[styles.modalLabel, { color: theme.colors.text }]}>Titulo *</Text>
+              <TextInput
+                style={[styles.modalInput, { color: theme.colors.text, borderColor: isDark ? '#2C2440' : '#E7DDF7', backgroundColor: isDark ? '#191327' : '#FBF8FF' }]}
+                placeholder="Titulo da ocorrencia"
+                placeholderTextColor={isDark ? '#8E8AA5' : '#94A3B8'}
+                value={ocTitulo}
+                onChangeText={setOcTitulo}
+              />
+
+              <Text style={[styles.modalLabel, { color: theme.colors.text }]}>Prioridade</Text>
+              <View style={styles.prioridadeRow}>
+                {PRIORIDADE_OPTIONS.map((op) => (
+                  <TouchableOpacity
+                    key={op.value}
+                    style={[
+                      styles.prioridadeChip,
+                      {
+                        backgroundColor:
+                          ocPrioridade === op.value
+                            ? theme.colors.primary
+                            : isDark ? '#191327' : '#F4EEFF',
+                        borderColor:
+                          ocPrioridade === op.value ? theme.colors.primary : isDark ? '#2C2440' : '#E7DDF7',
+                      },
+                    ]}
+                    onPress={() => setOcPrioridade(op.value)}
+                  >
+                    <Text
+                      style={{
+                        color: ocPrioridade === op.value ? '#fff' : theme.colors.text,
+                        fontSize: 12,
+                        fontFamily: 'Nunito_600SemiBold',
+                      }}
+                    >
+                      {op.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              <Text style={[styles.modalLabel, { color: theme.colors.text }]}>
+                Descricao (opcional)
+              </Text>
+              <TextInput
+                style={[
+                  styles.modalInput,
+                  styles.modalTextArea,
+                  { color: theme.colors.text, borderColor: isDark ? '#2C2440' : '#E7DDF7', backgroundColor: isDark ? '#191327' : '#FBF8FF' },
+                ]}
+                placeholder="Descreva a ocorrencia..."
+                placeholderTextColor={isDark ? '#8E8AA5' : '#94A3B8'}
+                multiline
+                value={ocDescricao}
+                onChangeText={setOcDescricao}
+              />
+
+              {ocError ? (
+                <Text style={[styles.ocError, { color: theme.colors.error }]}>{ocError}</Text>
+              ) : null}
+
+              <View style={styles.modalActions}>
+                <TouchableOpacity
+                  style={[styles.modalBtn, { backgroundColor: isDark ? '#191327' : '#F4EEFF' }]}
+                  onPress={closeModal}
+                >
+                  <Text style={{ color: theme.colors.text, fontFamily: 'Nunito_600SemiBold' }}>
+                    Cancelar
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.modalBtn,
+                    { backgroundColor: theme.colors.primary, opacity: ocSaving ? 0.7 : 1 },
+                  ]}
+                  onPress={handleSaveOcorrencia}
+                  disabled={ocSaving}
+                >
+                  <Text style={{ color: '#fff', fontFamily: 'Nunito_700Bold' }}>
+                    {ocSaving ? 'Salvando...' : 'Salvar'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </Pressable>
+          </Animated.View>
+        </Pressable>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -249,6 +440,24 @@ const createStyles = (theme: any, isDark: boolean) =>
       elevation: 2,
       gap: 6,
     },
+    ocorrenciasHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    addBadge: {
+      width: 24,
+      height: 24,
+      borderRadius: 8,
+      backgroundColor: isDark ? '#1F1A2C' : '#F4EEFF',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    addBadgeText: {
+      fontSize: 18,
+      fontFamily: 'Nunito_700Bold',
+      lineHeight: 22,
+    },
     smallCardNumber: {
       fontSize: 36,
       fontFamily: 'Nunito_600SemiBold',
@@ -324,5 +533,73 @@ const createStyles = (theme: any, isDark: boolean) =>
       fontSize: 20,
       color: theme.colors.text,
       opacity: 0.3,
+    },
+    // Modal styles
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20,
+    },
+    modalCard: {
+      width: '100%',
+      backgroundColor: theme.colors.background,
+      borderRadius: 24,
+      padding: 20,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 12 },
+      shadowOpacity: 0.2,
+      shadowRadius: 24,
+      elevation: 10,
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontFamily: 'Nunito_700Bold',
+      marginBottom: 16,
+    },
+    modalLabel: {
+      fontSize: 13,
+      fontFamily: 'Nunito_600SemiBold',
+      marginBottom: 6,
+      marginTop: 12,
+    },
+    modalInput: {
+      borderWidth: 1,
+      borderRadius: 14,
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+      fontSize: 14,
+    },
+    modalTextArea: {
+      minHeight: 80,
+      textAlignVertical: 'top',
+    },
+    prioridadeRow: {
+      flexDirection: 'row',
+      gap: 8,
+    },
+    prioridadeChip: {
+      flex: 1,
+      paddingVertical: 10,
+      borderRadius: 12,
+      borderWidth: 1,
+      alignItems: 'center',
+    },
+    ocError: {
+      fontSize: 12,
+      marginTop: 8,
+      textAlign: 'center',
+    },
+    modalActions: {
+      flexDirection: 'row',
+      gap: 10,
+      marginTop: 16,
+    },
+    modalBtn: {
+      flex: 1,
+      paddingVertical: 14,
+      borderRadius: 14,
+      alignItems: 'center',
     },
   });
