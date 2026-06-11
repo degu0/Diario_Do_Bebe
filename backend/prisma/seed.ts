@@ -51,6 +51,7 @@ async function main() {
       genero: 'Masculino',
       alergias: 'Lactose',
       turmaId: turma.id,
+      escolaId: escola.id,
     },
   });
 

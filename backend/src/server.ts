@@ -9,13 +9,30 @@ import { turmaRoutes } from './routes/turma.routes';
 import { eventoRoutes } from './routes/evento.routes';
 import { ocorrenciaRoutes } from './routes/ocorrencia.routes';
 import { vinculoRoutes } from './routes/vinculo.routes';
+import { authRoutes } from './routes/auth.routes';
 
 
 const app = express();
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', process.env.FRONTEND_ORIGIN || '*');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+  );
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS');
+
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+
+  return next();
+});
+
 app.use(express.json());
 
 // Registra as rotas de bebê com o prefixo /bebes
+app.use('/auth', authRoutes);
 app.use('/bebes', bebeRoutes);
 app.use('/diarios', diarioRoutes);
 app.use('/responsaveis', responsavelRoutes);

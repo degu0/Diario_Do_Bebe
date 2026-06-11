@@ -8,7 +8,7 @@ export class BebeController {
       const { nome, dataNascimento, genero, alergias, turmaId, escolaId } = req.body;
 
       // Validação básica: verifica se os campos obrigatórios vieram
-      if (!nome || !dataNascimento || !turmaId) {
+      if (!nome || !dataNascimento || !turmaId || !escolaId) {
         return res.status(400).json({ error: 'Nome, data de nascimento e turma são obrigatórios.' });
       }
 
@@ -19,7 +19,7 @@ export class BebeController {
           genero,
           alergias,
           turmaId: Number(turmaId), // Garante que é um número
-          escolaId: Number(turmaId)
+          escolaId: Number(escolaId)
         },
       });
 
@@ -62,6 +62,8 @@ export class BebeController {
       const bebeME = await prisma.bebe.findUnique({
         where: { id: Number(BEBEid)}, // Traz os dados da turma junto
         include: {
+          escola: true,
+          turma: true,
           responsaveis: {
             include: {
               responsavel: true // Traz os dados puros do responsável (nome, telefone)
