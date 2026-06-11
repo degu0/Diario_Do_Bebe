@@ -3,7 +3,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useResponsibleChild } from '@/context/ResponsibleChildContext';
 import { useThemeContext } from '@/context/ThemeContext';
 import { router } from 'expo-router';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const profileIcon = require('@/assets/icon/profile.png');
@@ -11,12 +11,24 @@ const profileIcon = require('@/assets/icon/profile.png');
 export default function Home() {
   const { theme, isDark } = useThemeContext();
   const { user } = useAuth();
-  const { children, selectedChild, selectChild } = useResponsibleChild();
+  const { children, selectedChild, selectChild, loading } = useResponsibleChild();
   const styles = createStyles(theme, isDark);
 
   const name = user?.nome?.split(' ')[0] || 'Responsavel';
   if (!selectedChild) {
-    return null;
+    return (
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}>
+          {loading ? (
+            <ActivityIndicator size="large" color="#fff" />
+          ) : (
+            <Text style={{ color: '#fff', fontSize: 15, textAlign: 'center' }}>
+              Nenhuma crianca vinculada a este responsavel ainda.
+            </Text>
+          )}
+        </View>
+      </SafeAreaView>
+    );
   }
 
   return (

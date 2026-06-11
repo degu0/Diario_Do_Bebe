@@ -10,6 +10,7 @@ type ResponsibleChildContextValue = {
   selectedChild: ResponsibleChild | null;
   selectChild: (childId: string) => Promise<void>;
   getChildById: (childId: string) => ResponsibleChild | null;
+  loading: boolean;
 };
 
 const STORAGE_KEY = '@diario_bebe:selected_responsible_child';
@@ -20,6 +21,7 @@ export function ResponsibleChildProvider({ children }: { children: ReactNode }) 
   const { user } = useAuth();
   const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
   const [responsibleChildren, setResponsibleChildren] = useState<ResponsibleChild[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
@@ -29,9 +31,12 @@ export function ResponsibleChildProvider({ children }: { children: ReactNode }) 
         if (isMounted) {
           setSelectedChildId(null);
           setResponsibleChildren([]);
+          setLoading(false);
         }
         return;
       }
+
+      if (isMounted) setLoading(true);
 
       const childrenFromApi = await Promise.all(
         (user.bebes ?? []).map(async (vinculo) => {
@@ -51,6 +56,7 @@ export function ResponsibleChildProvider({ children }: { children: ReactNode }) 
 
       setResponsibleChildren(childrenFromApi);
       setSelectedChildId(nextSelectedChildId);
+      setLoading(false);
     };
 
     syncSelectedChild();
@@ -77,8 +83,9 @@ export function ResponsibleChildProvider({ children }: { children: ReactNode }) 
       selectChild,
       getChildById: (childId: string) =>
         responsibleChildren.find((child) => child.id === childId) ?? null,
+      loading,
     };
-  }, [responsibleChildren, selectedChildId]);
+  }, [responsibleChildren, selectedChildId, loading]);
 
   return (
     <ResponsibleChildContext.Provider value={value}>{children}</ResponsibleChildContext.Provider>

@@ -22,6 +22,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [erro, setErro] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   const { theme, isDark } = useThemeContext();
   const { login } = useAuth();
@@ -121,6 +122,7 @@ export default function Login() {
       return;
     }
 
+    setSubmitting(true);
     try {
       await login({ email, password });
     } catch (error) {
@@ -129,6 +131,8 @@ export default function Login() {
           ? String(error.message)
           : 'Nao foi possivel fazer login';
       setErro(message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -218,9 +222,6 @@ export default function Login() {
               transform: [{ translateY: formY }],
             }}
           >
-            <Text style={[styles.cardTitle, { color: c.text }]}>Sign in</Text>
-            <Text style={[styles.cardSubtitle, { color: c.secondary }]}>Entre com sua conta</Text>
-
             <View style={styles.formWrapper}>
               <FormLogin
                 email={email}
@@ -232,10 +233,11 @@ export default function Login() {
             </View>
 
             <TouchableOpacity
-              style={[styles.button, { backgroundColor: c.primary }]}
+              style={[styles.button, { backgroundColor: c.primary, opacity: submitting ? 0.7 : 1 }]}
               onPress={handleLogin}
+              disabled={submitting}
             >
-              <Text style={styles.buttonText}>Entrar</Text>
+              <Text style={styles.buttonText}>{submitting ? 'Entrando...' : 'Entrar'}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity

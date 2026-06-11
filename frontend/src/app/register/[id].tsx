@@ -86,6 +86,18 @@ export default function Register() {
   const [banho, setBanho] = useState('nao');
   const [vivenciasGerais, setVivenciasGerais] = useState('');
   const [desenvolvimentoPedagogico, setDesenvolvimentoPedagogico] = useState(2);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
+
+  const todayLabel = useMemo(
+    () =>
+      new Intl.DateTimeFormat('pt-BR', {
+        weekday: 'long',
+        day: '2-digit',
+        month: 'long',
+      }).format(new Date()),
+    [],
+  );
 
   const subtitleColor = `${theme.colors.text}AA`;
   const presenca: 'presente' | 'ausente' =
@@ -129,17 +141,30 @@ export default function Register() {
   );
 
   const handleSave = async () => {
-    if (!childId || !user || user.type !== 'teacher') return;
+    if (!childId || !user || user.type !== 'teacher' || saving) return;
 
-    const { createDiario } = await import('@/services/diarioService');
+    setSaveError('');
+    setSaving(true);
 
-    await createDiario({
-      ...dailyReportPayload,
-      bebeId: Number(childId),
-      adiId: user.id,
-    });
+    try {
+      const { createDiario } = await import('@/services/diarioService');
 
-    router.back();
+      await createDiario({
+        ...dailyReportPayload,
+        bebeId: Number(childId),
+        adiId: user.id,
+      });
+
+      router.back();
+    } catch (error) {
+      const message =
+        error && typeof error === 'object' && 'message' in error
+          ? String(error.message)
+          : 'Nao foi possivel salvar o relatorio. Tente novamente.';
+      setSaveError(message);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -171,7 +196,7 @@ export default function Register() {
             <View style={styles.headerText}>
               <Text style={styles.name}>{child?.name ?? 'Crianca'}</Text>
               <Text style={styles.subtitle}>
-                Turma {child?.className ?? 'A1'} • Segunda, 14 de Agosto
+                Turma {child?.className ?? 'A1'} • {todayLabel}
               </Text>
               <View style={styles.infoPill}>
                 <Text style={styles.infoPillText}>Relatorio diario</Text>
@@ -434,8 +459,21 @@ export default function Register() {
             </View>
           ) : null}
 
-          <TouchableOpacity style={styles.button} activeOpacity={0.85} onPress={handleSave}>
-            <Text style={styles.buttonText}>Salvar relatorio diario</Text>
+          {saveError ? (
+            <Text style={{ color: theme.colors.error, textAlign: 'center', fontSize: 13 }}>
+              {saveError}
+            </Text>
+          ) : null}
+
+          <TouchableOpacity
+            style={[styles.button, saving && { opacity: 0.7 }]}
+            activeOpacity={0.85}
+            onPress={handleSave}
+            disabled={saving}
+          >
+            <Text style={styles.buttonText}>
+              {saving ? 'Salvando...' : 'Salvar relatorio diario'}
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

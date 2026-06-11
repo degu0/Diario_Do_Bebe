@@ -2,8 +2,9 @@ import DataUser from '@/components/DataUser';
 import { useAuth } from '@/context/AuthContext';
 import { useTeacherAttendance } from '@/context/TeacherAttendanceContext';
 import { useThemeContext } from '@/context/ThemeContext';
+import { listOcorrencias } from '@/services/ocorrenciaService';
 import { useRouter } from 'expo-router';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -16,6 +17,20 @@ export default function Home() {
   const router = useRouter();
 
   const styles = useMemo(() => createStyles(theme, isDark), [theme, isDark]);
+  const [ocorrenciasCount, setOcorrenciasCount] = useState(0);
+
+  useEffect(() => {
+    if (user?.type !== 'teacher') return;
+
+    listOcorrencias()
+      .then((ocorrencias) => {
+        const hoje = new Date().toDateString();
+        setOcorrenciasCount(
+          ocorrencias.filter((item) => new Date(item.dia).toDateString() === hoje).length,
+        );
+      })
+      .catch(() => setOcorrenciasCount(0));
+  }, [user]);
 
   const name = user?.nome?.split(' ')[0] || 'Professora';
   const filledCount = children.filter((child) => child.reportStatus === 'Preenchida').length;
@@ -73,8 +88,10 @@ export default function Home() {
             </View>
 
             <View style={styles.smallCard}>
-              <Text style={[styles.smallCardNumber, { color: theme.colors.primary }]}>1</Text>
-              <Text style={styles.smallCardLabel}>Ocorrencia</Text>
+              <Text style={[styles.smallCardNumber, { color: theme.colors.primary }]}>
+                {ocorrenciasCount}
+              </Text>
+              <Text style={styles.smallCardLabel}>Ocorrencias hoje</Text>
             </View>
           </View>
 

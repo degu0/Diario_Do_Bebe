@@ -55,7 +55,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (userData: LoginData) => {
     const response = await loginRequest(userData);
     await storeToken(response.token);
-    setUser(response.user);
+
+    // O /auth/login retorna o usuário sem bebes/turmas; o /auth/me traz completo.
+    const fullUser = await getAuthenticatedUser().catch(() => response.user);
+    setUser(fullUser);
 
     if (response.user.type === "responsible") {
       router.replace("/(responsible)/home");
