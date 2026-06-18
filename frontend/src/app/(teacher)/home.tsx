@@ -2,8 +2,8 @@ import DataUser from '@/components/DataUser';
 import { useAuth } from '@/context/AuthContext';
 import { useTeacherAttendance } from '@/context/TeacherAttendanceContext';
 import { useThemeContext } from '@/context/ThemeContext';
-import { createOcorrencia } from '@/services/ocorrenciaService';
-import { listOcorrencias } from '@/services/ocorrenciaService';
+import { createOcorrencia, listOcorrencias } from '@/services/ocorrenciaService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import {
@@ -43,14 +43,12 @@ export default function Home() {
   const [ocPrioridade, setOcPrioridade] = useState('BAIXA');
   const [ocDescricao, setOcDescricao] = useState('');
   const [ocSaving, setOcSaving] = useState(false);
-  const [ocError, setOcError] = useState('');
   const modalAnim = useRef(new Animated.Value(0)).current;
 
   const openModal = () => {
     setOcTitulo('');
     setOcPrioridade('BAIXA');
     setOcDescricao('');
-    setOcError('');
     setModalVisible(true);
     Animated.spring(modalAnim, { toValue: 1, useNativeDriver: true, bounciness: 4 }).start();
   };
@@ -61,36 +59,39 @@ export default function Home() {
     );
   };
 
+  const ocorrenciaLocalKey = `@diario_bebe:ocorrencias:${new Date().toISOString().split('T')[0]}`;
+
   const handleSaveOcorrencia = async () => {
-    if (!ocTitulo.trim()) {
-      setOcError('O titulo e obrigatorio.');
-      return;
-    }
-    if (!user || user.type !== 'teacher') return;
+    if (!ocTitulo.trim() || !user || user.type !== 'teacher') return;
 
     setOcSaving(true);
-    setOcError('');
+
+    const novaOcorrencia = {
+      titulo: ocTitulo.trim(),
+      prioridade: ocPrioridade,
+      descricao: ocDescricao.trim() || undefined,
+      adiId: user.id,
+      savedAt: new Date().toISOString(),
+    };
+
+    // Salva localmente e fecha o modal imediatamente
     try {
-      await createOcorrencia({
-        titulo: ocTitulo.trim(),
-        prioridade: ocPrioridade,
-        descricao: ocDescricao.trim() || undefined,
-        adiId: user.id,
-      });
-      closeModal();
-      listOcorrencias()
-        .then((ocorrencias) => {
-          const hoje = new Date().toDateString();
-          setOcorrenciasCount(
-            ocorrencias.filter((item) => new Date(item.dia).toDateString() === hoje).length,
-          );
-        })
-        .catch(() => {});
+      const raw = await AsyncStorage.getItem(ocorrenciaLocalKey);
+      const lista = raw ? JSON.parse(raw) : [];
+      lista.push(novaOcorrencia);
+      await AsyncStorage.setItem(ocorrenciaLocalKey, JSON.stringify(lista));
+      setOcorrenciasCount((prev) => (prev ?? 0) + 1);
     } catch {
-      setOcError('Nao foi possivel salvar. Tente novamente.');
-    } finally {
-      setOcSaving(false);
+      // AsyncStorage falhou, ainda tenta a API abaixo
     }
+
+    closeModal();
+    setOcSaving(false);
+
+    // Envia para a API em background — sem bloquear o usuário
+    createOcorrencia(novaOcorrencia).catch(() => {
+      // Falhou na API mas já está salvo localmente
+    });
   };
 
   const fetchOcorrencias = useCallback(() => {
@@ -291,10 +292,6 @@ export default function Home() {
                 value={ocDescricao}
                 onChangeText={setOcDescricao}
               />
-
-              {ocError ? (
-                <Text style={[styles.ocError, { color: theme.colors.error }]}>{ocError}</Text>
-              ) : null}
 
               <View style={styles.modalActions}>
                 <TouchableOpacity
